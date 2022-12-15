@@ -1,3 +1,5 @@
+package jena.swing;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -61,5 +63,4 @@ class MainWindow extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		add(new MainPanel(getWidth(), getHeight()));
 	}
-	
 }
