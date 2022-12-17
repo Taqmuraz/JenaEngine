@@ -25,7 +25,7 @@ class MainPanel extends JPanel
 		clearColor = new Color(0, 0, 100, 255);
 		try
 		{
-			image = ImageIO.read(new File("../../../resources/Image.png"));
+			image = ImageIO.read(new File("../resources/Image.png"));
 		}
 		catch(IOException ex)
 		{
