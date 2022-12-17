@@ -3,16 +3,29 @@ package jena.engine.math;
 public class Matrix3fStruct implements Matrix3f
 {
     public float[] elements;
+    /*
+        elements layout :
+
+        [ 0 3 6 ] -- line 0
+        [ 1 4 7 ] -- line 1
+        [ 2 5 8 ] -- line 2
+
+        [ 0 1 2 ] -- column 0
+        [ 3 4 5 ] -- column 1
+        [ 6 7 8 ] -- column 2
+    */
 
     private Matrix3fStruct(float[] elements)
     {
         this.elements = elements.clone();
     }
+
     public Matrix3fStruct()
     {
         elements = new float[9];
         elements[0] = elements[4] = elements[8] = 1f;
     }
+
     public Matrix3fStruct(Vector3f column0, Vector3f column1, Vector3f column2)
     {
         elements = new float[9];
