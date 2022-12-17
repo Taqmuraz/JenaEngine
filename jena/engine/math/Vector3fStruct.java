@@ -26,4 +26,10 @@ public class Vector3fStruct implements Vector3f
     {
         return (float)Math.sqrt(x * x + y * y + z * z);
     }
+
+    @Override
+    public Vector3f clone()
+    {
+        return new Vector3fStruct(x, y, z);
+    }
 }

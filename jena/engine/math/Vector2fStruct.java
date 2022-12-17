@@ -25,4 +25,9 @@ public class Vector2fStruct implements Vector2f
     {
         return (float)Math.sqrt(x * x + y * y);
     }
+    @Override
+    public Vector2f clone()
+    {
+        return new Vector2fStruct(x, y);
+    }
 }
