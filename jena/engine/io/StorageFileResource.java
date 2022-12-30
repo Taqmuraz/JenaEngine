@@ -74,7 +74,7 @@ public class StorageFileResource implements FileResource
                 {
                     output.close();
                 }
-                catch(Throwable exception) {}
+                catch(Throwable closeException) {}
             }
         }
     }
