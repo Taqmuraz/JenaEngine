@@ -1,6 +1,9 @@
 package jena.swing;
 
 import javax.swing.*;
+
+import jena.engine.io.FileResource;
+
 import java.awt.*;
 import java.io.*;
 import java.awt.image.*;
@@ -8,6 +11,14 @@ import javax.imageio.*;
 import java.awt.geom.*;
 import java.time.*;
 import java.time.temporal.*;
+
+public class ImageFileResource extends ImageResource
+{
+	public ImageFileResource(FileResource file)
+	{
+		super(ImageIO.read(new File("../resources/Image.png")));
+	}
+}
 
 public class Program
 {
