@@ -2,6 +2,8 @@ package jena.swing;
 
 import javax.swing.*;
 
+import jena.engine.io.StorageFileResource;
+
 import java.awt.*;
 import java.io.*;
 import java.awt.image.*;
@@ -17,23 +19,36 @@ public class Program
 		EventQueue.invokeLater(() -> new MainWindow());
 	}
 }
+
+interface CloseHandler
+{
+	void close();
+}
+
 class MainPanel extends JPanel
 {
-	public MainPanel(int width, int height)
+	public MainPanel(int width, int height, CloseHandler closeHandler)
 	{
 		setBounds(0, 0, width, height);
 		setDoubleBuffered(true);
 		clearColor = new Color(0, 0, 100, 255);
-		try
+		imageResource = new FileImageResource(new StorageFileResource("Image.png"), e -> 
 		{
-			image = ImageIO.read(new File("../resources/Image.png"));
-		}
-		catch(IOException ex)
-		{
-		}
+			int choice = JOptionPane.showOptionDialog(getComponentPopupMenu(), e, "Error message",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, new String[] 
+				{
+					"Continue",
+					"Finish the program"
+				}, e);
+			switch(choice)
+			{
+				case 1:
+					closeHandler.close();
+			}
+		});
 	}
 	Color clearColor;
-	BufferedImage image;
+	SwingTextureResource imageResource;
 
 	public void paint(Graphics g)
 	{
@@ -48,9 +63,15 @@ class MainPanel extends JPanel
 
 		int x = 150, y = 150;
 		AffineTransform transform = new AffineTransform();
-		transform.rotate(Math.toRadians(time * 360f), (image.getWidth() >> 1) + x, (image.getHeight() >> 1) + y);
-		g2.setTransform(transform);
-		g.drawImage(image, x, y, null);
+		
+		imageResource.accept(descriptor -> 
+			descriptor.acceptImage(image ->
+			descriptor.acceptSize((imageWidth, imageHeight) ->
+		{
+			transform.rotate(Math.toRadians(time * 360f), (imageWidth >> 1) + x, (imageHeight >> 1) + y);
+			g2.setTransform(transform);
+			g.drawImage(image, x, y, null);
+		})));
 		
 		repaint(10, 0, 0, getWidth(), getHeight());
 	}
@@ -62,6 +83,6 @@ class MainWindow extends JFrame
 		setSize(800, 600);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		add(new MainPanel(getWidth(), getHeight()));
+		add(new MainPanel(getWidth(), getHeight(), () -> dispose()));
 	}
 }
