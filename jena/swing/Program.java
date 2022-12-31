@@ -1,16 +1,26 @@
 package jena.swing;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 
+import jena.engine.common.Action;
+import jena.engine.common.ActionThrows;
+import jena.engine.common.ActionThrowsHandler;
+import jena.engine.common.ErrorHandler;
+import jena.engine.common.FunctionThrows;
+import jena.engine.common.FunctionThrowsHandler;
 import jena.engine.io.StorageFileResource;
 
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.awt.image.*;
 import javax.imageio.*;
 import java.awt.geom.*;
 import java.time.*;
 import java.time.temporal.*;
+import java.util.Arrays;
 
 public class Program
 {
@@ -27,25 +37,12 @@ interface CloseHandler
 
 class MainPanel extends JPanel
 {
-	public MainPanel(int width, int height, CloseHandler closeHandler)
+	public MainPanel(int width, int height, ErrorHandler errorHandler)
 	{
 		setBounds(0, 0, width, height);
 		setDoubleBuffered(true);
 		clearColor = new Color(0, 0, 100, 255);
-		imageResource = new FileImageResource(new StorageFileResource("Image.png"), e -> 
-		{
-			int choice = JOptionPane.showOptionDialog(getComponentPopupMenu(), e, "Error message",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, new String[] 
-				{
-					"Continue",
-					"Finish the program"
-				}, e);
-			switch(choice)
-			{
-				case 1:
-					closeHandler.close();
-			}
-		});
+		imageResource = new FileImageResource(new StorageFileResource("Image.png"), errorHandler);
 	}
 	Color clearColor;
 	SwingTextureResource imageResource;
@@ -83,6 +80,53 @@ class MainWindow extends JFrame
 		setSize(800, 600);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		add(new MainPanel(getWidth(), getHeight(), () -> dispose()));
+
+		{
+			InputStream i;
+			try
+			{
+				i = new FileInputStream(new File("abc.txt"));
+			}
+			catch(FileNotFoundException fileNotFound)
+			{
+				i = InputStream.nullInputStream();
+			}
+
+			// что-то с файлом делаем
+
+			try
+			{
+				i.close();
+			}
+			catch(IOException ioException)
+			{
+				System.out.println(ioException);
+			}
+		}
+		{
+			InputStream i = new FunctionThrowsHandler<>
+			(
+				() -> new FileInputStream(new File("abc.txt")),
+				error -> InputStream.nullInputStream()
+			).call();
+
+			// что-то с файлом делаем
+
+			new ActionThrowsHandler<>(i::close, System.out::println).call();
+		}
+		add(new MainPanel(getWidth(), getHeight(),  e -> 
+		{
+			int choice = JOptionPane.showOptionDialog(this, e, "Error message",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, new String[] 
+				{
+					"Continue",
+					"Finish the program"
+				}, e);
+			switch(choice)
+			{
+				case 1:
+					dispose();
+			}
+		}));
 	}
 }
