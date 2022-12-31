@@ -80,40 +80,7 @@ class MainWindow extends JFrame
 		setSize(800, 600);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		{
-			InputStream i;
-			try
-			{
-				i = new FileInputStream(new File("abc.txt"));
-			}
-			catch(FileNotFoundException fileNotFound)
-			{
-				i = InputStream.nullInputStream();
-			}
-
-			// что-то с файлом делаем
-
-			try
-			{
-				i.close();
-			}
-			catch(IOException ioException)
-			{
-				System.out.println(ioException);
-			}
-		}
-		{
-			InputStream i = new FunctionThrowsHandler<>
-			(
-				() -> new FileInputStream(new File("abc.txt")),
-				error -> InputStream.nullInputStream()
-			).call();
-
-			// что-то с файлом делаем
-
-			new ActionThrowsHandler<>(i::close, System.out::println).call();
-		}
+		
 		add(new MainPanel(getWidth(), getHeight(),  e -> 
 		{
 			int choice = JOptionPane.showOptionDialog(this, e, "Error message",
