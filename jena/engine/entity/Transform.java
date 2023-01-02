@@ -5,5 +5,5 @@ import jena.engine.math.Matrix3f;
 
 public interface Transform
 {
-    void accept(ActionSingle<Matrix3f> transformable);
+    void acceptMatrix(ActionSingle<Matrix3f> transformable);
 }

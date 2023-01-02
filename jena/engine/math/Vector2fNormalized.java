@@ -4,15 +4,13 @@ public final class Vector2fNormalized extends Vector2fStruct
 {
     public Vector2fNormalized(Vector2f source)
     {
-        source.accept((sx, sy) ->
+        Vector2fStruct struct = new Vector2fStruct(source);
+        float length = struct.length();
+        if (length != 0)
         {
-            float length = source.length();
-            if (length != 0)
-            {
-                x = sx / length;
-                y = sy / length;
-            }
-            else x = y = 0f;
-        });
+            x = struct.x / length;
+            y = struct.y / length;
+        }
+        else x = y = 0f;
     }
 }

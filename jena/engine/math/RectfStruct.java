@@ -1,10 +1,10 @@
 package jena.engine.math;
 
-public final class RectfStructure implements Rectf
+public final class RectfStruct implements Rectf
 {
     public float x, y, width, height;
 
-    public RectfStructure(float x, float y, float width, float height)
+    public RectfStruct(float x, float y, float width, float height)
     {
         this.x = x;
         this.y = y;

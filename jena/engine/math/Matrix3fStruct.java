@@ -61,4 +61,19 @@ public class Matrix3fStruct implements Matrix3f
     {
         return new Matrix3fStruct(elements);
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("matrix struct\n\t[%f, %f, %f]\n\t[%f, %f, %f]\n\t[%f, %f, %f]",
+            elements[0],
+            elements[1],
+            elements[2],
+            elements[3],
+            elements[4],
+            elements[5],
+            elements[6],
+            elements[7],
+            elements[8]);
+    }
 }

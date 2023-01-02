@@ -8,8 +8,8 @@ import jena.engine.io.FileResource;
 
 public class FileImageResource implements SwingTextureResource
 {
-	BufferedImage image;
-    static final BufferedImage nullImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+	private BufferedImage image;
+    private static final BufferedImage nullImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
 
 	public FileImageResource(FileResource file, ErrorHandler errorHandler)
 	{
@@ -19,15 +19,16 @@ public class FileImageResource implements SwingTextureResource
             {
                 image = ImageIO.read(stream);
             }
-            catch(Throwable exception)
+            catch(Throwable error) 
             {
-                image = nullImage;
+                errorHandler.call(error);
             }
 		}, error ->
 		{
-			image = nullImage;
 			errorHandler.call(error);
 		});
+
+        image = image == null ? nullImage : image;
 	}
 
     @Override

@@ -4,16 +4,14 @@ public final class Vector3fNormalized extends Vector3fStruct
 {
     public Vector3fNormalized(Vector3f source)
     {
-        source.accept((sx, sy, sz) ->
+        Vector3fStruct struct = new Vector3fStruct(source);
+        float length = struct.length();
+        if (length != 0)
         {
-            float length = source.length();
-            if (length != 0)
-            {
-                x = sx / length;
-                y = sy / length;
-                z = sz / length;
-            }
-            else x = y = z = 0f;
-        });
+            x = struct.x / length;
+            y = struct.y / length;
+            z = struct.z / length;
+        }
+        else x = y = z = 0f;
     }
 }

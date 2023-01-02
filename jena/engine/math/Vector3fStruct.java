@@ -14,6 +14,15 @@ public class Vector3fStruct implements Vector3f
         this.y = y;
         this.z = z;
     }
+    public Vector3fStruct(Vector3f source)
+    {
+        source.accept((x, y, z) ->
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        });
+    }
 
     @Override
     public void accept(Vector3fAcceptor acceptor)
@@ -21,7 +30,6 @@ public class Vector3fStruct implements Vector3f
         acceptor.call(x, y, z);
     }
 
-    @Override
     public float length()
     {
         return (float)Math.sqrt(x * x + y * y + z * z);
@@ -31,5 +39,11 @@ public class Vector3fStruct implements Vector3f
     public Vector3f clone()
     {
         return new Vector3fStruct(x, y, z);
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("(%f, %f, %f)", x, y, z);
     }
 }

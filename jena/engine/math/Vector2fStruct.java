@@ -14,13 +14,21 @@ public class Vector2fStruct implements Vector2f
         this.y = y;
     }
 
+    public Vector2fStruct(Vector2f source)
+    {
+        source.accept((x, y) ->
+        {
+            this.x = x;
+            this.y = y;
+        });
+    }
+
     @Override
     public void accept(Vector2fAcceptor acceptor) 
     {
         acceptor.call(x, y);
     }
 
-    @Override
     public float length()
     {
         return (float)Math.sqrt(x * x + y * y);
@@ -29,5 +37,11 @@ public class Vector2fStruct implements Vector2f
     public Vector2f clone()
     {
         return new Vector2fStruct(x, y);
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("(%f, %f)", x, y);
     }
 }
