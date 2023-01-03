@@ -6,20 +6,6 @@ public class ColorStruct implements Color
     static final float float2byte = 255f;
     public byte r, g, b, a;
 
-    public ColorStruct(byte r, byte g, byte b, byte a) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
-    }
-    public ColorStruct(float r, float g, float b, float a)
-    {
-        this.r = (byte)(r * float2byte);
-        this.g = (byte)(g * float2byte);
-        this.b = (byte)(b * float2byte);
-        this.a = (byte)(a * float2byte);
-    }
-
     @Override
     public void acceptBytes(ColorBytesAcceptor acceptor) 
     {

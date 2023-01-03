@@ -27,8 +27,8 @@ public class Camera implements GraphicsHandler
     public void handleGraphics(GraphicsScope graphics)
     {
         graphics.fillRect(clearRect, clearColor);
-        size.accept((sizeX, sizeY) -> graphics.pushMatrix(source -> new Matrix3fMul(source, new Matrix3fViewport(sizeX, sizeY))));
-        scene.handleGraphics(graphics);
-        graphics.popMatrix();
+        size.accept((sizeX, sizeY) -> graphics.matrixScope(
+            source -> new Matrix3fMul(source, new Matrix3fViewport(sizeX, sizeY)),
+            () -> scene.handleGraphics(graphics)));
     }
 }

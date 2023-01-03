@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.Player;
-import jena.engine.graphics.ColorStruct;
+import jena.engine.graphics.ColorByteStruct;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsScope;
 import jena.engine.graphics.TextureHandle;
@@ -29,7 +29,7 @@ public class MainPanel extends JPanel implements GraphicsResource
 		imageResource = new FileImageResource(new StorageFileResource("Image.png"), errorHandler);
 		this.errorHandler = errorHandler;
 		player = new Player(this);
-		camera = new Camera(acceptor -> acceptor.call(getWidth(), getHeight()), new ColorStruct(0, 1, 1, 255), player);
+		camera = new Camera(acceptor -> acceptor.call(getWidth(), getHeight()), new ColorByteStruct(0, 50, 50, 255), player);
 	}
 
 	@Override

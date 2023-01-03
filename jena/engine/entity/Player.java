@@ -5,6 +5,8 @@ import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsScope;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.StorageFileResource;
+import jena.engine.math.Matrix3fMul;
+import jena.engine.math.Matrix3fTransform;
 
 public class Player implements GraphicsHandler
 {
@@ -21,6 +23,11 @@ public class Player implements GraphicsHandler
     public void handleGraphics(GraphicsScope graphics)
     {
         graphics.drawSprite(texture0, acceptor -> acceptor.call(0f, 0f, 1f, 1f), acceptor -> acceptor.call(0f, 0f, 1f, 1f));
-        graphics.drawSprite(texture1, acceptor -> acceptor.call(0f, 0f, 1f, 1f), acceptor -> acceptor.call(-1f, -1f, 1f, 1f));
+        
+        Time.acceptTime(time -> graphics.matrixScope(
+            source -> new Matrix3fMul(source, new Matrix3fTransform(a -> a.call(-0.5f, -0.5f), time)),
+            () -> graphics.drawSprite(texture1,
+                acceptor -> acceptor.call(0f, 0f, 1f, 1f),
+                acceptor -> acceptor.call(-0.25f, -0.25f, 0.5f, 0.5f))));
     }
 }

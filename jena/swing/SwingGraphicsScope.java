@@ -3,6 +3,7 @@ package jena.swing;
 import java.awt.Graphics2D;
 import java.util.Stack;
 
+import jena.engine.common.Action;
 import jena.engine.common.FunctionSingle;
 import jena.engine.graphics.GraphicsScope;
 import jena.engine.graphics.TextureHandle;
@@ -51,15 +52,22 @@ public class SwingGraphicsScope implements GraphicsScope
 		rect.accept((x, y, w, h) ->
             color.acceptInts((cr, cg, cb, ca) ->
             {
-                graphics.setColor(new java.awt.Color(cr, cg, cb, ca));
-                graphics.fillRect((int)x, (int)y, (int)w, (int)h);
+                graphics.setBackground(new java.awt.Color(cr, cg, cb, ca));
+                graphics.clearRect((int)x, (int)y, (int)w, (int)h);
             }));
 	}
 
-	@Override
-	public void pushMatrix(FunctionSingle<Matrix3f, Matrix3f> transformation) 
-	{
+    @Override
+    public void matrixScope(FunctionSingle<Matrix3f, Matrix3f> transformation, Action action)
+    {
         Matrix3f matrix = transformation.call(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek());
+        pushMatrix(matrix);
+        action.call();
+        popMatrix();
+    }
+
+	private void pushMatrix(Matrix3f matrix) 
+	{
 		matrixStack.push(matrix);
         updateTransform(matrix);
 	}
@@ -70,8 +78,7 @@ public class SwingGraphicsScope implements GraphicsScope
         graphics.setTransform(transform);
     }
 
-	@Override
-	public void popMatrix() 
+	private void popMatrix() 
 	{
 		matrixStack.pop();
         updateTransform(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek());
