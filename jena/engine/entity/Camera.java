@@ -4,6 +4,7 @@ import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsHandler;
 import jena.engine.graphics.GraphicsScope;
 import jena.engine.math.Matrix3fMul;
+import jena.engine.math.Matrix3fOrtho;
 import jena.engine.math.Matrix3fViewport;
 import jena.engine.math.Rectf;
 import jena.engine.math.Vector2f;
@@ -28,7 +29,7 @@ public class Camera implements GraphicsHandler
     {
         graphics.fillRect(clearRect, clearColor);
         size.accept((sizeX, sizeY) -> graphics.matrixScope(
-            source -> new Matrix3fMul(source, new Matrix3fViewport(sizeX, sizeY)),
+            source -> new Matrix3fMul(source, new Matrix3fMul(new Matrix3fViewport(sizeX, sizeY), new Matrix3fOrtho(size, 1f))),
             () -> scene.handleGraphics(graphics)));
     }
 }
