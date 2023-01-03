@@ -7,8 +7,15 @@ public class Matrix3fOrtho extends Matrix3fStruct
         size.accept((x, y) ->
         {
             float dScale = 1f / scale;
-            elements[0] = (y / x) * dScale;
-            elements[4] = dScale;
+            if (x > y)
+            {
+                elements[0] = (y / x) * dScale;
+                elements[4] = dScale;
+            } else
+            {
+                elements[0] = dScale;
+                elements[4] = (x / y) * dScale;
+            }
         });
     }
 }
