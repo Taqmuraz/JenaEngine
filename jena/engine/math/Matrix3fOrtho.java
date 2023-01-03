@@ -6,7 +6,9 @@ public class Matrix3fOrtho extends Matrix3fStruct
     {
         size.accept((x, y) ->
         {
-            elements[0] = y / x;
+            float dScale = 1f / scale;
+            elements[0] = (y / x) * dScale;
+            elements[4] = dScale;
         });
     }
 }
