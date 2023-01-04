@@ -3,6 +3,8 @@ package jena.swing;
 import java.awt.*;
 import java.util.Scanner;
 
+import jena.environment.StandardEnvironmentVariables;
+
 public class Program
 {
 	public static void main(String[] args)
@@ -13,7 +15,7 @@ public class Program
 		{
 			try
 			{
-				new MainWindow();
+				new MainWindow(new StandardEnvironmentVariables(args));
 			}
 			catch(Throwable error)
 			{

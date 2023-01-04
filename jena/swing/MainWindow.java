@@ -6,17 +6,20 @@ import javax.swing.Timer;
 
 
 import jena.engine.common.ErrorHandler;
+import jena.environment.EnvironmentVariables;
 
 public class MainWindow extends JFrame
 {
 	MainPanel panel;
 	ErrorHandler errorHandler;
 	Timer timer;
+	EnvironmentVariables environmentVariables;
 
-	public MainWindow()
+	public MainWindow(EnvironmentVariables environmentVariables)
 	{
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.environmentVariables = environmentVariables;
 
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 
 		errorHandler = e -> 
@@ -39,14 +42,21 @@ public class MainWindow extends JFrame
 
 		setSize(800, 600);
 		
-		timer = new Timer(33, e ->
+		environmentVariables.parseValue("fps", 
+			fps -> startFrameTimer((int)(1000f / Integer.valueOf(fps.value()))),
+			() -> startFrameTimer(33));
+	}
+
+	void startFrameTimer(int frameDelay)
+	{
+		timer = new Timer(frameDelay, e ->
 		{
 			panel.repaint();
 			panel.revalidate();
 		});
 		timer.start();
 	}
-		
+
 	@Override
 	public void dispose()
 	{

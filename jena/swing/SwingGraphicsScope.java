@@ -1,5 +1,6 @@
 package jena.swing;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Stack;
 
@@ -33,15 +34,25 @@ public class SwingGraphicsScope implements GraphicsScope
         {
             swingTexture.accept(descriptor -> descriptor.acceptImage(image ->
             {
-                AffineTransform t = graphics.getTransform();
-                destination.accept((x, y, w, h) ->
-                    descriptor.acceptSize((imageWidth, imageHeight) ->
+                destination.accept((dx, dy, dw, dh) ->
+                    descriptor.acceptSize((iw, ih) ->
                     {
-                        graphics.translate(x, y + h);
-                        graphics.scale(1f / imageWidth * w, -1f / imageHeight * h);
+                        source.accept((sx, sy, sw, sh) -> 
+                        {
+                            AffineTransform copy = graphics.getTransform();
+                            graphics.translate(dx, dy);
+                            graphics.scale(dw, dh);
+                            graphics.drawImage(image,
+                                    0, 1, 1, 0,
+                                    (int)(sx * iw), (int)(sy * ih), (int)((sx + sw) * iw), (int)((sy + sh) * ih),
+                                    null);
+                            graphics.setStroke(new java.awt.BasicStroke(0.01f));
+                            graphics.setColor(Color.red);
+                            graphics.drawLine(0, 0, 1, 1);
+                            graphics.drawLine(1, 0, 0, 1);
+                            graphics.setTransform(copy);
+                        });
                     }));
-                graphics.drawImage(image, 0, 0, null);
-                graphics.setTransform(t);
             }));
         }
 	}
