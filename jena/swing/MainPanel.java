@@ -43,7 +43,6 @@ public class MainPanel extends JPanel implements GraphicsResource
 		Graphics2D g2 = (Graphics2D)g;
 		GraphicsScope scope = new SwingGraphicsScope(g2);
 		camera.handleGraphics(scope);
-		repaint(10, 0, 0, getWidth(), getHeight());
 	}
 
 	@Override

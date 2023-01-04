@@ -2,6 +2,8 @@ package jena.swing;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
+
 
 import jena.engine.common.ErrorHandler;
 
@@ -9,6 +11,7 @@ public class MainWindow extends JFrame
 {
 	MainPanel panel;
 	ErrorHandler errorHandler;
+	Timer timer;
 
 	public MainWindow()
 	{
@@ -35,7 +38,21 @@ public class MainWindow extends JFrame
 		add(panel);
 
 		setSize(800, 600);
+		
+		timer = new Timer(33, e ->
+		{
+			panel.repaint();
+			panel.revalidate();
+		});
+		timer.start();
 	}
+		
+	@Override
+	public void dispose()
+	{
+		timer.stop();
+	}
+
 	@Override
 	public void setSize(int width, int height)
 	{
