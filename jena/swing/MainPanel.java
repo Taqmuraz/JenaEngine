@@ -32,7 +32,8 @@ public class MainPanel extends JPanel implements GraphicsResource
 		cameras = new Camera[] 
 		{
 			new Camera(acceptor -> acceptor.call(0, 0, getWidth(), getHeight()), new ColorByteStruct(0, 50, 50, 255), player),
-			new Camera(acceptor -> acceptor.call(250, 250, 200, 300), new ColorByteStruct(150, 50, 0, 255), player),
+			new Camera(acceptor -> acceptor.call(250, 250, 200, 300), new ColorByteStruct(50, 50, 150, 255), player),
+			new Camera(acceptor -> acceptor.call(1000, 600, 700, 400), new ColorByteStruct(50, 150, 150, 255), player),
 		};
 	}
 
