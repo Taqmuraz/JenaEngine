@@ -7,6 +7,7 @@ import jena.engine.common.Action;
 import jena.engine.common.ActionSingle;
 import jena.environment.reader.FpsEnvironmentVariableReader;
 import jena.environment.reader.FullscreenEnvironmentVariableReader;
+import jena.environment.reader.ScreenSizeEnvironmentVariableReader;
 
 public class StandardEnvironmentVariables implements EnvironmentVariables
 {
@@ -33,6 +34,7 @@ public class StandardEnvironmentVariables implements EnvironmentVariables
         ArrayList<EnvironmentVariableReader> readers = new ArrayList<>();
         readers.add(new FpsEnvironmentVariableReader());
         readers.add(new FullscreenEnvironmentVariableReader());
+        readers.add(new ScreenSizeEnvironmentVariableReader());
 
         while(iterator.hasNext())
         {

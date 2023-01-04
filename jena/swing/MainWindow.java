@@ -9,6 +9,7 @@ import javax.swing.Timer;
 
 import jena.engine.common.ErrorHandler;
 import jena.environment.EnvironmentVariables;
+import jena.environment.variable.DimensionVariable;
 import jena.environment.variable.IntegerVariable;
 
 public class MainWindow extends JFrame
@@ -39,12 +40,15 @@ public class MainWindow extends JFrame
 					errorHandler = error -> {};
 			}
 		};
-		panel = new MainPanel(errorHandler);
-		add(panel);
-		
-		environmentVariables.<IntegerVariable>findVariable("fps", 
-			fps -> startFrameTimer((int)(1000f / Integer.valueOf(fps.value()))),
-			() -> startFrameTimer(33));
+
+		environmentVariables.<DimensionVariable>findVariable("resolution", size -> size.accept((w, h) ->
+		{
+			panel = new MainPanel(w, h, errorHandler);
+		}), () -> 
+		{
+			java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+			panel = new MainPanel(screenSize.width, screenSize.height, errorHandler);
+		});
 
 		environmentVariables.findVariable("fullscreen", 
 			fs ->
@@ -56,7 +60,13 @@ public class MainWindow extends JFrame
 			},
 			() -> setSize(800, 600));
 
+		add(panel);
+
 		setVisible(true);
+
+		environmentVariables.<IntegerVariable>findVariable("fps", 
+			fps -> startFrameTimer((int)(1000f / Integer.valueOf(fps.value()))),
+			() -> startFrameTimer(33));
 	}
 
 	void startFrameTimer(int frameDelay)
