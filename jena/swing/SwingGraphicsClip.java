@@ -1,6 +1,5 @@
 package jena.swing;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Stack;
 
