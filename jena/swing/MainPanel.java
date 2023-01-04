@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.Player;
+import jena.engine.entity.Time;
 import jena.engine.graphics.ColorByteStruct;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsDevice;
@@ -32,8 +33,8 @@ public class MainPanel extends JPanel implements GraphicsResource
 		cameras = new Camera[] 
 		{
 			new Camera(acceptor -> acceptor.call(0, 0, getWidth(), getHeight()), new ColorByteStruct(0, 50, 50, 255), player),
-			new Camera(acceptor -> acceptor.call(250, 250, 200, 300), new ColorByteStruct(50, 50, 150, 255), player),
-			new Camera(acceptor -> acceptor.call(1000, 600, 700, 400), new ColorByteStruct(50, 150, 150, 255), player),
+			new Camera(acceptor -> acceptor.call(200 + (float)Math.cos(Time.time()) * 100f, 250, 200, 300), new ColorByteStruct(50, 50, 150, 255), player),
+			new Camera(acceptor -> acceptor.call(1000f, 500f + (float)Math.sin(Time.time()) * 100f, 500f + (float)Math.cos(Time.time()) * 250f, 400f), new ColorByteStruct(50, 150, 150, 255), player),
 		};
 	}
 

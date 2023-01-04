@@ -8,9 +8,13 @@ public class Time
 {
     public static void acceptTime(TimeAcceptor acceptor)
     {
+		acceptor.call(time());
+    }
+    public static float time()
+    {
         Temporal currentFrame = LocalTime.now();
 		Duration frameTime = Duration.between(LocalTime.MIN, currentFrame);
 		
-		acceptor.call((float)(frameTime.getSeconds() + frameTime.getNano() * 0.000000001));
+		return (float)(frameTime.getSeconds() + frameTime.getNano() * 0.000000001);
     }
 }
