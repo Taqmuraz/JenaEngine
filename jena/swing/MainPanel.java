@@ -31,7 +31,6 @@ public class MainPanel extends JPanel implements GraphicsResource
 	
 	public MainPanel(int canvasWidth, int canvasHeight, ErrorHandler errorHandler)
 	{
-		setDoubleBuffered(true);
 		this.canvasWidth = canvasWidth;
 		this.canvasHeight = canvasHeight;
 		imageResource = new FileImageResource(new StorageFileResource("Image.png"), errorHandler);
