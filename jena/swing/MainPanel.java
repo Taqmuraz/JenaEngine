@@ -11,7 +11,7 @@ import jena.engine.entity.Camera;
 import jena.engine.entity.Player;
 import jena.engine.graphics.ColorByteStruct;
 import jena.engine.graphics.GraphicsResource;
-import jena.engine.graphics.GraphicsScope;
+import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
 import jena.engine.io.StorageFileResource;
@@ -21,7 +21,7 @@ public class MainPanel extends JPanel implements GraphicsResource
 	SwingTextureResource imageResource;
 	ErrorHandler errorHandler;
 	Player player;
-	Camera camera;
+	Camera[] cameras;
 	
 	public MainPanel(ErrorHandler errorHandler)
 	{
@@ -29,7 +29,11 @@ public class MainPanel extends JPanel implements GraphicsResource
 		imageResource = new FileImageResource(new StorageFileResource("Image.png"), errorHandler);
 		this.errorHandler = errorHandler;
 		player = new Player(this);
-		camera = new Camera(acceptor -> acceptor.call(getWidth(), getHeight()), new ColorByteStruct(0, 50, 50, 255), player);
+		cameras = new Camera[] 
+		{
+			new Camera(acceptor -> acceptor.call(0, 0, getWidth(), getHeight()), new ColorByteStruct(0, 50, 50, 255), player),
+			new Camera(acceptor -> acceptor.call(250, 250, 200, 300), new ColorByteStruct(150, 50, 0, 255), player),
+		};
 	}
 
 	@Override
@@ -41,8 +45,8 @@ public class MainPanel extends JPanel implements GraphicsResource
 	public void paint(Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D)g;
-		GraphicsScope scope = new SwingGraphicsScope(g2);
-		camera.handleGraphics(scope);
+		GraphicsDevice device = new SwingGraphicsDevice(g2);
+		for (Camera camera : cameras) camera.paint(device);
 	}
 
 	@Override

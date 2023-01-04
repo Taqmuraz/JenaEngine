@@ -5,5 +5,5 @@ import jena.engine.common.ActionSingle;
 
 public interface EnvironmentVariables
 {
-	void parseValue(String name, ActionSingle<EnvironmentVariable> acceptor, Action noVariableCase);
+    <T extends EnvironmentVariable> void findVariable(String name, ActionSingle<? super T> hasVariableCase, Action noVariableCase);
 }

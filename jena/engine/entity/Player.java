@@ -1,14 +1,14 @@
 package jena.engine.entity;
 
-import jena.engine.graphics.GraphicsHandler;
+import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
-import jena.engine.graphics.GraphicsScope;
+import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.StorageFileResource;
 import jena.engine.math.Matrix3fMul;
 import jena.engine.math.Matrix3fTransform;
 
-public class Player implements GraphicsHandler
+public class Player implements GraphicsClipPainter
 {
     private TextureHandle texture0;
     private TextureHandle texture1;
@@ -20,7 +20,7 @@ public class Player implements GraphicsHandler
     }
 
     @Override
-    public void handleGraphics(GraphicsScope graphics)
+    public void paint(GraphicsClip graphics)
     {
         graphics.drawSprite(texture0, acceptor -> acceptor.call(0f, 0f, 1f, 1f), acceptor -> acceptor.call(0f, 0f, 1f, 1f));
         

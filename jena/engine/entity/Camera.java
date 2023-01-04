@@ -1,35 +1,40 @@
 package jena.engine.entity;
 
 import jena.engine.graphics.Color;
-import jena.engine.graphics.GraphicsHandler;
-import jena.engine.graphics.GraphicsScope;
-import jena.engine.math.Matrix3fMul;
+import jena.engine.graphics.GraphicsClipPainter;
+import jena.engine.graphics.GraphicsDevice;
+import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.math.Matrix3fOrtho;
 import jena.engine.math.Matrix3fViewport;
 import jena.engine.math.Rectf;
-import jena.engine.math.Vector2f;
+import jena.engine.math.Matrix3fBuilder;
 
-public class Camera implements GraphicsHandler
+public class Camera implements GraphicsDevicePainter
 {
-    private GraphicsHandler scene;
+    private GraphicsClipPainter scene;
     private Color clearColor;
-    private Rectf clearRect;
-    private Vector2f size;
+    private Rectf clip;
 
-    public Camera(Vector2f size, Color clearColor, GraphicsHandler scene)
+    public Camera(Rectf clip, Color clearColor, GraphicsClipPainter scene)
     {
         this.clearColor = clearColor;
         this.scene = scene;
-        this.size = size;
-        clearRect = acceptor -> size.accept((w, h) ->  acceptor.call(0f, 0f, w, h));
+        this.clip = clip;
     }
 
     @Override
-    public void handleGraphics(GraphicsScope graphics)
+    public void paint(GraphicsDevice graphicsDevice)
     {
-        graphics.fillRect(clearRect, clearColor);
-        size.accept((sizeX, sizeY) -> graphics.matrixScope(
-            source -> new Matrix3fMul(source, new Matrix3fMul(new Matrix3fViewport(sizeX, sizeY), new Matrix3fOrtho(size, 1f))),
-            () -> scene.handleGraphics(graphics)));
+        graphicsDevice.paintRect(clip, graphicsClip ->
+        {
+            graphicsClip.fillRect(clip, clearColor);
+            clip.accept((x, y, w, h) -> graphicsClip.matrixScope(
+                source -> new Matrix3fBuilder(source)
+                    .translate(a -> a.call(x, y))
+                    .multiply(new Matrix3fViewport(w, h))
+                    .multiply(new Matrix3fOrtho(a -> a.call(w, h), 1f))
+                    .build(),
+                () -> scene.paint(graphicsClip)));
+        });
     }
 }

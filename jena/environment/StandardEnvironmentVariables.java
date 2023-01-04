@@ -5,6 +5,8 @@ import java.util.Iterator;
 
 import jena.engine.common.Action;
 import jena.engine.common.ActionSingle;
+import jena.environment.reader.FpsEnvironmentVariableReader;
+import jena.environment.reader.FullscreenEnvironmentVariableReader;
 
 public class StandardEnvironmentVariables implements EnvironmentVariables
 {
@@ -29,18 +31,8 @@ public class StandardEnvironmentVariables implements EnvironmentVariables
         };
 
         ArrayList<EnvironmentVariableReader> readers = new ArrayList<>();
-        readers.add(new EnvironmentVariableReader()
-        {
-            public boolean isKey(String key)
-            {
-                return key.equals("fps");
-            }
-            public EnvironmentVariable read(Iterator<String> iterator)
-            {
-                String variable = iterator.next();
-                return () -> variable;
-            }
-        });
+        readers.add(new FpsEnvironmentVariableReader());
+        readers.add(new FullscreenEnvironmentVariableReader());
 
         while(iterator.hasNext())
         {
@@ -58,11 +50,11 @@ public class StandardEnvironmentVariables implements EnvironmentVariables
     }
 
     @Override
-    public void parseValue(String name, ActionSingle<EnvironmentVariable> acceptor, Action noVariableCase)
+    public <T extends EnvironmentVariable> void findVariable(String name, ActionSingle<? super T> hasVariableCase, Action noVariableCase)
     {
         if (variables.containsKey(name))
         {
-            acceptor.call(variables.get(name));
+            hasVariableCase.call((T)variables.get(name));
         }
         else
         {

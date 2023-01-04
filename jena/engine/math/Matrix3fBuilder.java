@@ -38,4 +38,8 @@ public final class Matrix3fBuilder
         }));
         return this;
     }
+    public Matrix3f build()
+    {
+        return result;
+    }
 }
