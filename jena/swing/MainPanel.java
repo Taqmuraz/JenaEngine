@@ -40,7 +40,7 @@ public class MainPanel extends JPanel implements GraphicsResource
 		{
 			new Camera(acceptor -> acceptor.call(0, 0, canvasWidth, canvasHeight), new ColorByteStruct(0, 50, 50, 255), player),
 			new Camera(acceptor -> acceptor.call(canvasWidth * (0.1f + (float)Math.cos(Time.time()) * 0.1f), canvasHeight * 0.25f, canvasWidth * 0.2f, canvasHeight * 0.4f), new ColorByteStruct(50, 50, 150, 255), player),
-			new Camera(acceptor -> acceptor.call(canvasWidth * 0.4f, canvasHeight * (0.6f + (float)Math.sin(Time.time()) * 0.1f), canvasWidth * (0.3f + (float)Math.cos(Time.time()) * 0.2f), canvasHeight * 0.3f), new ColorByteStruct(50, 150, 150, 255), player),
+			//new Camera(acceptor -> acceptor.call(canvasWidth * 0.4f, canvasHeight * (0.6f + (float)Math.sin(Time.time()) * 0.1f), canvasWidth * (0.3f + (float)Math.cos(Time.time()) * 0.2f), canvasHeight * 0.3f), new ColorByteStruct(50, 150, 150, 255), player),
 		};
 		screenBuffer = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
 	}

@@ -6,4 +6,4 @@ del sourcelist.txt
 cd build
 (echo Main-Class: jena.swing.Program & echo. ) > manifest.txt
 jar -cvfm jena.jar manifest.txt jena
-java -Xms64M -jar jena.jar fps 144 resolution 240 120 fullscreen
+java -Xms64M -jar jena.jar fps 144

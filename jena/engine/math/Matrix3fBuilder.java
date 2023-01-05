@@ -10,7 +10,7 @@ public final class Matrix3fBuilder
     }
     public Matrix3fBuilder(Matrix3f source)
     {
-        this.result = source.clone();
+        this.result = new Matrix3fStruct(source);
     }
     public Matrix3fBuilder multiply(Matrix3f matrix)
     {
