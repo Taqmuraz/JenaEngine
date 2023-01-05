@@ -49,18 +49,26 @@ public class Player implements GraphicsClipPainter
     {
         texture = graphicsResource.loadTexture(new StorageFileResource("HumanMap.png"));
 
+        BodyPart head = new BodyPart(a -> a.call(0.8f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.2f, 1f, 1f), a -> new Matrix3fTransform(-0.05f, 0.35f, 0.5f, 0.75f, (float)Math.sin(Time.time() * 2f) * 0.25f).accept(a));
+
+        BodyPart forearm = new BodyPart(a -> a.call(0.6f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -1f, 0f));
+        BodyPart armL = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), a -> new Matrix3fTransform(-0.3f, 0.5f, 0.5f, 0.5f, (float)Math.sin(Time.time() * 2f) * 0.5f).accept(a), forearm);
+        BodyPart armR = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), a -> new Matrix3fTransform(0.1f, 0.5f, 0.5f, 0.5f, -(float)Math.sin(Time.time() * 2f) * 0.5f).accept(a), forearm);
+
         BodyPart shoe = new BodyPart(a -> a.call(0.8f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -0.5f, 0f));
         BodyPart knee = new BodyPart(a -> a.call(0.4f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -0.8f, 0f), shoe);
         BodyPart legL = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(-0.15f, -0.45f, 0.5f, 0.5f, -(float)Math.sin(Time.time() * 2f) * 0.5f).accept(a), knee);
         BodyPart legR = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(0.1f, -0.45f, 0.5f, 0.5f, (float)Math.sin(Time.time() * 2f) * 0.5f).accept(a), knee);
-        BodyPart body = new BodyPart(a -> a.call(0f, 0f, 0.4f, 1f), a -> a.call(-0.5f, -0.5f, 0.8f, 1.2f), new Matrix3fTransform(0f, 0f, 1f, 1f, 0f));
+        BodyPart body = new BodyPart(a -> a.call(0f, 0f, 0.4f, 1f), a -> a.call(-0.5f, -0.5f, 0.8f, 1.2f), new Matrix3fTransform(0f, 0f, 1f, 1f, 0f), head);
         root = clip ->
         {
             clip.matrixScope(source -> new Matrix3fBuilder(source).scale(a -> a.call(0.25f, 0.25f)).build(), () ->
             {
+                armR.paint(clip);
                 legR.paint(clip);
                 body.paint(clip);
                 legL.paint(clip);
+                armL.paint(clip);
             });
         };
     }

@@ -53,6 +53,12 @@ public class SwingGraphicsClip implements GraphicsClip
                                     0, 1, 1, 0,
                                     (int)(sx * iw), (int)(sy * ih), (int)((sx + sw) * iw), (int)((sy + sh) * ih),
                                     null);
+                            /* debug
+                            graphics.setStroke(new java.awt.BasicStroke(0.01f));
+                            graphics.setColor(java.awt.Color.red);
+                            graphics.drawLine(0, 0, 1, 1);
+                            graphics.drawLine(1, 0, 0, 1);
+                            */
                             graphics.setTransform(copy);
                         });
                     }));
