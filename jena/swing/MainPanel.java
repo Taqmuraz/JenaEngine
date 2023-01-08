@@ -1,5 +1,6 @@
 package jena.swing;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -55,9 +56,35 @@ public class MainPanel extends JPanel implements GraphicsResource
 	{
 		Graphics2D screen = screenBuffer.createGraphics();
 		GraphicsDevice device = new SwingGraphicsDevice(screen);
-		screen.clearRect(0, 0, canvasWidth, canvasHeight);
 		for (Camera camera : cameras) camera.paint(device);
-		g.drawImage(screenBuffer, 0, 0, getWidth(), getHeight(), 0, 0, canvasWidth, canvasHeight, null);
+
+		int w = getWidth();
+		int h = getHeight();
+
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setBackground(new Color(0, 0, 0, 255));
+		g.clearRect(0, 0, w, h);
+
+		float mw = (float)w / canvasWidth;
+		float mh = (float)h / canvasHeight;
+
+		int rx, ry, rw, rh;
+
+		if (mw < mh)
+		{
+			rw = (int)(canvasWidth * mw);
+			rh = (int)(canvasHeight * mw);
+			rx = 0;
+			ry = (h - rh) >>> 1;
+		}
+		else
+		{
+			rw = (int)(canvasWidth * mh);
+			rh = (int)(canvasHeight * mh);
+			rx = (w - rw) >>> 1;
+			ry = 0;
+		}
+		g.drawImage(screenBuffer, rx, ry, rx + rw, ry + rh, 0, 0, canvasWidth, canvasHeight, null);
 
 		keyboard.updateKeys();
 	}

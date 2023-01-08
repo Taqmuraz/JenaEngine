@@ -5,7 +5,6 @@ import java.awt.event.KeyListener;
 
 import jena.engine.input.Key;
 import jena.engine.input.Keyboard;
-import jena.engine.math.Vector2f;
 
 public class SwingKeyboard implements Keyboard, KeyListener
 {
@@ -30,7 +29,7 @@ public class SwingKeyboard implements Keyboard, KeyListener
 		@Override
 		public boolean isHold()
 		{
-			return keyStates[code] == HOLD_STATE;
+			return keyStates[code] != NONE_STATE;
 		}
 	}
 
@@ -80,20 +79,5 @@ public class SwingKeyboard implements Keyboard, KeyListener
 	public Key keyOf(char symbol)
 	{
 		return new SwingKey((int)Character.toUpperCase(symbol));
-	}
-
-	@Override
-	public Vector2f movement()
-	{
-		return a ->
-		{
-			float x = 0f;
-			float y = 0f;
-			if (keyStates[(int)'W'] != 0) y += 1f;
-			if (keyStates[(int)'S'] != 0) y -= 1f;
-			if (keyStates[(int)'A'] != 0) x -= 1f;
-			if (keyStates[(int)'D'] != 0) x += 1f;
-			a.call(x, y);
-		};
 	}
 }

@@ -12,6 +12,7 @@ import jena.engine.math.Matrix3fStruct;
 import jena.engine.math.Rectf;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.Shape;
 
 public class SwingGraphicsClip implements GraphicsClip
@@ -19,6 +20,7 @@ public class SwingGraphicsClip implements GraphicsClip
 	private Graphics2D graphics;
     private Stack<Matrix3f> matrixStack;
     private AffineTransform transform;
+    private AffineTransform identity;
     private Shape clip;
 
     public SwingGraphicsClip(Graphics2D graphics)
@@ -29,6 +31,7 @@ public class SwingGraphicsClip implements GraphicsClip
     {
         this.graphics = graphics;
         this.clip = clip;
+        identity = new AffineTransform();
         transform = new AffineTransform();
         matrixStack = new Stack<Matrix3f>();
         reset();
@@ -72,8 +75,27 @@ public class SwingGraphicsClip implements GraphicsClip
 		rect.accept((x, y, w, h) ->
             color.acceptInts((cr, cg, cb, ca) ->
             {
+                AffineTransform copy = graphics.getTransform();
+                graphics.setTransform(identity);
+        
+                Point2D.Float srcA = new Point2D.Float(x, y);
+                Point2D.Float srcB = new Point2D.Float(x + w, y + h);
+                Point2D.Float dstA = new Point2D.Float();
+                Point2D.Float dstB = new Point2D.Float();
+
+                copy.transform(srcA, dstA);
+                copy.transform(srcB, dstB);
+                int minX = (int)Math.min(dstA.x, dstB.x);
+                int minY = (int)Math.min(dstA.y, dstB.y);
+                int width = (int)(Math.abs(dstA.x - dstB.x));
+                int height = (int)(Math.abs(dstA.y - dstB.y));
+
+                //System.out.println(String.format("%s, %s, %s, %s", minX, minY, width, height));
+
                 graphics.setBackground(new java.awt.Color(cr, cg, cb, ca));
-                graphics.clearRect((int)x, (int)y, (int)w, (int)h);
+                graphics.clearRect(minX, minY, width, height);
+
+                graphics.setTransform(copy);
             }));
 	}
 
