@@ -21,8 +21,8 @@ public final class Matrix3fBuilder
     {
         result.accept(elements -> vector.accept((x, y) ->
         {
-            elements[6] += x;
-            elements[7] += y;
+            elements[6] += x * (elements[0] + elements[3]);
+            elements[7] += y * (elements[1] + elements[4]);
         }));
         return this;
     }

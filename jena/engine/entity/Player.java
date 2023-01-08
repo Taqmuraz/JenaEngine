@@ -4,12 +4,14 @@ import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
+import jena.engine.input.Keyboard;
 import jena.engine.io.StorageFileResource;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fBuilder;
 import jena.engine.math.Matrix3fMul;
 import jena.engine.math.Matrix3fTransform;
 import jena.engine.math.Rectf;
+import jena.engine.math.Vector2fStruct;
 
 public class Player implements GraphicsClipPainter
 {
@@ -44,10 +46,13 @@ public class Player implements GraphicsClipPainter
 
     private TextureHandle texture;
     private GraphicsClipPainter root;
+    private Vector2fStruct position;
+    private TimeMeter frameTimeMeter;
 
-    public Player(GraphicsResource graphicsResource)
+    public Player(GraphicsResource graphicsResource, Keyboard keyboard)
     {
         texture = graphicsResource.loadTexture(new StorageFileResource("HumanMap.png"));
+        position = new Vector2fStruct();
 
         BodyPart head = new BodyPart(a -> a.call(0.8f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.2f, 1f, 1f), a -> new Matrix3fTransform(-0.05f, 0.35f, 0.5f, 0.75f, (float)Math.sin(Time.time() * 2f) * 0.25f).accept(a));
 
@@ -62,7 +67,13 @@ public class Player implements GraphicsClipPainter
         BodyPart body = new BodyPart(a -> a.call(0f, 0f, 0.4f, 1f), a -> a.call(-0.5f, -0.5f, 0.8f, 1.2f), new Matrix3fTransform(0f, 0f, 1f, 1f, 0f), head);
         root = clip ->
         {
-            clip.matrixScope(source -> new Matrix3fBuilder(source).scale(a -> a.call(0.25f, 0.25f)).build(), () ->
+            keyboard.movement().accept((x, y)->
+            {
+                float d = frameTimeMeter.measureTime();
+                position.x += x * d;
+                position.y += y * d;
+            });
+            clip.matrixScope(source -> new Matrix3fBuilder(source).translate(position).scale(a -> a.call(0.25f, 0.25f)).build(), () ->
             {
                 armR.paint(clip);
                 legR.paint(clip);
@@ -71,6 +82,7 @@ public class Player implements GraphicsClipPainter
                 armL.paint(clip);
             });
         };
+        frameTimeMeter = new DefaultTimeMeter();
     }
 
     @Override

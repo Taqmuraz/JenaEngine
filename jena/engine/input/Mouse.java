@@ -1,10 +1,10 @@
 package jena.engine.input;
 
-import jena.engine.common.Action;
-import jena.engine.math.Vector2fAcceptor;
+import jena.engine.math.Vector2f;
+import jena.engine.math.ValueInt;
 
 public interface Mouse
 {
-    void acceptPosition(Vector2fAcceptor acceptor);
-    void acceptState(int button, KeyStateAcceptor acceptor);
+    Vector2f position();
+    ValueInt buttonState(int button);
 }

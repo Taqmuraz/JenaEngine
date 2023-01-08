@@ -1,6 +1,9 @@
 package jena.engine.input;
 
+import jena.engine.math.Vector2f;
+
 public interface Keyboard
 {
-    void acceptState(int key, KeyStateAcceptor acceptor);
+    Vector2f movement();
+    Key keyOf(char symbol);
 }

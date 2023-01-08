@@ -3,7 +3,6 @@ package jena.swing;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -17,25 +16,26 @@ import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
-import jena.engine.io.StorageFileResource;
 
 public class MainPanel extends JPanel implements GraphicsResource
 {
-	SwingTextureResource imageResource;
-	ErrorHandler errorHandler;
-	Player player;
-	Camera[] cameras;
-	BufferedImage screenBuffer;
-	int canvasWidth;
-	int canvasHeight;
+	private ErrorHandler errorHandler;
+	private Player player;
+	private Camera[] cameras;
+	private BufferedImage screenBuffer;
+	private int canvasWidth;
+	private int canvasHeight;
+	private SwingKeyboard keyboard;
 	
-	public MainPanel(int canvasWidth, int canvasHeight, ErrorHandler errorHandler)
+	public MainPanel(int canvasWidth, int canvasHeight, SwingKeyboard keyboard, ErrorHandler errorHandler)
 	{
 		this.canvasWidth = canvasWidth;
 		this.canvasHeight = canvasHeight;
-		imageResource = new FileImageResource(new StorageFileResource("Image.png"), errorHandler);
+		this.keyboard = keyboard;
 		this.errorHandler = errorHandler;
-		player = new Player(this);
+		
+		player = new Player(this, keyboard);
+
 		cameras = new Camera[] 
 		{
 			new Camera(acceptor -> acceptor.call(0, 0, canvasWidth, canvasHeight), new ColorByteStruct(0, 50, 50, 255), player),
@@ -58,6 +58,8 @@ public class MainPanel extends JPanel implements GraphicsResource
 		screen.clearRect(0, 0, canvasWidth, canvasHeight);
 		for (Camera camera : cameras) camera.paint(device);
 		g.drawImage(screenBuffer, 0, 0, getWidth(), getHeight(), 0, 0, canvasWidth, canvasHeight, null);
+
+		keyboard.updateKeys();
 	}
 
 	@Override

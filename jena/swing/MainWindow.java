@@ -41,13 +41,16 @@ public class MainWindow extends JFrame
 			}
 		};
 
+		SwingKeyboard keyboard = new SwingKeyboard();
+		addKeyListener(keyboard);
+
 		environmentVariables.<DimensionVariable>findVariable("resolution", size -> size.accept((w, h) ->
 		{
-			panel = new MainPanel(w, h, errorHandler);
+			panel = new MainPanel(w, h, keyboard, errorHandler);
 		}), () -> 
 		{
 			java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-			panel = new MainPanel(screenSize.width, screenSize.height, errorHandler);
+			panel = new MainPanel(screenSize.width, screenSize.height, keyboard, errorHandler);
 		});
 
 		environmentVariables.findVariable("fullscreen", 
