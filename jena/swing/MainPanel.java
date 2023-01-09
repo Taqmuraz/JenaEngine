@@ -36,11 +36,14 @@ public class MainPanel extends JPanel implements GraphicsResource
 		
 		player = new Player(this, keyboard);
 
-		var cameras = java.util.stream.IntStream.range(0, 100).boxed().map(i ->
+		int num = 20;
+		float dnum = 1f / num;
+
+		var cameras = java.util.stream.IntStream.range(0, num * num).boxed().map(i ->
 		{
-			float x = (i % 10) * 0.1f;
-			float y = (i / 10) * 0.1f;
-			return new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * 0.1f, canvasHeight * 0.1f), new jena.engine.graphics.ColorFloatStruct(x * 0.5f, y * 0.5f, 0f, 1f), player);
+			float x = (i % num) * dnum;
+			float y = (i / num) * dnum;
+			return new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(x * 0.5f, y * 0.5f, 0f, 1f), player);
 		}).toList();
 
 		rootPainter = device ->
