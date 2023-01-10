@@ -11,7 +11,10 @@ import jena.engine.graphics.TextureHandle;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fStruct;
 import jena.engine.math.Rectf;
+import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
+import jena.engine.math.Vector2fNormalized;
+import jena.engine.math.Vector2fStruct;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -23,6 +26,8 @@ public class SwingGraphicsClip implements GraphicsClip
     private Stack<Matrix3f> matrixStack;
     private AffineTransform transform;
     private AffineTransform identity;
+    private AffineTransform line;
+    private AffineTransform buffer;
     private Shape clip;
 
     public SwingGraphicsClip(Graphics2D graphics)
@@ -33,6 +38,8 @@ public class SwingGraphicsClip implements GraphicsClip
     {
         this.graphics = graphics;
         this.clip = clip;
+        line = new AffineTransform();
+        buffer = new AffineTransform();
         identity = new AffineTransform();
         transform = new AffineTransform();
         matrixStack = new Stack<Matrix3f>();
@@ -74,7 +81,7 @@ public class SwingGraphicsClip implements GraphicsClip
 	public void fillRect(Rectf rect, jena.engine.graphics.Color color)
 	{
 		rect.accept((x, y, w, h) ->
-            color.acceptInts((cr, cg, cb, ca) ->
+            color.accept((cr, cg, cb, ca) ->
             {
                 AffineTransform copy = graphics.getTransform();
                 graphics.setTransform(identity);
@@ -134,9 +141,20 @@ public class SwingGraphicsClip implements GraphicsClip
         updateTransform(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek());
 	}
     @Override
-    public void drawLine(Vector2f a, Vector2f b, Color color)
+    public void drawLine(Vector2f a, Vector2f b, Color color, ValueFloat width)
     {
-        
+        a.accept((ax, ay) -> b.accept((bx, by) ->
+        {
+            color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
+            graphics.setStroke(new java.awt.BasicStroke(width.read()));
+            Vector2fStruct d = new Vector2fNormalized(v -> v.call(bx - ax, by - ay));
+            line.setTransform(transform);
+            buffer.setTransform(bx - ax, by - ay, -d.y, d.x, ax, ay);
+            line.concatenate(buffer);
+            graphics.setTransform(line);
+            graphics.drawLine(0, 0, 1, 0);
+            graphics.setTransform(transform);
+        }));
     }
     @Override
     public void drawEllipse(Rectf rect, Color color)

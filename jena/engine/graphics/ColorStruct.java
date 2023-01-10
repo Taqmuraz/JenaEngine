@@ -1,30 +1,37 @@
 package jena.engine.graphics;
 
-public class ColorStruct implements Color
+public class ColorStruct implements ColorFloat
 {
     static final float byte2float = 1f / 255f;
     static final float float2byte = 255f;
-    public byte r, g, b, a;
+    public int r, g, b, a;
 
-    @Override
-    public void acceptBytes(ColorBytesAcceptor acceptor) 
+    public ColorStruct()
     {
-        acceptor.call(r, g, b, a);
+        
+    }
+
+    public ColorStruct(int r, int g, int b, int a)
+    {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
     }
 
     @Override
-    public void acceptInts(ColorIntsAcceptor acceptor) 
+    public void accept(ColorIntsAcceptor acceptor) 
     {
-        acceptor.call(Byte.toUnsignedInt(r), Byte.toUnsignedInt(g), Byte.toUnsignedInt(b), Byte.toUnsignedInt(a));
+        acceptor.call(r, g, b, a);
     }
 
     @Override
     public void acceptFloats(ColorFloatsAcceptor acceptor)
     {
         acceptor.call(
-            Byte.toUnsignedInt(r) * byte2float,
-            Byte.toUnsignedInt(g) * byte2float,
-            Byte.toUnsignedInt(b) * byte2float,
-            Byte.toUnsignedInt(a) * byte2float);
+            r * byte2float,
+            g * byte2float,
+            b * byte2float,
+            a * byte2float);
     }
 }
