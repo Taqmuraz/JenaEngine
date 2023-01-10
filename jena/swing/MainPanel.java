@@ -12,7 +12,7 @@ import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.FrameEndHandler;
 import jena.engine.entity.FrameStartHandler;
-import jena.engine.entity.Player;
+import jena.engine.entity.human.Player;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;

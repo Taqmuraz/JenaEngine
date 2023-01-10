@@ -5,11 +5,13 @@ import java.util.Stack;
 
 import jena.engine.common.Action;
 import jena.engine.common.FunctionSingle;
+import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fStruct;
 import jena.engine.math.Rectf;
+import jena.engine.math.Vector2f;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -49,7 +51,6 @@ public class SwingGraphicsClip implements GraphicsClip
                     {
                         source.accept((sx, sy, sw, sh) -> 
                         {
-                            AffineTransform copy = graphics.getTransform();
                             graphics.translate(dx, dy);
                             graphics.scale(dw, dh);
                             graphics.drawImage(image,
@@ -62,7 +63,7 @@ public class SwingGraphicsClip implements GraphicsClip
                             graphics.drawLine(0, 0, 1, 1);
                             graphics.drawLine(1, 0, 0, 1);
                             */
-                            graphics.setTransform(copy);
+                            graphics.setTransform(transform);
                         });
                     }));
             }));
@@ -132,4 +133,21 @@ public class SwingGraphicsClip implements GraphicsClip
 		matrixStack.pop();
         updateTransform(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek());
 	}
+    @Override
+    public void drawLine(Vector2f a, Vector2f b, Color color)
+    {
+        
+    }
+    @Override
+    public void drawEllipse(Rectf rect, Color color)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public void fillEllipse(Rectf rect, Color color)
+    {
+        // TODO Auto-generated method stub
+        
+    }
 }

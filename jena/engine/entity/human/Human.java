@@ -1,13 +1,16 @@
-package jena.engine.entity;
+package jena.engine.entity.human;
 
 import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
+import jena.engine.entity.FrameStartHandler;
+import jena.engine.entity.Controller;
+import jena.engine.entity.DefaultTimeMeter;
+import jena.engine.entity.FrameEndHandler;
+import jena.engine.entity.Time;
+import jena.engine.entity.TimeMeter;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
-import jena.engine.input.Key;
-import jena.engine.input.Keyboard;
 import jena.engine.io.StorageFileResource;
-import jena.engine.math.MathFloat;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fBuilder;
 import jena.engine.math.Matrix3fMul;
@@ -16,10 +19,9 @@ import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.ValueInt;
 import jena.engine.math.Vector2f;
-import jena.engine.math.Vector2fAcceptor;
 import jena.engine.math.Vector2fStruct;
 
-public class Player implements GraphicsClipPainter, FrameStartHandler
+public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHandler
 {
     private class BodyPart implements GraphicsClipPainter
     {
@@ -54,40 +56,17 @@ public class Player implements GraphicsClipPainter, FrameStartHandler
     private GraphicsClipPainter root;
     private Vector2fStruct position;
     private Vector2f movement;
-    private TimeMeter frameTimeMeter;
+    private TimeMeter frameMeter;
 
-    public Player(GraphicsResource graphicsResource, Keyboard keyboard)
+    public Human(GraphicsResource graphicsResource, Controller controller)
     {
         texture = graphicsResource.loadTexture(new StorageFileResource("HumanMap.png"));
         position = new Vector2fStruct();
-        movement = new Vector2f()
-        {
-            Key w = keyboard.keyOf('W');
-            Key a = keyboard.keyOf('A');
-            Key s = keyboard.keyOf('S');
-            Key d = keyboard.keyOf('D');
+        movement = controller.movement();
+        
+        frameMeter = new DefaultTimeMeter();
 
-            @Override
-            public void accept(Vector2fAcceptor acceptor)
-            {
-                float x = 0f;
-                float y = 0f;
-                if (w.isHold()) y += 1f;
-                if (s.isHold()) y -= 1f;
-                if (a.isHold()) x -= 1f;
-                if (d.isHold()) x += 1f;
-                acceptor.call(x, y);
-            }
-        };
-
-        ValueFloat sin = new ValueFloat()
-        {
-            float speedLerp = 0f;
-            public float read()
-            {
-                return (float)Math.sin(Time.time() * 6f) * 0.5f * (speedLerp = MathFloat.lerp(speedLerp, new jena.engine.math.Vector2fStruct(movement).length(), 0.01f));
-            }
-        };
+        ValueFloat sin = () -> (float)Math.sin(Time.time() * 6f) * 0.5f * new Vector2fStruct(movement).length();
         ValueInt dir = new ValueInt()
         {
             int dir = 1;
@@ -98,7 +77,7 @@ public class Player implements GraphicsClipPainter, FrameStartHandler
             }
         };
 
-        BodyPart head = new BodyPart(a -> a.call(0.8f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.2f, 1f, 1f), a -> new Matrix3fTransform(-0.05f, 0.35f, 0.5f, 0.75f, sin.read() * 0.5f).accept(a));
+        BodyPart head = new BodyPart(a -> a.call(0.8f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.2f, 1f, 1f), a -> new Matrix3fTransform(-0.05f, 0.35f, 0.5f, 0.75f, new Vector2fStruct(movement).y * 0.5f).accept(a));
 
         BodyPart forearm = new BodyPart(a -> a.call(0.6f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -1f, 0f));
         BodyPart armL = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), a -> new Matrix3fTransform(-0.3f, 0.5f, 0.5f, 0.5f, sin.read()).accept(a), forearm);
@@ -109,6 +88,7 @@ public class Player implements GraphicsClipPainter, FrameStartHandler
         BodyPart legL = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(-0.15f, -0.45f, 0.5f, 0.5f, -sin.read()).accept(a), knee);
         BodyPart legR = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(0.1f, -0.45f, 0.5f, 0.5f, sin.read()).accept(a), knee);
         BodyPart body = new BodyPart(a -> a.call(0f, 0f, 0.4f, 1f), a -> a.call(-0.5f, -0.5f, 0.8f, 1.2f), new Matrix3fTransform(0f, 0f, 1f, 1f, 0f), head);
+        
         root = clip ->
         {
             clip.matrixScope(source -> new Matrix3fBuilder(source).translate(position).scale(a -> a.call(0.25f * dir.read(), 0.25f)).build(), () ->
@@ -120,23 +100,28 @@ public class Player implements GraphicsClipPainter, FrameStartHandler
                 armL.paint(clip);
             });
         };
-        frameTimeMeter = new DefaultTimeMeter();
-    }
-
-    @Override
-    public void onStartFrame()
-    {
-        movement.accept((x, y)->
-        {
-            float d = frameTimeMeter.measureTime();
-            position.x += x * d;
-            position.y += y * d;
-        });
     }
 
     @Override
     public void paint(GraphicsClip clip)
     {
         root.paint(clip);
+    }
+
+    @Override
+    public void onEndFrame()
+    {
+
+    }
+
+    @Override
+    public void onStartFrame()
+    {
+        float dt = frameMeter.measureTime();
+        movement.accept((x, y) ->
+        {
+            position.x += x * dt;
+            position.y += y * dt;
+        });
     }
 }
