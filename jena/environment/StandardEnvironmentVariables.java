@@ -51,7 +51,7 @@ public class StandardEnvironmentVariables implements EnvironmentVariables
         }
     }
 
-    @Override
+    @Override @SuppressWarnings("unchecked")
     public <T extends EnvironmentVariable> void findVariable(String name, ActionSingle<? super T> hasVariableCase, Action noVariableCase)
     {
         if (variables.containsKey(name))

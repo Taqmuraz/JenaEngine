@@ -8,16 +8,19 @@ import jena.engine.graphics.TextureHandle;
 import jena.engine.input.Key;
 import jena.engine.input.Keyboard;
 import jena.engine.io.StorageFileResource;
+import jena.engine.math.MathFloat;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fBuilder;
 import jena.engine.math.Matrix3fMul;
 import jena.engine.math.Matrix3fTransform;
 import jena.engine.math.Rectf;
+import jena.engine.math.ValueFloat;
+import jena.engine.math.ValueInt;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAcceptor;
 import jena.engine.math.Vector2fStruct;
 
-public class Player implements GraphicsClipPainter
+public class Player implements GraphicsClipPainter, FrameStartHandler
 {
     private class BodyPart implements GraphicsClipPainter
     {
@@ -51,13 +54,14 @@ public class Player implements GraphicsClipPainter
     private TextureHandle texture;
     private GraphicsClipPainter root;
     private Vector2fStruct position;
+    private Vector2f movement;
     private TimeMeter frameTimeMeter;
 
     public Player(GraphicsResource graphicsResource, Keyboard keyboard)
     {
         texture = graphicsResource.loadTexture(new StorageFileResource("HumanMap.png"));
         position = new Vector2fStruct();
-        Vector2f movement = new Vector2f()
+        movement = new Vector2f()
         {
             Key w = keyboard.keyOf('W');
             Key a = keyboard.keyOf('A');
@@ -77,27 +81,38 @@ public class Player implements GraphicsClipPainter
             }
         };
 
-        BodyPart head = new BodyPart(a -> a.call(0.8f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.2f, 1f, 1f), a -> new Matrix3fTransform(-0.05f, 0.35f, 0.5f, 0.75f, (float)Math.sin(Time.time() * 2f) * 0.25f).accept(a));
+        ValueFloat sin = new ValueFloat()
+        {
+            float speedLerp = 0f;
+            public float read()
+            {
+                return (float)Math.sin(Time.time() * 6f) * 0.5f * (speedLerp = MathFloat.lerp(speedLerp, new jena.engine.math.Vector2fStruct(movement).length(), 0.01f));
+            }
+        };
+        ValueInt dir = new ValueInt()
+        {
+            int dir = 1;
+            public int read()
+            {
+                movement.accept((x, y) -> dir = x == 0 ? dir : (x < 0 ? -1 : 1));
+                return dir;
+            }
+        };
+
+        BodyPart head = new BodyPart(a -> a.call(0.8f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.2f, 1f, 1f), a -> new Matrix3fTransform(-0.05f, 0.35f, 0.5f, 0.75f, sin.read() * 0.5f).accept(a));
 
         BodyPart forearm = new BodyPart(a -> a.call(0.6f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -1f, 0f));
-        BodyPart armL = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), a -> new Matrix3fTransform(-0.3f, 0.5f, 0.5f, 0.5f, (float)Math.sin(Time.time() * 2f) * 0.5f).accept(a), forearm);
-        BodyPart armR = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), a -> new Matrix3fTransform(0.1f, 0.5f, 0.5f, 0.5f, -(float)Math.sin(Time.time() * 2f) * 0.5f).accept(a), forearm);
+        BodyPart armL = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), a -> new Matrix3fTransform(-0.3f, 0.5f, 0.5f, 0.5f, sin.read()).accept(a), forearm);
+        BodyPart armR = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), a -> new Matrix3fTransform(0.1f, 0.5f, 0.5f, 0.5f, -sin.read()).accept(a), forearm);
 
         BodyPart shoe = new BodyPart(a -> a.call(0.8f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -0.5f, 0f));
         BodyPart knee = new BodyPart(a -> a.call(0.4f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -0.8f, 0f), shoe);
-        BodyPart legL = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(-0.15f, -0.45f, 0.5f, 0.5f, -(float)Math.sin(Time.time() * 2f) * 0.5f).accept(a), knee);
-        BodyPart legR = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(0.1f, -0.45f, 0.5f, 0.5f, (float)Math.sin(Time.time() * 2f) * 0.5f).accept(a), knee);
+        BodyPart legL = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(-0.15f, -0.45f, 0.5f, 0.5f, -sin.read()).accept(a), knee);
+        BodyPart legR = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(0.1f, -0.45f, 0.5f, 0.5f, sin.read()).accept(a), knee);
         BodyPart body = new BodyPart(a -> a.call(0f, 0f, 0.4f, 1f), a -> a.call(-0.5f, -0.5f, 0.8f, 1.2f), new Matrix3fTransform(0f, 0f, 1f, 1f, 0f), head);
         root = clip ->
         {
-            clip.fillRect(a -> a.call(-0.5f, -0.5f, 1f, 1f), new ColorByteStruct(0, 0, 0, 255));
-            movement.accept((x, y)->
-            {
-                float d = frameTimeMeter.measureTime();
-                position.x += x * d;
-                position.y += y * d;
-            });
-            clip.matrixScope(source -> new Matrix3fBuilder(source).translate(position).scale(a -> a.call(0.25f, 0.25f)).build(), () ->
+            clip.matrixScope(source -> new Matrix3fBuilder(source).translate(position).scale(a -> a.call(0.25f * dir.read(), 0.25f)).build(), () ->
             {
                 armR.paint(clip);
                 legR.paint(clip);
@@ -107,6 +122,17 @@ public class Player implements GraphicsClipPainter
             });
         };
         frameTimeMeter = new DefaultTimeMeter();
+    }
+
+    @Override
+    public void onStartFrame()
+    {
+        movement.accept((x, y)->
+        {
+            float d = frameTimeMeter.measureTime();
+            position.x += x * d;
+            position.y += y * d;
+        });
     }
 
     @Override
