@@ -83,7 +83,6 @@ public class SwingGraphicsClip implements GraphicsClip
 		rect.accept((x, y, w, h) ->
             color.accept((cr, cg, cb, ca) ->
             {
-                AffineTransform copy = graphics.getTransform();
                 graphics.setTransform(identity);
         
                 Point2D.Float srcA = new Point2D.Float(x, y);
@@ -91,19 +90,17 @@ public class SwingGraphicsClip implements GraphicsClip
                 Point2D.Float dstA = new Point2D.Float();
                 Point2D.Float dstB = new Point2D.Float();
 
-                copy.transform(srcA, dstA);
-                copy.transform(srcB, dstB);
+                transform.transform(srcA, dstA);
+                transform.transform(srcB, dstB);
                 int minX = (int)Math.min(dstA.x, dstB.x);
                 int minY = (int)Math.min(dstA.y, dstB.y);
                 int width = (int)(Math.abs(dstA.x - dstB.x));
                 int height = (int)(Math.abs(dstA.y - dstB.y));
-
-                //System.out.println(String.format("%s, %s, %s, %s", minX, minY, width, height));
-
+                
                 graphics.setBackground(new java.awt.Color(cr, cg, cb, ca));
                 graphics.clearRect(minX, minY, width, height);
 
-                graphics.setTransform(copy);
+                graphics.setTransform(transform);
             }));
 	}
 
