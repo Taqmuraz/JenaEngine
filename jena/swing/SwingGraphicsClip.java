@@ -4,10 +4,10 @@ import java.awt.Graphics2D;
 import java.util.Stack;
 
 import jena.engine.common.Action;
-import jena.engine.common.FunctionSingle;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
+import jena.engine.graphics.Transformation;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fStruct;
 import jena.engine.math.Rectf;
@@ -108,9 +108,9 @@ public class SwingGraphicsClip implements GraphicsClip
 	}
 
     @Override
-    public void matrixScope(FunctionSingle<Matrix3f, Matrix3f> transformation, Action action)
+    public void matrixScope(Transformation transformation, Action action)
     {
-        Matrix3f matrix = transformation.call(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek());
+        Matrix3f matrix = transformation.transform(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek());
         pushMatrix(matrix);
         action.call();
         popMatrix();

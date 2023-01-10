@@ -49,13 +49,16 @@ public class MainPanel extends JPanel implements GraphicsResource
 
 		frameStartHandler = player;
 		frameEndHandler = keyboard::updateKeys;
-		rootPainter = device ->
+		GraphicsDevicePainter painter = device ->
 		{
 			for(Camera camera : cameras)
 			{
 				camera.paint(device);
 			}
 		};
+		var bakedDevice = new PostponedGraphicsDevice();
+		painter.paint(bakedDevice);
+		rootPainter = bakedDevice;
 
 		screenBuffer = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
 	}
@@ -69,7 +72,6 @@ public class MainPanel extends JPanel implements GraphicsResource
 	public void paint(Graphics g)
 	{
 		frameStartHandler.onStartFrame();
-
 		Graphics2D screen = screenBuffer.createGraphics();
 		GraphicsDevice device = new SwingGraphicsDevice(screen);
 		rootPainter.paint(device);
