@@ -11,7 +11,7 @@ public interface GraphicsClip
 {
     void drawSprite(TextureHandle texture, Rectf source, Rectf destination);
     void drawLine(Vector2f a, Vector2f b, Color color, ValueFloat width);
-    void drawEllipse(Rectf rect, Color color);
+    void drawEllipse(Rectf rect, Color color, ValueFloat width);
     void fillEllipse(Rectf rect, Color color);
     void fillRect(Rectf rect, Color color);
     void matrixScope(FunctionSingle<Matrix3f, Matrix3f> transformation, Action paint);

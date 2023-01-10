@@ -157,15 +157,28 @@ public class SwingGraphicsClip implements GraphicsClip
         }));
     }
     @Override
-    public void drawEllipse(Rectf rect, Color color)
+    public void drawEllipse(Rectf rect, Color color, ValueFloat width)
     {
-        // TODO Auto-generated method stub
-        
+        rect.accept((x, y, w, h) ->
+        {
+            color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
+            graphics.translate(x, y);
+            graphics.scale(w, h);
+            graphics.setStroke(new java.awt.BasicStroke(width.read()));
+            graphics.drawArc(0, 0, 1, 1, 0, 360);
+            graphics.setTransform(transform);
+        });
     }
     @Override
     public void fillEllipse(Rectf rect, Color color)
     {
-        // TODO Auto-generated method stub
-        
+        rect.accept((x, y, w, h) ->
+        {
+            color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
+            graphics.translate(x, y);
+            graphics.scale(w, h);
+            graphics.fillArc(0, 0, 1, 1, 0, 360);
+            graphics.setTransform(transform);
+        });
     }
 }
