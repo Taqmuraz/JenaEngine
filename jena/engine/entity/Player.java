@@ -2,7 +2,6 @@ package jena.engine.entity;
 
 import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
-import jena.engine.graphics.ColorByteStruct;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.input.Key;
