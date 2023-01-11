@@ -1,6 +1,6 @@
 package jena.engine.math;
 
-public class Vector2fStruct implements Vector2f
+public final class Vector2fStruct implements Vector2f
 {
     public float x, y;
 
