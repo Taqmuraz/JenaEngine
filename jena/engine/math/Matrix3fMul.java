@@ -1,24 +1,32 @@
 package jena.engine.math;
 
-public class Matrix3fMul extends Matrix3fStruct
+public class Matrix3fMul implements Matrix3f
 {
+    private Matrix3f a;
+    private Matrix3f b;
+    
     public Matrix3fMul(Matrix3f a, Matrix3f b)
     {
-        a.accept(elementsA -> b.accept(elementsB ->
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    int startA = i;
-                    int startB = j * 3;
+        this.a = a;
+        this.b = b;
+    }
 
-                    elements[j * 3 + i] =
-                        elementsA[startA] * elementsB[startB] +
-                        elementsA[startA + 3] * elementsB[startB + 1] +
-                        elementsA[startA + 6] * elementsB[startB + 2];
-                }
-            }
-        }));
+    @Override
+    public Matrix3fElements elements()
+    {
+        Matrix3fElements ea = a.elements();
+        Matrix3fElements eb = b.elements();
+        return index ->
+        {
+            int i = index % 3;
+            int j = index / 3;
+            int startA = i;
+            int startB = j * 3;
+
+            return
+                ea.at(startA) * eb.at(startB) +
+                ea.at(startA + 3) * eb.at(startB + 1) +
+                ea.at(startA + 6) * eb.at(startB + 2);
+        };
     }
 }

@@ -3,6 +3,13 @@ package jena.engine.entity.human;
 import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.entity.FrameStartHandler;
+
+import java.util.Arrays;
+import java.util.List;
+
+import jena.editor.GraphicsInspectable;
+import jena.editor.GraphicsInspector;
+import jena.editor.PointHandle;
 import jena.engine.entity.Controller;
 import jena.engine.entity.DefaultTimeMeter;
 import jena.engine.entity.FrameEndHandler;
@@ -20,17 +27,18 @@ import jena.engine.math.ValueFloat;
 import jena.engine.math.ValueInt;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fStruct;
+import jena.engine.math.Vector3fMul;
 
 public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHandler
 {
-    private class BodyPart implements GraphicsClipPainter
+    private class BodyPart implements GraphicsClipPainter, GraphicsInspectable
     {
         Rectf source;
         Rectf destination;
         Matrix3f transform;
-        GraphicsClipPainter[] children;
+        BodyPart[] children;
 
-        public BodyPart(Rectf source, Rectf destination, Matrix3f transform, GraphicsClipPainter...children)
+        public BodyPart(Rectf source, Rectf destination, Matrix3f transform, BodyPart...children)
         {
             this.source = source;
             this.destination = destination;
@@ -49,6 +57,18 @@ public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHa
                     child.paint(clip);
                 }
             });
+        }
+
+        @Override
+        public GraphicsClipPainter inspect(GraphicsInspector inspector)
+        {
+            List<GraphicsClipPainter> childPainters = Arrays.stream(children).map(c -> c.inspect(inspector)).toList();
+            PointHandle handle = inspector.pointHandle(a -> new Vector3fMul(v -> v.call(0f, 0f, 1f), transform), a -> a.call(150, 150, 0, 255), () -> 0.25f);
+            return clip ->
+            {
+                handle.paint(clip);
+                for(GraphicsClipPainter child : childPainters) child.paint(clip);
+            };
         }
     }
 
@@ -77,17 +97,17 @@ public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHa
             }
         };
 
-        BodyPart head = new BodyPart(a -> a.call(0.8f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.2f, 1f, 1f), a -> new Matrix3fTransform(-0.05f, 0.35f, 0.5f, 0.75f, new Vector2fStruct(movement).y * 0.5f).accept(a));
+        BodyPart head = new BodyPart(a -> a.call(0.8f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.2f, 1f, 1f), new Matrix3fTransform(a -> a.call(-0.05f, 0.35f), a -> a.call(0.5f, 0.75f), () -> new Vector2fStruct(movement).y * 0.5f));
 
-        BodyPart forearm = new BodyPart(a -> a.call(0.6f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -1f, 0f));
-        BodyPart armL = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), a -> new Matrix3fTransform(-0.3f, 0.5f, 0.5f, 0.5f, sin.read()).accept(a), forearm);
-        BodyPart armR = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), a -> new Matrix3fTransform(0.1f, 0.5f, 0.5f, 0.5f, -sin.read()).accept(a), forearm);
+        BodyPart forearm = new BodyPart(a -> a.call(0.6f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(a -> a.call(0f, -1f), () -> 0f));
+        BodyPart armL = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), new Matrix3fTransform(a -> a.call(-0.3f, 0.5f), a -> a.call(0.5f, 0.5f), sin), forearm);
+        BodyPart armR = new BodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), new Matrix3fTransform(a -> a.call(0.1f, 0.5f), a -> a.call(0.5f, 0.5f), () -> -sin.read()), forearm);
 
-        BodyPart shoe = new BodyPart(a -> a.call(0.8f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -0.5f, 0f));
-        BodyPart knee = new BodyPart(a -> a.call(0.4f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(0f, -0.8f, 0f), shoe);
-        BodyPart legL = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(-0.15f, -0.45f, 0.5f, 0.5f, -sin.read()).accept(a), knee);
-        BodyPart legR = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), a -> new Matrix3fTransform(0.1f, -0.45f, 0.5f, 0.5f, sin.read()).accept(a), knee);
-        BodyPart body = new BodyPart(a -> a.call(0f, 0f, 0.4f, 1f), a -> a.call(-0.5f, -0.5f, 0.8f, 1.2f), new Matrix3fTransform(0f, 0f, 1f, 1f, 0f), head);
+        BodyPart shoe = new BodyPart(a -> a.call(0.8f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(a -> a.call(0f, -0.5f), () -> 0f));
+        BodyPart knee = new BodyPart(a -> a.call(0.4f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(a -> a.call(0f, -0.8f), () -> 0f), shoe);
+        BodyPart legL = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), new Matrix3fTransform(a -> a.call(-0.15f, -0.45f), a -> a.call(0.5f, 0.5f), () -> -sin.read()), knee);
+        BodyPart legR = new BodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), new Matrix3fTransform(a -> a.call(0.1f, -0.45f), a -> a.call(0.5f, 0.5f), sin), knee);
+        BodyPart body = new BodyPart(a -> a.call(0f, 0f, 0.4f, 1f), a -> a.call(-0.5f, -0.5f, 0.8f, 1.2f), new Matrix3fTransform(a -> a.call(0f, 0f), a -> a.call(1f, 1f), () -> 0f), head);
         
         root = clip ->
         {

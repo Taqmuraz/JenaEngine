@@ -32,7 +32,11 @@ public class DefaultGraphicsInspector implements GraphicsInspector, GraphicsClip
             }
             public void paint(GraphicsClip clip)
             {
-                
+                position.accept((x, y) -> clip.drawEllipse(a ->
+                {
+                    float r = radius.read();
+                    a.call(x - r, y - r, r * 2f, r * 2f);
+                }, color, () -> 0.2f));
             }
         };
     }

@@ -1,14 +1,30 @@
 package jena.engine.math;
 
-public class Matrix3fRotation extends Matrix3fStruct
+public class Matrix3fRotation implements Matrix3f
 {
-    public Matrix3fRotation(float angle)
+    ValueFloat angle;
+    public Matrix3fRotation(ValueFloat angle)
     {
+        this.angle = angle;
+    }
+
+    @Override
+    public Matrix3fElements elements()
+    {
+        float angle = this.angle.read();
         float sin = (float)Math.sin(angle);
         float cos = (float)Math.cos(angle);
-        elements[0] = cos;
-        elements[1] = sin;
-        elements[3] = -sin;
-        elements[4] = cos;
+        return index ->
+        {
+            switch(index)
+            {
+                case 0:return cos;
+                case 1:return sin;
+                case 3:return -sin;
+                case 4:return cos;
+                case 8:return 1f;
+                default:return 0f;
+            }
+        };
     }
 }

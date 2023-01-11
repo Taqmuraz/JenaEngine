@@ -17,7 +17,12 @@ public class Matrix3fStruct implements Matrix3f
 
     public Matrix3fStruct(Matrix3f source)
     {
-        source.accept(elements -> this.elements = elements.clone());
+        elements = new float[9];
+        Matrix3fElements sourceElements = source.elements();
+        for(int i = 0; i < 9; i++)
+        {
+            elements[i] = sourceElements.at(i);
+        }
     }
 
     public Matrix3fStruct()
@@ -51,9 +56,9 @@ public class Matrix3fStruct implements Matrix3f
     }
 
     @Override
-    public void accept(Matrix3fAcceptor acceptor)
+    public Matrix3fElements elements()
     {
-        acceptor.call(elements);
+        return index -> elements[index];
     }
 
     @Override

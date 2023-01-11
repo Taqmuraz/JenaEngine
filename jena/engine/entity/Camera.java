@@ -32,7 +32,7 @@ public class Camera implements GraphicsDevicePainter
                 source -> new Matrix3fBuilder(source)
                     .translate(a -> a.call(x, y))
                     .multiply(new Matrix3fViewport(w, h))
-                    .multiply(new Matrix3fOrtho(a -> a.call(w, h), 1f))
+                    .multiply(new Matrix3fOrtho(a -> a.call(w, h), () -> 1f))
                     .build(),
                 () -> scene.paint(graphicsClip)));
         });

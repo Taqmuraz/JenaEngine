@@ -6,11 +6,11 @@ public final class Matrix3fBuilder
 
     public Matrix3fBuilder()
     {
-        result = new Matrix3fStruct();
+        result = Matrix3fIdentity.identity;
     }
     public Matrix3fBuilder(Matrix3f source)
     {
-        this.result = new Matrix3fStruct(source);
+        this.result = source;
     }
     public Matrix3fBuilder multiply(Matrix3f matrix)
     {
@@ -19,23 +19,12 @@ public final class Matrix3fBuilder
     }
     public Matrix3fBuilder translate(Vector2f vector)
     {
-        result.accept(elements -> vector.accept((x, y) ->
-        {
-            elements[6] += x * (elements[0] + elements[3]);
-            elements[7] += y * (elements[1] + elements[4]);
-        }));
+        result = new Matrix3fMul(result, new Matrix3fTranslation(vector));
         return this;
     }
     public Matrix3fBuilder scale(Vector2f scale)
     {
-        result.accept(elements -> scale.accept((x, y) ->
-        {
-            elements[0] *= x;
-            elements[1] *= x;
-
-            elements[3] *= y;
-            elements[4] *= y;
-        }));
+        result = new Matrix3fMul(result, new Matrix3fScale(scale));
         return this;
     }
     public Matrix3f build()

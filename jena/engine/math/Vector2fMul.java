@@ -10,12 +10,13 @@ public final class Vector2fMul extends Vector2fStruct
             y = ay * by;
         }));
     }
-    public Vector2fMul(Vector2f a, float b)
+    public Vector2fMul(Vector2f a, ValueFloat b)
     {
         a.accept((ax, ay) ->
         {
-            x = ax * b;
-            y = ay * b;
+            float m = b.read();
+            x = ax * m;
+            y = ay * m;
         });
     }
 }

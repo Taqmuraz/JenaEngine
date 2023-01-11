@@ -2,20 +2,45 @@ package jena.engine.math;
 
 public class Matrix3fOrtho extends Matrix3fStruct
 {
-    public Matrix3fOrtho(Vector2f size, float scale)
+    private Vector2f clipSize;
+    private ValueFloat worldScale;
+
+    public Matrix3fOrtho(Vector2f clipSize, ValueFloat worldScale)
     {
-        size.accept((x, y) ->
+        this.clipSize = clipSize;
+        this.worldScale = worldScale;
+    }
+
+    @Override
+    public Matrix3fElements elements()
+    {
+        Vector2fStruct size = new Vector2fStruct(clipSize);
+        float dScale = 1f / worldScale.read();
+        if (size.x > size.y)
         {
-            float dScale = 1f / scale;
-            if (x > y)
+            return index ->
             {
-                elements[0] = (y / x) * dScale;
-                elements[4] = dScale;
-            } else
+                switch(index)
+                {
+                    case 0: return (size.y / size.x) * dScale;
+                    case 4: return dScale;
+                    case 8: return 1f;
+                    default: return 0f;
+                }
+            };
+        }
+        else
+        {
+            return index ->
             {
-                elements[0] = dScale;
-                elements[4] = (x / y) * dScale;
-            }
-        });
+                switch(index)
+                {
+                    case 0: return dScale;
+                    case 4: return (size.x / size.y) * dScale;
+                    case 8: return 1f;
+                    default: return 0f;
+                }
+            };
+        }
     }
 }
