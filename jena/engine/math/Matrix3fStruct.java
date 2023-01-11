@@ -2,6 +2,11 @@ package jena.engine.math;
 
 public class Matrix3fStruct implements Matrix3f
 {
+    Vector3fAcceptor col0;
+    Vector3fAcceptor col1;
+    Vector3fAcceptor col2;
+    Matrix3fElements at;
+
     public float[] elements;
     /*
         elements layout :
@@ -17,7 +22,7 @@ public class Matrix3fStruct implements Matrix3f
 
     public Matrix3fStruct(Matrix3f source)
     {
-        elements = new float[9];
+        this();
         Matrix3fElements sourceElements = source.elements();
         for(int i = 0; i < 9; i++)
         {
@@ -29,36 +34,42 @@ public class Matrix3fStruct implements Matrix3f
     {
         elements = new float[9];
         elements[0] = elements[4] = elements[8] = 1f;
+
+        at = index -> elements[index];
+
+        col0 = (x, y, z) -> 
+        {
+            elements[0] = x;
+            elements[1] = y;
+            elements[2] = z;
+        };
+        col1 = (x, y, z) -> 
+        {
+            elements[3] = x;
+            elements[4] = y;
+            elements[5] = z;
+        };
+        col2 = (x, y, z) -> 
+        {
+            elements[6] = x;
+            elements[7] = y;
+            elements[8] = z;
+        };
     }
 
     public Matrix3fStruct(Vector3f column0, Vector3f column1, Vector3f column2)
     {
         elements = new float[9];
 
-        column0.accept((x, y, z) -> 
-        {
-            elements[0] = x;
-            elements[1] = y;
-            elements[2] = z;
-        });
-        column1.accept((x, y, z) -> 
-        {
-            elements[3] = x;
-            elements[4] = y;
-            elements[5] = z;
-        });
-        column2.accept((x, y, z) -> 
-        {
-            elements[6] = x;
-            elements[7] = y;
-            elements[8] = z;
-        });
+        column0.accept(col0);
+        column1.accept(col1);
+        column2.accept(col2);
     }
 
     @Override
     public Matrix3fElements elements()
     {
-        return index -> elements[index];
+        return at;
     }
 
     @Override

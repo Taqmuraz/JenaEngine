@@ -3,15 +3,18 @@ package jena.engine.math;
 public class Vector2fStruct implements Vector2f
 {
     public float x, y;
+    Vector2fAcceptor acceptor;
 
     public Vector2fStruct()
     {
+        acceptor = this::apply;
     }
 
     public Vector2fStruct(float x, float y)
     {
         this.x = x;
         this.y = y;
+        acceptor = this::apply;
     }
 
     public Vector2fStruct(Vector2f source)
@@ -21,15 +24,18 @@ public class Vector2fStruct implements Vector2f
             this.x = x;
             this.y = y;
         });
+        acceptor = this::apply;
     }
 
     public void apply(Vector2f vector)
     {
-        vector.accept((x, y) ->
-        {
-            this.x = x;
-            this.y = y;
-        });
+        vector.accept(acceptor);
+    }
+
+    public void apply(float x, float y)
+    {
+        this.x = x;
+        this.y = y;
     }
 
     @Override

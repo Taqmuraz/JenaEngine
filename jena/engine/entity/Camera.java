@@ -5,7 +5,6 @@ import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.math.Matrix3fOrtho;
-import jena.engine.math.Matrix3fStruct;
 import jena.engine.math.Matrix3fViewport;
 import jena.engine.math.Rectf;
 import jena.engine.math.Matrix3fBuilder;

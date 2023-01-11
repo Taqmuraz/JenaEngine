@@ -4,17 +4,12 @@ public class Matrix3fScale implements Matrix3f
 {
     Vector2f scale;
     Vector2fStruct scaleStruct = new Vector2fStruct();
+    Matrix3fElements elements;
     
     public Matrix3fScale(Vector2f scale)
     {
         this.scale = scale;
-    }
-    
-    @Override
-    public Matrix3fElements elements()
-    {
-        scaleStruct.apply(scale);
-        return index ->
+        elements = index ->
         {
             switch(index)
             {
@@ -24,5 +19,12 @@ public class Matrix3fScale implements Matrix3f
                 default: return 0f;
             }
         };
+    }
+    
+    @Override
+    public Matrix3fElements elements()
+    {
+        scaleStruct.apply(scale);
+        return elements;
     }
 }
