@@ -146,7 +146,7 @@ public class SwingGraphicsClip implements GraphicsClip
         {
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.setStroke(new java.awt.BasicStroke(width.read()));
-            Vector2fStruct d = new Vector2fNormalized(v -> v.call(bx - ax, by - ay));
+            Vector2fStruct d = new Vector2fStruct(new Vector2fNormalized(v -> v.call(bx - ax, by - ay)));
             line.setTransform(transform);
             buffer.setTransform(bx - ax, by - ay, -d.y, d.x, ax, ay);
             line.concatenate(buffer);

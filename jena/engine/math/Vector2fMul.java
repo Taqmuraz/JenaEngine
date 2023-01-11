@@ -1,22 +1,25 @@
 package jena.engine.math;
 
-public final class Vector2fMul extends Vector2fStruct
+public final class Vector2fMul implements Vector2f
 {
+    private Vector2f result;
+
     public Vector2fMul(Vector2f a, Vector2f b)
     {
-        a.accept((ax, ay) -> b.accept((bx, by) -> 
-        {
-            x = ax * bx;
-            y = ay * by;
-        }));
+        result = r -> a.accept((ax, ay) -> b.accept((bx, by) -> r.call(ax * bx, ay * by)));
     }
     public Vector2fMul(Vector2f a, ValueFloat b)
     {
-        a.accept((ax, ay) ->
+        result = r -> a.accept((ax, ay) ->
         {
             float m = b.read();
-            x = ax * m;
-            y = ay * m;
+            r.call(ax * m, ay * m);
         });
+    }
+
+    @Override
+    public void accept(Vector2fAcceptor acceptor)
+    {
+        result.accept(acceptor);
     }
 }

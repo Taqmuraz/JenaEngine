@@ -1,13 +1,18 @@
 package jena.engine.math;
 
-public final class Vector2fSub extends Vector2fStruct
+public final class Vector2fSub implements Vector2f
 {
+    Vector2f a;
+    Vector2f b;
     public Vector2fSub(Vector2f a, Vector2f b)
     {
-        a.accept((ax, ay) -> b.accept((bx, by) -> 
-        {
-            x = ax - bx;
-            y = ay - by;
-        }));
+        this.a = a;
+        this.b = b;
+    }
+
+    @Override
+    public void accept(Vector2fAcceptor acceptor)
+    {
+        a.accept((ax, ay) -> b.accept((bx, by) -> acceptor.call(ax - bx, ay - by)));
     }
 }
