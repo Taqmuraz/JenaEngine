@@ -23,6 +23,15 @@ public class Vector2fStruct implements Vector2f
         });
     }
 
+    public void apply(Vector2f vector)
+    {
+        vector.accept((x, y) ->
+        {
+            this.x = x;
+            this.y = y;
+        });
+    }
+
     @Override
     public void accept(Vector2fAcceptor acceptor) 
     {

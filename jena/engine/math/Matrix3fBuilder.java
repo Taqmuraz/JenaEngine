@@ -31,4 +31,8 @@ public final class Matrix3fBuilder
     {
         return result;
     }
+    public Matrix3f struct()
+    {
+        return new Matrix3fStruct(result);
+    }
 }

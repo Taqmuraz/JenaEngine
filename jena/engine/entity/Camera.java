@@ -5,6 +5,7 @@ import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.math.Matrix3fOrtho;
+import jena.engine.math.Matrix3fStruct;
 import jena.engine.math.Matrix3fViewport;
 import jena.engine.math.Rectf;
 import jena.engine.math.Matrix3fBuilder;
@@ -33,7 +34,7 @@ public class Camera implements GraphicsDevicePainter
                     .translate(a -> a.call(x, y))
                     .multiply(new Matrix3fViewport(w, h))
                     .multiply(new Matrix3fOrtho(a -> a.call(w, h), () -> 1f))
-                    .build(),
+                    .struct(),
                 () -> scene.paint(graphicsClip)));
         });
     }
