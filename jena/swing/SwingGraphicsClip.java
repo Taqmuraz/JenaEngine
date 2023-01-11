@@ -108,7 +108,7 @@ public class SwingGraphicsClip implements GraphicsClip
     @Override
     public void matrixScope(Transformation transformation, Action action)
     {
-        Matrix3f matrix = transformation.transform(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek());
+        Matrix3f matrix = new Matrix3fStruct(transformation.transform(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek()));
         pushMatrix(matrix);
         action.call();
         popMatrix();
