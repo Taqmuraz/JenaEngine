@@ -12,5 +12,5 @@ public interface GraphicsClip
     void drawEllipse(Rectf rect, Color color, ValueFloat width);
     void fillEllipse(Rectf rect, Color color);
     void fillRect(Rectf rect, Color color);
-    void matrixScope(Transformation transformation, Action paint);
+    void matrixScope(Transformation transformation, Action action);
 }

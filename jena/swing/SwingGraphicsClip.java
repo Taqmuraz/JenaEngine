@@ -1,16 +1,15 @@
 package jena.swing;
 
 import java.awt.Graphics2D;
-import java.util.Stack;
 
 import jena.engine.common.Action;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
-import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fElements;
-import jena.engine.math.Matrix3fStruct;
+import jena.engine.math.Matrix3fPipeline;
+import jena.engine.math.Matrix3fStack;
 import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
@@ -24,12 +23,12 @@ import java.awt.Shape;
 public class SwingGraphicsClip implements GraphicsClip
 {
 	private Graphics2D graphics;
-    private Stack<Matrix3f> matrixStack;
     private AffineTransform transform;
     private AffineTransform identity;
     private AffineTransform line;
     private AffineTransform buffer;
     private Shape clip;
+    private Matrix3fPipeline matrixStack;
 
     public SwingGraphicsClip(Graphics2D graphics)
     {
@@ -43,7 +42,7 @@ public class SwingGraphicsClip implements GraphicsClip
         buffer = new AffineTransform();
         identity = new AffineTransform();
         transform = new AffineTransform();
-        matrixStack = new Stack<Matrix3f>();
+        matrixStack = new Matrix3fStack();
         reset();
     }
 
@@ -108,21 +107,17 @@ public class SwingGraphicsClip implements GraphicsClip
     @Override
     public void matrixScope(Transformation transformation, Action action)
     {
-        Matrix3f matrix = new Matrix3fStruct(transformation.transform(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek()));
-        pushMatrix(matrix);
-        action.call();
-        popMatrix();
+        matrixStack.matrixScope(transformation, () ->
+        {
+            updateTransform();
+            action.call();
+        });
+        updateTransform();
     }
 
-	private void pushMatrix(Matrix3f matrix) 
-	{
-		matrixStack.push(matrix);
-        updateTransform(matrix);
-	}
-
-    private void updateTransform(Matrix3f matrix)
+    private void updateTransform()
     {
-        Matrix3fElements e = matrix.elements();
+        Matrix3fElements e = matrixStack.elements();
         transform.setTransform(e.at(0), e.at(1), e.at(3), e.at(4), e.at(6), e.at(7));
         graphics.setTransform(transform);
     }
@@ -134,11 +129,6 @@ public class SwingGraphicsClip implements GraphicsClip
         graphics.setTransform(transform);
     }
 
-	private void popMatrix() 
-	{
-		matrixStack.pop();
-        updateTransform(matrixStack.empty() ? new Matrix3fStruct() : matrixStack.peek());
-	}
     @Override
     public void drawLine(Vector2f a, Vector2f b, Color color, ValueFloat width)
     {
