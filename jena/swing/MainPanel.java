@@ -50,13 +50,13 @@ public class MainPanel extends JPanel implements GraphicsResource
 		{
 			float x = (i % num) * dnum;
 			float y = (i / num) * dnum;
-			return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(x * 0.5f, y * 0.5f, 0f, 1f), player);
+			return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(x * 0.25f + 0.25f, y * 0.25f + 0.25f, 0f, 1f), player);
 		}).collect(Collectors.toList());
 
 		painters.add(new RootCanvas(a -> a.call(150f, 150f, 300f, 300f), canvas ->
 		{
 			UserCanvas userCanvas = new MenuCanvas(canvas);
-			userCanvas.drawButton(() -> "ABC", a -> a.call(10f, 10f, 100f + 50f * (float)Math.sin(Time.time()), 100f), c -> c.call(50, 50, 50, 255), c -> c.call(200, 200, 200, 255), () -> System.out.println("click"));
+			userCanvas.drawButton(() -> "Здрасьте", a -> a.call(10f, 10f, 150f + 100f * (float)Math.sin(Time.time()), 150f + 100f * (float)Math.cos(Time.time())), c -> c.call(50, 50, 50, 255), c -> c.call(200, 200, 200, 255), () -> System.out.println("click"));
 		}));
 
 		frameStartHandler = player;

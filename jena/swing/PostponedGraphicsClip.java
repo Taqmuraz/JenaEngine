@@ -76,6 +76,11 @@ public class PostponedGraphicsClip implements GraphicsClip, GraphicsClipPainter
     {
         scopes.peek().appendPainter(clip -> clip.drawEllipse(rect, color, width));
     }
+    @Override
+    public void drawRect(Rectf rect, Color color, ValueFloat width)
+    {
+        scopes.peek().appendPainter(clip -> clip.drawRect(rect, color, width));
+    }
 
     @Override
     public void fillEllipse(Rectf rect, Color color)

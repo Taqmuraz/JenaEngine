@@ -115,15 +115,29 @@ public class SwingGraphicsClip implements GraphicsClip
             float bw = metrics.stringWidth(content);
             float bh = metrics.getLineMetrics(content, graphics).getHeight();
 
-            float mul;
+            float bd = bw / bh;
+            float d = w / h;
+            float sx, sy, sw, sh;
 
-            if (bw > bh) mul = w / bw;
-            else mul = h / bh;
-            
+            if (bd > d)
+            {
+                sx = 0f;
+                sh = (bh / bw) * w;
+                sy = (h - sh) * 0.5f;
+                sw = w;
+            }
+            else
+            {
+                sy = 0f;
+                sh = h;
+                sw = (bw / bh) * h;
+                sx = (w - sw) * 0.5f;
+            }
+
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
-            graphics.translate(x, y);
-            graphics.scale(mul, mul);
-            graphics.drawString(text.content(), 0, h * 0.5f / mul);
+            graphics.translate(x + sx, y + sy + sh);
+            graphics.scale(sw / bw, sh / bh);
+            graphics.drawString(content, 0, 0);
             graphics.setTransform(transform);
         });
     }
@@ -179,6 +193,17 @@ public class SwingGraphicsClip implements GraphicsClip
             graphics.scale(w, h);
             graphics.setStroke(new java.awt.BasicStroke(width.read()));
             graphics.drawArc(0, 0, 1, 1, 0, 360);
+            graphics.setTransform(transform);
+        });
+    }
+    @Override
+    public void drawRect(Rectf rect, Color color, ValueFloat width)
+    {
+        rect.accept((x, y, w, h) ->
+        {
+            color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
+            graphics.setStroke(new java.awt.BasicStroke(width.read()));
+            graphics.drawRect((int)x, (int)y, (int)w, (int)h);
             graphics.setTransform(transform);
         });
     }

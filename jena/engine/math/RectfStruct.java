@@ -11,6 +11,16 @@ public final class RectfStruct implements Rectf
         this.width = width;
         this.height = height;
     }
+    public RectfStruct(Rectf rect)
+    {
+        rect.accept((x, y, w, h) ->
+        {
+            this.x = x;
+            this.y = y;
+            this.width = w;
+            this.height = h;
+        });
+    }
 
     @Override
     public void accept(RectfAcceptor acceptor)

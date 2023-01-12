@@ -6,6 +6,7 @@ import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.Text;
 import jena.engine.math.Rectf;
+import jena.engine.math.RectfStruct;
 import jena.engine.math.Matrix3fMul;
 import jena.engine.math.Matrix3fTranslation;
 
@@ -28,6 +29,13 @@ public class RootCanvas implements GraphicsDevicePainter
         public void fillRect(Rectf rect, Color color)
         {
             clip.fillRect(rect, color);
+            float outline = 5f;
+            clip.drawRect(a ->
+            {
+                RectfStruct r = new RectfStruct(rect);
+                a.call(r.x - outline, r.y - outline, r.width + outline * 2f, r.height + outline * 2f);
+            },
+            a -> a.call(0, 0, 0, 255), () -> outline * 2f);
         }
     }
 
