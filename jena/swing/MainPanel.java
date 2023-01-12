@@ -35,15 +35,16 @@ public class MainPanel extends JPanel implements GraphicsResource
 	private int canvasWidth;
 	private int canvasHeight;
 	
-	public MainPanel(int canvasWidth, int canvasHeight, SwingKeyboard keyboard, ErrorHandler errorHandler)
+	public MainPanel(int canvasWidth, int canvasHeight, SwingKeyboard keyboard, SwingMouse mouse, ErrorHandler errorHandler)
 	{
 		this.canvasWidth = canvasWidth;
 		this.canvasHeight = canvasHeight;
 		this.errorHandler = errorHandler;
+		this.addMouseListener(mouse);
 		
 		Player player = new Player(this, keyboard);
 
-		int num = 3;
+		int num = 2;
 		float dnum = 1f / num;
 
 		List<GraphicsDevicePainter> painters = java.util.stream.IntStream.range(0, num * num).boxed().map(i ->
@@ -60,7 +61,7 @@ public class MainPanel extends JPanel implements GraphicsResource
 		}));
 
 		frameStartHandler = player;
-		frameEndHandler = keyboard::updateKeys;
+		frameEndHandler = keyboard::updateState;
 		GraphicsDevicePainter painter = device ->
 		{
 			for(GraphicsDevicePainter p : painters)
