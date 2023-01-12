@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
@@ -18,6 +20,9 @@ import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
+import jena.engine.ui.MenuCanvas;
+import jena.engine.ui.RootCanvas;
+import jena.engine.ui.UserCanvas;
 
 public class MainPanel extends JPanel implements GraphicsResource
 {
@@ -37,23 +42,29 @@ public class MainPanel extends JPanel implements GraphicsResource
 		
 		Player player = new Player(this, keyboard);
 
-		int num = 2;
+		int num = 3;
 		float dnum = 1f / num;
 
-		var cameras = java.util.stream.IntStream.range(0, num * num).boxed().map(i ->
+		List<GraphicsDevicePainter> painters = java.util.stream.IntStream.range(0, num * num).boxed().map(i ->
 		{
 			float x = (i % num) * dnum;
 			float y = (i / num) * dnum;
-			return new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(x * 0.5f, y * 0.5f, 0f, 1f), player);
-		}).toList();
+			return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(x * 0.5f, y * 0.5f, 0f, 1f), player);
+		}).collect(Collectors.toList());
+
+		painters.add(new RootCanvas(a -> a.call(150f, 150f, 300f, 300f), canvas ->
+		{
+			UserCanvas userCanvas = new MenuCanvas(canvas);
+			userCanvas.drawButton(() -> "example", a -> a.call(10f, 10f, 100f, 100f), c -> c.call(150, 0, 150, 255), c -> c.call(0, 0, 255, 255), () -> System.out.println("click"));
+		}));
 
 		frameStartHandler = player;
 		frameEndHandler = keyboard::updateKeys;
 		GraphicsDevicePainter painter = device ->
 		{
-			for(Camera camera : cameras)
+			for(GraphicsDevicePainter p : painters)
 			{
-				camera.paint(device);
+				p.paint(device);
 			}
 		};
 		var bakedDevice = new PostponedGraphicsDevice();

@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import jena.engine.common.Action;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsClip;
+import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
 import jena.engine.math.Matrix3fElements;
@@ -18,6 +19,7 @@ import jena.engine.math.Vector2fStruct;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 
 public class SwingGraphicsClip implements GraphicsClip
@@ -103,6 +105,29 @@ public class SwingGraphicsClip implements GraphicsClip
                 graphics.setTransform(transform);
             }));
 	}
+
+    @Override
+    public void drawText(Text text, Rectf rect, Color color)
+    {
+        rect.accept((x, y, w, h) ->
+        {
+            String content = text.content();
+            Rectangle2D bounds = graphics.getFontMetrics(graphics.getFont()).getStringBounds(content, 0, 0, graphics);
+
+            float mul;
+            float bw = (float)bounds.getWidth();
+            float bh = (float)bounds.getWidth();
+
+            if (bw > bh) mul = bw / w;
+            else mul = bh / h;
+            
+            color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
+            graphics.translate(x, y);
+            graphics.scale(w * mul, h * mul);
+            graphics.drawString(text.content(), 0, 0);
+            graphics.setTransform(transform);
+        });
+    }
 
     @Override
     public void matrixScope(Transformation transformation, Action action)

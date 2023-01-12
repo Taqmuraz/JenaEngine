@@ -8,6 +8,7 @@ import jena.engine.common.Action;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.GraphicsClipPainter;
+import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
 import jena.engine.math.Rectf;
@@ -86,6 +87,12 @@ public class PostponedGraphicsClip implements GraphicsClip, GraphicsClipPainter
     public void fillRect(Rectf rect, Color color)
     {
         scopes.peek().appendPainter(clip -> clip.fillRect(rect, color));
+    }
+
+    @Override
+    public void drawText(Text text, Rectf rect, Color color)
+    {
+        scopes.peek().appendPainter(clip -> clip.drawText(text, rect, color));
     }
 
     @Override
