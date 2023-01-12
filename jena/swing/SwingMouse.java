@@ -16,6 +16,7 @@ public class SwingMouse extends KeySystem implements Mouse, MouseListener, Mouse
 	public SwingMouse()
 	{
 		super(3);
+        position = new Vector2fStruct();
 	}
 
 	@Override
@@ -39,11 +40,13 @@ public class SwingMouse extends KeySystem implements Mouse, MouseListener, Mouse
     @Override
     public void mousePressed(MouseEvent e)
     {
+        states[e.getButton() - 1] = DOWN_STATE;
     }
 
     @Override
     public void mouseReleased(MouseEvent e)
     {
+        states[e.getButton() - 1] = UP_STATE;
     }
 
     @Override
@@ -66,5 +69,7 @@ public class SwingMouse extends KeySystem implements Mouse, MouseListener, Mouse
     @Override
     public void mouseMoved(MouseEvent e)
     {
+        position.x = e.getX();
+        position.y = e.getY();
     }
 }

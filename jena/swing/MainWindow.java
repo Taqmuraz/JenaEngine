@@ -46,11 +46,11 @@ public class MainWindow extends JFrame
 
 		environmentVariables.<DimensionVariable>findVariable("resolution", size -> size.accept((w, h) ->
 		{
-			panel = new MainPanel(w, h, keyboard, errorHandler);
+			panel = new MainPanel(w, h, keyboard, new SwingMouse(), errorHandler);
 		}), () -> 
 		{
 			java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-			panel = new MainPanel(screenSize.width, screenSize.height, keyboard, errorHandler);
+			panel = new MainPanel(screenSize.width, screenSize.height, keyboard, new SwingMouse(), errorHandler);
 		});
 
 		environmentVariables.findVariable("fullscreen", 

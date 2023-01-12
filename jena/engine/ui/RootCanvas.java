@@ -5,6 +5,8 @@ import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.Text;
+import jena.engine.input.ClipMouse;
+import jena.engine.input.Mouse;
 import jena.engine.math.Rectf;
 import jena.engine.math.RectfStruct;
 import jena.engine.math.Matrix3fMul;
@@ -37,14 +39,21 @@ public class RootCanvas implements GraphicsDevicePainter
             },
             a -> a.call(0, 0, 0, 255), () -> outline * 2f);
         }
+        @Override
+        public Mouse mouse()
+        {
+            return mouse;
+        }
     }
 
     Rectf rect;
     CanvasPainter painter;
+    Mouse mouse;
 
-    public RootCanvas(Rectf rect, CanvasPainter painter)
+    public RootCanvas(Rectf rect, Mouse mouse, CanvasPainter painter)
     {
         this.rect = rect;
+        this.mouse = new ClipMouse(rect, mouse);;
         this.painter = painter;
     }
 

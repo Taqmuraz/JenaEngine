@@ -20,10 +20,15 @@ import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.TextureHandle;
+import jena.engine.input.Mouse;
+import jena.engine.input.WindowToGraphicsMouse;
 import jena.engine.io.FileResource;
+import jena.engine.math.Rectf;
+import jena.engine.math.Vector2f;
 import jena.engine.ui.MenuCanvas;
 import jena.engine.ui.RootCanvas;
 import jena.engine.ui.UserCanvas;
+import jena.engine.graphics.GraphicsRectf;
 
 public class MainPanel extends JPanel implements GraphicsResource
 {
@@ -32,15 +37,18 @@ public class MainPanel extends JPanel implements GraphicsResource
 	private FrameStartHandler frameStartHandler;
 	private FrameEndHandler frameEndHandler;
 	private BufferedImage screenBuffer;
-	private int canvasWidth;
-	private int canvasHeight;
+	private Rectf graphicsRect;
+	private Vector2f canvasSize;
 	
 	public MainPanel(int canvasWidth, int canvasHeight, SwingKeyboard keyboard, SwingMouse mouse, ErrorHandler errorHandler)
 	{
-		this.canvasWidth = canvasWidth;
-		this.canvasHeight = canvasHeight;
 		this.errorHandler = errorHandler;
 		this.addMouseListener(mouse);
+		this.addMouseMotionListener(mouse);
+		this.canvasSize = a -> a.call(canvasWidth, canvasHeight);
+		Vector2f panelSize = a -> a.call(getWidth(), getHeight());
+		this.graphicsRect = new GraphicsRectf(panelSize, a -> a.call(canvasWidth, canvasHeight));
+		Mouse windowMouse = new WindowToGraphicsMouse(mouse, canvasSize, graphicsRect);
 		
 		Player player = new Player(this, keyboard);
 
@@ -52,9 +60,10 @@ public class MainPanel extends JPanel implements GraphicsResource
 			float x = (i % num) * dnum;
 			float y = (i / num) * dnum;
 			return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(x * 0.25f + 0.25f, y * 0.25f + 0.25f, 0f, 1f), player);
-		}).collect(Collectors.toList());
+		})
+		.collect(Collectors.toList());
 
-		painters.add(new RootCanvas(a -> a.call(150f, 150f, 300f, 300f), canvas ->
+		painters.add(new RootCanvas(a -> a.call(150f, 150f, 300f, 300f), windowMouse, canvas ->
 		{
 			UserCanvas userCanvas = new MenuCanvas(canvas);
 			userCanvas.drawButton(() -> "Здрасьте", a -> a.call(10f, 10f, 150f + 100f * (float)Math.sin(Time.time()), 150f + 100f * (float)Math.cos(Time.time())), c -> c.call(50, 50, 50, 255), c -> c.call(200, 200, 200, 255), () -> System.out.println("click"));
@@ -95,27 +104,9 @@ public class MainPanel extends JPanel implements GraphicsResource
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setBackground(new Color(0, 0, 0, 255));
 		g.clearRect(0, 0, w, h);
-
-		float mw = (float)w / canvasWidth;
-		float mh = (float)h / canvasHeight;
-
-		int rx, ry, rw, rh;
-
-		if (mw < mh)
-		{
-			rw = (int)(canvasWidth * mw);
-			rh = (int)(canvasHeight * mw);
-			rx = 0;
-			ry = (h - rh) >>> 1;
-		}
-		else
-		{
-			rw = (int)(canvasWidth * mh);
-			rh = (int)(canvasHeight * mh);
-			rx = (w - rw) >>> 1;
-			ry = 0;
-		}
-		g.drawImage(screenBuffer, rx, ry, rx + rw, ry + rh, 0, 0, canvasWidth, canvasHeight, null);
+		canvasSize.accept((cw, ch) ->
+			graphicsRect.accept((rx, ry, rw, rh) ->
+				g.drawImage(screenBuffer, (int)rx, (int)ry, (int)(rx + rw), (int)(ry + rh), 0, 0, (int)cw, (int)ch, null)));
 		frameEndHandler.onEndFrame();
 	}
 

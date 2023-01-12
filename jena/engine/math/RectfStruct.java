@@ -27,4 +27,10 @@ public final class RectfStruct implements Rectf
     {
         acceptor.call(x, y, width, height);
     }
+
+    public boolean contains(Vector2f point)
+    {
+        Vector2fStruct p = new Vector2fStruct(point);
+        return p.x >= x && p.y >= y && p.x < (x + width) && p.y < (y + height);
+    }
 }
