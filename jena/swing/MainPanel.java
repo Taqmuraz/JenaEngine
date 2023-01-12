@@ -14,6 +14,7 @@ import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.FrameEndHandler;
 import jena.engine.entity.FrameStartHandler;
+import jena.engine.entity.Time;
 import jena.engine.entity.human.Player;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsDevice;
@@ -55,7 +56,7 @@ public class MainPanel extends JPanel implements GraphicsResource
 		painters.add(new RootCanvas(a -> a.call(150f, 150f, 300f, 300f), canvas ->
 		{
 			UserCanvas userCanvas = new MenuCanvas(canvas);
-			userCanvas.drawButton(() -> "example", a -> a.call(10f, 10f, 100f, 100f), c -> c.call(150, 0, 150, 255), c -> c.call(0, 0, 255, 255), () -> System.out.println("click"));
+			userCanvas.drawButton(() -> "ABC", a -> a.call(10f, 10f, 100f + 50f * (float)Math.sin(Time.time()), 100f), c -> c.call(50, 50, 50, 255), c -> c.call(200, 200, 200, 255), () -> System.out.println("click"));
 		}));
 
 		frameStartHandler = player;

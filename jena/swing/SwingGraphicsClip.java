@@ -19,7 +19,6 @@ import jena.engine.math.Vector2fStruct;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 
 public class SwingGraphicsClip implements GraphicsClip
@@ -112,19 +111,19 @@ public class SwingGraphicsClip implements GraphicsClip
         rect.accept((x, y, w, h) ->
         {
             String content = text.content();
-            Rectangle2D bounds = graphics.getFontMetrics(graphics.getFont()).getStringBounds(content, 0, 0, graphics);
+            var metrics = graphics.getFontMetrics(graphics.getFont());
+            float bw = metrics.stringWidth(content);
+            float bh = metrics.getLineMetrics(content, graphics).getHeight();
 
             float mul;
-            float bw = (float)bounds.getWidth();
-            float bh = (float)bounds.getWidth();
 
-            if (bw > bh) mul = bw / w;
-            else mul = bh / h;
+            if (bw > bh) mul = w / bw;
+            else mul = h / bh;
             
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.translate(x, y);
-            graphics.scale(w * mul, h * mul);
-            graphics.drawString(text.content(), 0, 0);
+            graphics.scale(mul, mul);
+            graphics.drawString(text.content(), 0, h * 0.5f / mul);
             graphics.setTransform(transform);
         });
     }
