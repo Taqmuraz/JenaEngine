@@ -3,6 +3,7 @@ package jena.engine.ui;
 import jena.engine.common.Action;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.Text;
+import jena.engine.input.Key;
 import jena.engine.input.Mouse;
 import jena.engine.math.Rectf;
 import jena.engine.math.RectfStruct;
@@ -23,7 +24,12 @@ public class MenuCanvas implements UserCanvas
     {
         Color color = c ->
         {
-            if (new RectfStruct(rect).contains(mouse.position())) c.call(100, 100, 100, 255);
+            Key m = mouse.button(0);
+            if (new RectfStruct(rect).contains(mouse.position()))
+            {
+                if (m.isHold()) c.call(150, 200, 150, 255);
+                else c.call(150, 150, 150, 255);
+            }
             else buttonColor.accept(c);
         };
         canvas.fillRect(rect, color);

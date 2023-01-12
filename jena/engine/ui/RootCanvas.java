@@ -53,7 +53,7 @@ public class RootCanvas implements GraphicsDevicePainter
     public RootCanvas(Rectf rect, Mouse mouse, CanvasPainter painter)
     {
         this.rect = rect;
-        this.mouse = new ClipMouse(rect, mouse);;
+        this.mouse = new ClipMouse(rect, mouse);
         this.painter = painter;
     }
 

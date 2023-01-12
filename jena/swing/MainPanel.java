@@ -70,7 +70,11 @@ public class MainPanel extends JPanel implements GraphicsResource
 		}));
 
 		frameStartHandler = player;
-		frameEndHandler = keyboard::updateState;
+		frameEndHandler = () ->
+		{
+			keyboard.updateState();
+			mouse.updateState();
+		};
 		GraphicsDevicePainter painter = device ->
 		{
 			for(GraphicsDevicePainter p : painters)
