@@ -7,5 +7,5 @@ import jena.engine.math.Rectf;
 
 public interface UserCanvas
 {
-    Button drawButton(Text text, Rectf rect, Color textColor, Color buttonColor, Action click);
+    void drawButton(Text text, Rectf rect, Color textColor, Color buttonColor, Action click);
 }

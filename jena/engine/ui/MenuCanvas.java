@@ -7,6 +7,7 @@ import jena.engine.input.Key;
 import jena.engine.input.Mouse;
 import jena.engine.math.Rectf;
 import jena.engine.math.RectfStruct;
+import jena.engine.math.Vector2f;
 
 public class MenuCanvas implements UserCanvas
 {
@@ -20,21 +21,22 @@ public class MenuCanvas implements UserCanvas
     }
 
     @Override
-    public Button drawButton(Text text, Rectf rect, Color textColor, Color buttonColor, Action click)
+    public void drawButton(Text text, Rectf rect, Color textColor, Color buttonColor, Action click)
     {
+        Key button = mouse.button(0);
+        Vector2f mousePosition = mouse.position();
+
         Color color = c ->
         {
-            Key m = mouse.button(0);
-            if (new RectfStruct(rect).contains(mouse.position()))
+            if (new RectfStruct(rect).contains(mousePosition))
             {
-                if (m.isDown()) click.call();
-                if (m.isHold()) c.call(150, 200, 150, 255);
+                if (button.isDown()) click.call();
+                if (button.isHold()) c.call(150, 200, 150, 255);
                 else c.call(150, 150, 150, 255);
             }
             else buttonColor.accept(c);
         };
         canvas.fillRect(rect, color);
         canvas.drawText(text, rect, textColor);
-        return () -> false;
     }
 }
