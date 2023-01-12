@@ -27,6 +27,7 @@ public class MenuCanvas implements UserCanvas
             Key m = mouse.button(0);
             if (new RectfStruct(rect).contains(mouse.position()))
             {
+                if (m.isDown()) click.call();
                 if (m.isHold()) c.call(150, 200, 150, 255);
                 else c.call(150, 150, 150, 255);
             }
