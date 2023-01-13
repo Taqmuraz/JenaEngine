@@ -31,7 +31,7 @@ public class RootCanvas implements GraphicsDevicePainter
         public void fillRect(Rectf rect, Color color)
         {
             clip.fillRect(rect, color);
-            float outline = 5f;
+            float outline = 1f;
             clip.drawRect(a ->
             {
                 RectfStruct r = new RectfStruct(rect);

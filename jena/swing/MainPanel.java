@@ -5,8 +5,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.JPanel;
 
@@ -52,21 +54,26 @@ public class MainPanel extends JPanel implements GraphicsResource
 		
 		Player player = new Player(this, keyboard);
 
-		int num = 2;
+		int num = 1;
 		float dnum = 1f / num;
 
 		List<GraphicsDevicePainter> painters = java.util.stream.IntStream.range(0, num * num).boxed().map(i ->
 		{
 			float x = (i % num) * dnum;
 			float y = (i / num) * dnum;
-			return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(x * 0.25f + 0.25f, y * 0.25f + 0.25f, 0f, 1f), player);
+			return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(x * 0.25f + 0.25f, y * 0.25f + 0.25f, 0.5f, 1f), player);
 		})
 		.collect(Collectors.toList());
 
-		painters.add(new RootCanvas(a -> a.call(150f, 150f, 300f, 300f), windowMouse, canvas ->
+		String[] buttons = new String[] { "Играться", "Загрузиться", "Выбираться", "Уходить" };
+
+		painters.add(new RootCanvas(a -> a.call(450f, 550f, 300f, 55f * buttons.length), windowMouse, canvas ->
 		{
 			UserCanvas userCanvas = new MenuCanvas(canvas);
-			userCanvas.drawButton(() -> "Здрасьте", a -> a.call(10f, 10f, 150f + 100f * (float)Math.sin(Time.time()), 150f + 100f * (float)Math.cos(Time.time())), c -> c.call(50, 50, 50, 255), c -> c.call(200, 200, 200, 255), () -> System.out.println("click"));
+			IntStream.range(0, buttons.length).boxed().forEach(b -> 
+			{
+				userCanvas.drawButton(() -> buttons[b], a -> a.call(0f, b * 55f, 300f, 50f), c -> c.call(255, 150, 50, 255), c -> c.call(100, 100, 100, 255), () -> System.out.println(b));
+			});
 		}));
 
 		frameStartHandler = player;

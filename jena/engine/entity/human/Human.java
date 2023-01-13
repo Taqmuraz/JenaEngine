@@ -70,7 +70,7 @@ public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHa
         
         frameMeter = new DefaultTimeMeter();
 
-        ValueFloat sin = () -> (float)Math.sin(Time.time() * 6f) * 0.5f * new Vector2fStruct(movement).length();
+        ValueFloat sin = () -> (float)Math.sin(Time.time() * 3f) * 0.5f * new Vector2fStruct(movement).length();
         ValueInt dir = new ValueInt()
         {
             int dir = 1;
@@ -98,9 +98,9 @@ public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHa
             @Override
             public void paint(GraphicsClip clip)
             {
-                clip.fillEllipse(a -> a.call(position.x - 0.25f, position.y - 0.25f, 0.5f, 0.5f), a -> a.call(50, 150, 50, 255));
-                clip.drawEllipse(a -> a.call(position.x - 0.5f, position.y - 0.5f, 1f, 1f), a -> a.call(150, 0, 150, 255), () -> 0.02f);
-                clip.drawLine(position, a -> a.call(0f, 0f), a -> a.call(150, 150, 0, 255), () -> 0.01f);
+                //clip.fillEllipse(a -> a.call(position.x - 0.25f, position.y - 0.25f, 0.5f, 0.5f), a -> a.call(50, 150, 50, 255));
+                //clip.drawEllipse(a -> a.call(position.x - 0.5f, position.y - 0.5f, 1f, 1f), a -> a.call(150, 0, 150, 255), () -> 0.02f);
+                //clip.drawLine(position, a -> a.call(0f, 0f), a -> a.call(150, 150, 0, 255), () -> 0.01f);
                 clip.matrixScope(source -> new Matrix3fBuilder(source).translate(new Vector2fAdd(position, a -> a.call(0f, 1.25f))).scale(a -> a.call(dir.read(), 1f)).build(), () ->
                 {
                     armR.paint(clip);
@@ -131,8 +131,8 @@ public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHa
         float dt = frameMeter.measureTime();
         movement.accept((x, y) ->
         {
-            position.x += x * dt * 3f;
-            position.y += y * dt * 3f;
+            //position.x += x * dt * 3f;
+            //position.y += y * dt * 3f;
         });
     }
 }
