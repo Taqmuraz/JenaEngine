@@ -20,6 +20,7 @@ public class Player implements GraphicsClipPainter, FrameStartHandler, FrameEndH
 {
     Human human;
     TextureHandle groundTexture;
+    TextureHandle skyTexture;
 
     public Player(GraphicsResource graphicsResource, Keyboard keyboard)
     {
@@ -44,6 +45,7 @@ public class Player implements GraphicsClipPainter, FrameStartHandler, FrameEndH
             }
         });
         groundTexture = graphicsResource.loadTexture(new StorageFileResource("Ground.png"));
+        skyTexture = graphicsResource.loadTexture(new StorageFileResource("Sky.png"));
     }
 
     @Override
@@ -57,24 +59,38 @@ public class Player implements GraphicsClipPainter, FrameStartHandler, FrameEndH
         human.onEndFrame();
     }
 
+    class BackgroundOffset implements ValueFloat
+    {
+        float max;
+        float speed;
+        float start = Time.time();
+
+        public BackgroundOffset(float max, float speed)
+        {
+            this.max = max;
+            this.speed = speed;
+        }
+
+        @Override
+        public float read()
+        {
+            float time = Time.time();
+            if ((time - start) * speed >= max) start = time;
+            return (time - start) * speed;
+        }
+    }
+
     @Override
     public void paint(GraphicsClip clip)
     {
-        ValueFloat groundOffset = new ValueFloat()
-        {
-            float start = Time.time();
+        ValueFloat groundOffset = new BackgroundOffset(10f, 1f);
+        ValueFloat skyOffset = new BackgroundOffset(40f, 0.5f);
 
-            @Override
-            public float read()
-            {
-                float time = Time.time();
-                if (time - start >= 10f) start = time;
-                return time - start;
-            }
-        };
         clip.drawSprite(groundTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(-10f - groundOffset.read(), -10f, 10f, 8f));
         clip.drawSprite(groundTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(-groundOffset.read(), -10f, 10f, 8f));
         clip.drawSprite(groundTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(10f - groundOffset.read(), -10f, 10f, 8f));
+        clip.drawSprite(skyTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(-20f - skyOffset.read(), -2f, 40f, 5f));
+        clip.drawSprite(skyTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(20f - skyOffset.read(), -2f, 40f, 5f));
         clip.matrixScope(s -> new Matrix3fBuilder(s).translate(a -> a.call(1f, -2f)).build(), () -> human.paint(clip));
     }
 }
