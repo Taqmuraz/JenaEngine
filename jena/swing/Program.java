@@ -10,6 +10,7 @@ public class Program
 	public static void main(String[] args)
 	{
 		System.setProperty("sun.java2d.uiScale", "1.0"); // to disable Windows UI scaling
+		System.out.println("OpenGL version : " + com.jogamp.opengl.GL.GL_VERSION);
 
 		EventQueue.invokeLater(() ->
 		{

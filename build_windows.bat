@@ -1,6 +1,6 @@
 rd /s /q build
 dir /s /b *.java > sourcelist.txt
-javac -d build @sourcelist.txt
+javac -classpath jar/* -d build @sourcelist.txt
 del sourcelist.txt
 
 cd build
