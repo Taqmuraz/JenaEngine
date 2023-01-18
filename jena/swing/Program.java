@@ -1,6 +1,6 @@
 package jena.swing;
 
-import java.awt.*;
+import java.awt.EventQueue;
 import java.util.Scanner;
 
 import jena.environment.StandardEnvironmentVariables;
