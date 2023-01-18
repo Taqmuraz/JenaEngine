@@ -1,6 +1,7 @@
 package jena.swing;
 
 import java.awt.image.BufferedImage;
+import java.awt.TexturePaint;
 
 import javax.imageio.ImageIO;
 import jena.engine.common.ErrorHandler;
@@ -10,6 +11,7 @@ public class FileImageResource implements SwingTextureResource
 {
 	private BufferedImage image;
     private static final BufferedImage nullImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+    private TexturePaint paint;
 
 	public FileImageResource(FileResource file, ErrorHandler errorHandler)
 	{
@@ -29,6 +31,7 @@ public class FileImageResource implements SwingTextureResource
 		});
 
         image = image == null ? nullImage : image;
+        paint = new TexturePaint(image, new java.awt.geom.Rectangle2D.Float(0f, 0f, 1f, 1f));
 	}
 
     @Override
@@ -37,15 +40,9 @@ public class FileImageResource implements SwingTextureResource
         acceptor.call(new ImageDescriptor()
         {
             @Override
-            public void acceptSize(ImageSizeAcceptor acceptor)
+            public void acceptPaint(PaintAcceptor acceptor)
             {
-                acceptor.call(image.getWidth(), image.getHeight());
-            }
-
-            @Override
-            public void acceptImage(ImageAcceptor acceptor)
-            {
-                acceptor.call(image);
+                acceptor.call(paint);
             }
         });
     }
