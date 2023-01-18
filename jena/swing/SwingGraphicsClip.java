@@ -47,8 +47,39 @@ public class SwingGraphicsClip implements GraphicsClip
         reset();
     }
 
-	@Override
+    @Override
 	public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
+	{
+        if (texture instanceof SwingTextureResource swingTexture)
+        {
+            swingTexture.accept(descriptor -> descriptor.acceptImage(image ->
+            {
+                destination.accept((dx, dy, dw, dh) ->
+                    descriptor.acceptSize((iw, ih) ->
+                    {
+                        source.accept((sx, sy, sw, sh) -> 
+                        {
+                            graphics.translate(dx, dy);
+                            graphics.scale(dw, dh);
+                            graphics.drawImage(image,
+                                    0, 1, 1, 0,
+                                    (int)(sx * iw), (int)(sy * ih), (int)((sx + sw) * iw), (int)((sy + sh) * ih),
+                                    null);
+                            /* debug
+                            graphics.setStroke(new java.awt.BasicStroke(0.01f));
+                            graphics.setColor(java.awt.Color.red);
+                            graphics.drawLine(0, 0, 1, 1);
+                            graphics.drawLine(1, 0, 0, 1);
+                            */
+                            graphics.setTransform(transform);
+                        });
+                    }));
+            }));
+        }
+	}
+
+	@Override
+	public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
 	{
         if (texture instanceof SwingTextureResource swingTexture)
         {
@@ -56,16 +87,14 @@ public class SwingGraphicsClip implements GraphicsClip
             {
                 destination.accept((dx, dy, dw, dh) ->
                 {
-                    source.accept((sx, sy, sw, sh) ->
+                    tiles.accept((sw, sh) ->
                     {
-                        graphics.setClip(new java.awt.geom.Rectangle2D.Float(dx, dy, dw, dh));
                         graphics.setPaint(paint);
                         float scaleX = sw == 0f ? 0f : 1f / sw;
                         float scaleY = sh == 0f ? 0f : 1f / sh;
-                        graphics.translate(dx, dy);
+                        graphics.translate(dx, dy + dh);
                         graphics.scale(scaleX * dw, -scaleY * dh);
-                        graphics.translate(-sx, -sy - sh);
-                        graphics.fill(new java.awt.geom.Rectangle2D.Float(0f, 0f, sw + sx, sh + sy));
+                        graphics.fill(new java.awt.geom.Rectangle2D.Float(0f, 0f, sw, sh));
                         graphics.setTransform(transform);
                     });
                 });

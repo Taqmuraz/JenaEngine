@@ -61,8 +61,12 @@ public class PostponedGraphicsClip implements GraphicsClip, GraphicsClipPainter
     @Override
     public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
     {
-        MatrixScope scope = scopes.peek();
-        scope.appendPainter(clip -> clip.drawSprite(texture, source, destination));
+        scopes.peek().appendPainter(clip -> clip.drawSprite(texture, source, destination));
+    }
+    @Override
+    public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
+    {
+        scopes.peek().appendPainter(clip -> clip.drawTile(texture, tiles, destination));
     }
 
     @Override

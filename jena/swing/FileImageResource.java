@@ -44,6 +44,16 @@ public class FileImageResource implements SwingTextureResource
             {
                 acceptor.call(paint);
             }
+            @Override
+            public void acceptImage(ImageAcceptor acceptor)
+            {
+                acceptor.call(image);
+            }
+            @Override
+            public void acceptSize(ImageSizeAcceptor acceptor)
+            {
+                acceptor.call(image.getWidth(), image.getHeight());
+            }
         });
     }
 }

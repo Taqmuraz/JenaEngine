@@ -86,11 +86,11 @@ public class Player implements GraphicsClipPainter, FrameStartHandler, FrameEndH
         ValueFloat groundOffset = new BackgroundOffset(10f, 1f);
         ValueFloat skyOffset = new BackgroundOffset(40f, 0.5f);
 
-        clip.drawSprite(groundTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(-10f - groundOffset.read(), -10f, 10f, 8f));
-        clip.drawSprite(groundTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(-groundOffset.read(), -10f, 10f, 8f));
-        clip.drawSprite(groundTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(10f - groundOffset.read(), -10f, 10f, 8f));
-        clip.drawSprite(skyTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(-20f - skyOffset.read(), -2f, 40f, 5f));
-        clip.drawSprite(skyTexture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(20f - skyOffset.read(), -2f, 40f, 5f));
-        clip.matrixScope(s -> new Matrix3fBuilder(s).translate(a -> a.call(1f, -2f)).build(), () -> human.paint(clip));
+        clip.matrixScope(s -> new Matrix3fBuilder(s).translate(a -> a.call(1f, -2f)).build(), () ->
+        {
+            clip.drawTile(skyTexture, a -> a.call(2f, 1f), a -> a.call(-20f - skyOffset.read(), 0f, 60f, 5f));
+            clip.drawTile(groundTexture, a -> a.call(3f, 1f), a -> a.call(-10f - groundOffset.read(), -8f, 30f, 8f));
+            human.paint(clip);
+        });
     }
 }
