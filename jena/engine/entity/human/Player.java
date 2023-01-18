@@ -11,7 +11,6 @@ import jena.engine.input.Key;
 import jena.engine.input.Keyboard;
 import jena.engine.io.StorageFileResource;
 import jena.engine.math.Matrix3fBuilder;
-import jena.engine.math.Matrix3fTranslation;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAcceptor;
@@ -40,8 +39,7 @@ public class Player implements GraphicsClipPainter, FrameStartHandler, FrameEndH
                 if (s.isHold()) y -= 1f;
                 if (a.isHold()) x -= 1f;
                 if (d.isHold()) x += 1f;
-                //acceptor.call(x, y);
-                acceptor.call(1f, 0f);
+                acceptor.call(x, y);
             }
         });
         groundTexture = graphicsResource.loadTexture(new StorageFileResource("Ground.png"));
@@ -83,8 +81,8 @@ public class Player implements GraphicsClipPainter, FrameStartHandler, FrameEndH
     @Override
     public void paint(GraphicsClip clip)
     {
-        ValueFloat groundOffset = new BackgroundOffset(10f, 1f);
-        ValueFloat skyOffset = new BackgroundOffset(40f, 0.5f);
+        ValueFloat groundOffset = new BackgroundOffset(10f, 0f);
+        ValueFloat skyOffset = new BackgroundOffset(40f, 0f);
 
         clip.matrixScope(s -> new Matrix3fBuilder(s).translate(a -> a.call(1f, -2f)).build(), () ->
         {

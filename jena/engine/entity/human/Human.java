@@ -70,7 +70,7 @@ public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHa
         
         frameMeter = new DefaultTimeMeter();
 
-        ValueFloat sin = () -> (float)Math.sin(Time.time() * 3f) * 0.5f * new Vector2fStruct(movement).length();
+        ValueFloat sin = () -> (float)Math.sin(Time.time() * 6f) * 0.5f * new Vector2fStruct(movement).length();
         ValueInt dir = new ValueInt()
         {
             int dir = 1;
@@ -131,8 +131,8 @@ public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHa
         float dt = frameMeter.measureTime();
         movement.accept((x, y) ->
         {
-            //position.x += x * dt * 3f;
-            //position.y += y * dt * 3f;
+            position.x += x * dt * 3f;
+            position.y += y * dt * 3f;
         });
     }
 }

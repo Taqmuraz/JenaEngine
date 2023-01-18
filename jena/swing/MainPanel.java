@@ -13,8 +13,10 @@ import javax.swing.JPanel;
 
 import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
+import jena.engine.entity.DefaultTimeMeter;
 import jena.engine.entity.FrameEndHandler;
 import jena.engine.entity.FrameStartHandler;
+import jena.engine.entity.TimeMeter;
 import jena.engine.entity.human.Player;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsDevice;
@@ -65,12 +67,14 @@ public class MainPanel extends JPanel implements GraphicsResource
 
 		String[] buttons = new String[] { "Играться", "Загрузиться", "Выбираться", "Уходить" };
 
-		painters.add(new RootCanvas(a -> a.call(450f, 550f, 300f, 55f * buttons.length), windowMouse, canvas ->
+		painters.add(new RootCanvas(a -> a.call(450f, 550f, 300f, 55f * buttons.length + 1), windowMouse, canvas ->
 		{
 			UserCanvas userCanvas = new MenuCanvas(canvas);
+			TimeMeter frameMeter = new DefaultTimeMeter();
+			canvas.drawText(() -> "fps = %s".formatted(String.valueOf((int)(1f / frameMeter.measureTime()))), a -> a.call(0f, 0f, 300f, 50f), a -> a.call(255, 255, 255, 255));
 			IntStream.range(0, buttons.length).boxed().forEach(b -> 
 			{
-				userCanvas.drawButton(() -> buttons[b], a -> a.call(0f, b * 55f, 300f, 50f), c -> c.call(255, 150, 50, 255), c -> c.call(100, 100, 100, 255), () -> System.out.println(b));
+				userCanvas.drawButton(() -> buttons[b], a -> a.call(0f, (b + 1) * 55f, 300f, 50f), c -> c.call(255, 150, 50, 255), c -> c.call(100, 100, 100, 255), () -> System.out.println(b));
 			});
 		}));
 
