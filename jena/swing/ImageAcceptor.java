@@ -4,5 +4,5 @@ import java.awt.Image;
 
 public interface ImageAcceptor
 {
-	void call(Image image);
+    void call(Image image);
 }

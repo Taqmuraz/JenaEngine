@@ -4,5 +4,5 @@ import jena.engine.graphics.TextureHandle;
 
 public interface SwingTextureResource extends TextureHandle
 {
-	void accept(ImageDescriptorAcceptor acceptor);
+    void accept(ImageDescriptorAcceptor acceptor);
 }

@@ -4,5 +4,5 @@ import java.awt.Paint;
 
 public interface PaintAcceptor
 {
-	void call(Paint paint);
+    void call(Paint paint);
 }

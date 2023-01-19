@@ -11,25 +11,25 @@ import java.awt.event.MouseMotionListener;
 
 public class SwingMouse extends KeySystem implements Mouse, MouseListener, MouseMotionListener
 {
-	Vector2fStruct position;
+    Vector2fStruct position;
 
-	public SwingMouse()
-	{
-		super(3);
+    public SwingMouse()
+    {
+        super(3);
         position = new Vector2fStruct();
-	}
+    }
 
-	@Override
-	public Vector2f position()
-	{
-		return position;
-	}
+    @Override
+    public Vector2f position()
+    {
+        return position;
+    }
 
-	@Override
-	public Key button(int button)
-	{
-		return new SystemKey(button);
-	}
+    @Override
+    public Key button(int button)
+    {
+        return new SystemKey(button);
+    }
 
     @Override
     public void mouseClicked(MouseEvent e)

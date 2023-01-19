@@ -23,7 +23,7 @@ import java.awt.Shape;
 
 public class SwingGraphicsClip implements GraphicsClip
 {
-	private Graphics2D graphics;
+    private Graphics2D graphics;
     private AffineTransform transform;
     private AffineTransform identity;
     private AffineTransform line;
@@ -48,8 +48,8 @@ public class SwingGraphicsClip implements GraphicsClip
     }
 
     @Override
-	public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
-	{
+    public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
+    {
         if (texture instanceof SwingTextureResource swingTexture)
         {
             swingTexture.accept(descriptor -> descriptor.acceptImage(image ->
@@ -76,11 +76,11 @@ public class SwingGraphicsClip implements GraphicsClip
                     }));
             }));
         }
-	}
+    }
 
-	@Override
-	public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
-	{
+    @Override
+    public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
+    {
         if (texture instanceof SwingTextureResource swingTexture)
         {
             swingTexture.accept(descriptor -> descriptor.acceptPaint(paint ->
@@ -100,12 +100,12 @@ public class SwingGraphicsClip implements GraphicsClip
                 });
             }));
         }
-	}
+    }
 
-	@Override
-	public void fillRect(Rectf rect, jena.engine.graphics.Color color)
-	{
-		rect.accept((x, y, w, h) ->
+    @Override
+    public void fillRect(Rectf rect, jena.engine.graphics.Color color)
+    {
+        rect.accept((x, y, w, h) ->
             color.accept((cr, cg, cb, ca) ->
             {
                 graphics.setTransform(identity);
@@ -127,7 +127,7 @@ public class SwingGraphicsClip implements GraphicsClip
 
                 graphics.setTransform(transform);
             }));
-	}
+    }
 
     @Override
     public void drawText(Text text, Rectf rect, Color color)
