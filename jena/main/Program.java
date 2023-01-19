@@ -1,9 +1,10 @@
-package jena.swing;
+package jena.main;
 
 import java.awt.EventQueue;
 import java.util.Scanner;
 
 import jena.environment.StandardEnvironmentVariables;
+import jena.swing.MainWindow;
 
 public class Program
 {
