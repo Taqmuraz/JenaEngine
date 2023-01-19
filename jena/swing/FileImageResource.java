@@ -25,10 +25,7 @@ public class FileImageResource implements SwingTextureResource
             {
                 errorHandler.call(error);
             }
-        }, error ->
-        {
-            errorHandler.call(error);
-        });
+        }, errorHandler);
 
         image = image == null ? nullImage : image;
         paint = new TexturePaint(image, new java.awt.geom.Rectangle2D.Float(0f, 0f, 1f, 1f));
