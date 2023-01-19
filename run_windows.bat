@@ -1,2 +1,1 @@
-cd build
-java -Xms64M -classpath lib/* -jar jena.jar fps 144
+java -Xms64M -jar build/jena.jar fps 144

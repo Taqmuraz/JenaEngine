@@ -4,7 +4,7 @@ import java.awt.EventQueue;
 import java.util.Scanner;
 
 import jena.environment.StandardEnvironmentVariables;
-import jena.swing.MainWindow;
+import jena.opengl.OpenGLWindow;
 
 public class Program
 {
@@ -17,7 +17,7 @@ public class Program
         {
             try
             {
-                new MainWindow(new StandardEnvironmentVariables(args));
+                new OpenGLWindow(new StandardEnvironmentVariables(args));
             }
             catch(Throwable error)
             {
