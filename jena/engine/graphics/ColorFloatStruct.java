@@ -9,4 +9,14 @@ public class ColorFloatStruct extends ColorStruct
         this.b = (int)(b * float2byte);
         this.a = (int)(a * float2byte);
     }
+    public ColorFloatStruct(Color color)
+    {
+        color.accept((r, g, b, a) ->
+        {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            this.a = a;
+        });
+    }
 }
