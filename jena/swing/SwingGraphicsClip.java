@@ -137,7 +137,7 @@ public class SwingGraphicsClip implements GraphicsClip
         rect.accept((x, y, w, h) ->
         {
             String content = text.content();
-            var metrics = graphics.getFontMetrics(graphics.getFont());
+            java.awt.FontMetrics metrics = graphics.getFontMetrics(graphics.getFont());
             float bw = metrics.stringWidth(content);
             float bh = metrics.getLineMetrics(content, graphics).getHeight();
 

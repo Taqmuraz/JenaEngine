@@ -22,7 +22,7 @@ public class Program
             catch(Throwable error)
             {
                 System.out.println(error.toString());
-                for (var trace : error.getStackTrace())
+                for (Object trace : error.getStackTrace())
                 {
                     System.out.println(trace);
                 }
