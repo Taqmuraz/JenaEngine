@@ -9,7 +9,6 @@ import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
-import jena.engine.math.Matrix3fElements;
 import jena.engine.math.Matrix3fPipeline;
 import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;

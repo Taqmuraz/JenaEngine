@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.DefaultTimeMeter;
-import jena.engine.entity.FrameEndHandler;
-import jena.engine.entity.FrameStartHandler;
+import jena.engine.entity.FrameEndListener;
+import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.TimeMeter;
 import jena.engine.entity.human.Player;
 import jena.engine.graphics.GraphicsResource;
@@ -36,8 +36,8 @@ public class MainPanel extends JPanel implements GraphicsResource
 {
     private ErrorHandler errorHandler;
     private GraphicsDevicePainter rootPainter;
-    private FrameStartHandler frameStartHandler;
-    private FrameEndHandler frameEndHandler;
+    private FrameStartListener frameStartHandler;
+    private FrameEndListener frameEndHandler;
     private BufferedImage screenBuffer;
     private Rectf graphicsRect;
     private Vector2f canvasSize;
@@ -81,8 +81,8 @@ public class MainPanel extends JPanel implements GraphicsResource
         frameStartHandler = player;
         frameEndHandler = () ->
         {
-            keyboard.updateState();
-            mouse.updateState();
+            keyboard.onEndFrame();
+            mouse.onEndFrame();
         };
         GraphicsDevicePainter painter = device ->
         {

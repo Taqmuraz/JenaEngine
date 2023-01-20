@@ -1,14 +1,14 @@
-package jena.swing;
+package jena.engine.input;
 
-import jena.engine.input.Key;
+import jena.engine.entity.FrameEndListener;
 
-public abstract class KeySystem
+public abstract class KeySystem implements FrameEndListener
 {
     protected class SystemKey implements Key
     {
         int code;
 
-        SystemKey(int code)
+        public SystemKey(int code)
         {
             this.code = code;
         }
@@ -36,12 +36,13 @@ public abstract class KeySystem
 
     protected int[] states;
 
-    static final int NONE_STATE = 0;
-    static final int DOWN_STATE = 1;
-    static final int HOLD_STATE = 2;
-    static final int UP_STATE = 3;
+    protected static final int NONE_STATE = 0;
+    protected static final int DOWN_STATE = 1;
+    protected static final int HOLD_STATE = 2;
+    protected static final int UP_STATE = 3;
 
-    public void updateState()
+    @Override
+    public void onEndFrame()
     {
         for (int i = 0; i < states.length; i++)
         {

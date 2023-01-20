@@ -1,10 +1,10 @@
 package jena.engine.entity.human;
 
-import jena.engine.entity.FrameEndHandler;
-import jena.engine.entity.FrameStartHandler;
+import jena.engine.entity.FrameEndListener;
+import jena.engine.entity.FrameStartListener;
 import jena.engine.graphics.GraphicsClipPainter;
 
-public interface HumanState extends GraphicsClipPainter, FrameStartHandler, FrameEndHandler
+public interface HumanState extends GraphicsClipPainter, FrameStartListener, FrameEndListener
 {
     void onEnter();
     void onExit();

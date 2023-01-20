@@ -1,6 +1,6 @@
 package jena.engine.entity;
 
-public interface FrameEndHandler
+public interface FrameEndListener
 {
     void onEndFrame();
 }

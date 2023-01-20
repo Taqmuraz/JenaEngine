@@ -2,10 +2,10 @@ package jena.engine.entity.human;
 
 import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
-import jena.engine.entity.FrameStartHandler;
+import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.Controller;
 import jena.engine.entity.DefaultTimeMeter;
-import jena.engine.entity.FrameEndHandler;
+import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.Time;
 import jena.engine.entity.TimeMeter;
 import jena.engine.graphics.GraphicsClip;
@@ -22,7 +22,7 @@ import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAdd;
 import jena.engine.math.Vector2fStruct;
 
-public class Human implements GraphicsClipPainter, FrameStartHandler, FrameEndHandler
+public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndListener
 {
     private interface BodyPart extends GraphicsClipPainter
     {

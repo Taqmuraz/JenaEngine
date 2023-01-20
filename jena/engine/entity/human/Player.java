@@ -1,7 +1,7 @@
 package jena.engine.entity.human;
 
-import jena.engine.entity.FrameEndHandler;
-import jena.engine.entity.FrameStartHandler;
+import jena.engine.entity.FrameEndListener;
+import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.Time;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.GraphicsClipPainter;
@@ -15,7 +15,7 @@ import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAcceptor;
 
-public class Player implements GraphicsClipPainter, FrameStartHandler, FrameEndHandler
+public class Player implements GraphicsClipPainter, FrameStartListener, FrameEndListener
 {
     Human human;
     TextureHandle groundTexture;

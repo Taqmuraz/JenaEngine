@@ -1,6 +1,7 @@
 package jena.swing;
 
 import jena.engine.input.Key;
+import jena.engine.input.KeySystem;
 import jena.engine.input.Mouse;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fStruct;

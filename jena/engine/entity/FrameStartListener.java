@@ -1,6 +1,6 @@
 package jena.engine.entity;
 
-public interface FrameStartHandler
+public interface FrameStartListener
 {
     void onStartFrame();
 }

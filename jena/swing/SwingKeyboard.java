@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import jena.engine.input.Key;
+import jena.engine.input.KeySystem;
 import jena.engine.input.Keyboard;
 
 public class SwingKeyboard extends KeySystem implements Keyboard, KeyListener
