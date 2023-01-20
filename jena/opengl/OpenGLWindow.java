@@ -18,8 +18,10 @@ public class OpenGLWindow extends JFrame
         int width = 800;
         int height = 600;
 
+        variables.findVariable(getName(), null, null);
+
         GLProfile.initSingleton();
-        GLProfile profile = GLProfile.get(GLProfile.GL2);
+        GLProfile profile = GLProfile.getDefault();
         GLCapabilities cap = new GLCapabilities(profile);
         GLWindow window = GLWindow.create(cap);
         window.setSize(width, height);
