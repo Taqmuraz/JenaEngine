@@ -28,8 +28,9 @@ public class OpenGLClip implements GraphicsClip
     @Override
     public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
     {
-        if (texture instanceof OpenGLTextureHandle openGLtex)
+        if (texture instanceof OpenGLTextureHandle)
         {
+            OpenGLTextureHandle openGLtex = (OpenGLTextureHandle)texture;
             source.accept((sx, sy, sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.bindTransparent(gl, () ->
             {
                 gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
@@ -55,8 +56,9 @@ public class OpenGLClip implements GraphicsClip
     @Override
     public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
     {
-        if (texture instanceof OpenGLTextureHandle openGLtex)
+        if (texture instanceof OpenGLTextureHandle)
         {
+            OpenGLTextureHandle openGLtex = (OpenGLTextureHandle)texture;
             tiles.accept((sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.bind(gl, () ->
             {
                 gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);

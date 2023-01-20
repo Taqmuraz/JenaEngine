@@ -46,11 +46,10 @@ public abstract class KeySystem implements FrameEndListener
     {
         for (int i = 0; i < states.length; i++)
         {
-            states[i] = switch(states[i])
+            switch(states[i])
             {
-                case DOWN_STATE -> HOLD_STATE;
-                case UP_STATE -> NONE_STATE;
-                default -> states[i];
+                case DOWN_STATE: states[i] = HOLD_STATE; break;
+                case UP_STATE: states[i] = NONE_STATE; break;
             };
         }
     }

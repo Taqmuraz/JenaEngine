@@ -50,8 +50,9 @@ public class SwingGraphicsClip implements GraphicsClip
     @Override
     public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
     {
-        if (texture instanceof SwingTextureResource swingTexture)
+        if (texture instanceof SwingTextureResource)
         {
+            SwingTextureResource swingTexture = (SwingTextureResource)texture;
             swingTexture.accept(descriptor -> descriptor.acceptImage(image ->
             {
                 destination.accept((dx, dy, dw, dh) ->
@@ -81,8 +82,9 @@ public class SwingGraphicsClip implements GraphicsClip
     @Override
     public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
     {
-        if (texture instanceof SwingTextureResource swingTexture)
+        if (texture instanceof SwingTextureResource)
         {
+            SwingTextureResource swingTexture = (SwingTextureResource)texture;
             swingTexture.accept(descriptor -> descriptor.acceptPaint(paint ->
             {
                 destination.accept((dx, dy, dw, dh) ->
