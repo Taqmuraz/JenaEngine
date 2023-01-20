@@ -28,13 +28,54 @@ public class OpenGLClip implements GraphicsClip
     @Override
     public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
     {
-        fillRect(destination, a -> a.call(255, 0, 255, 255));
+        if (texture instanceof OpenGLTextureHandle openGLtex)
+        {
+            source.accept((sx, sy, sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.bindTransparent(gl, () ->
+            {
+                gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+                gl.glColor3f(1f, 1f, 1f);
+                gl.glBegin(GL2.GL_QUADS);
+                gl.glTexCoord2f(sx, sy + sh);
+                gl.glVertex2f(dx, dy);
+                gl.glTexCoord2f(sx, sy);
+                gl.glVertex2f(dx, dy + dh);
+                gl.glTexCoord2f(sx + sw, sy);
+                gl.glVertex2f(dx + dw, dy + dh);
+                gl.glTexCoord2f(sx + sw, sy + sh);
+                gl.glVertex2f(dx + dw, dy);
+                gl.glEnd();
+            })));
+        }
     }
 
     @Override
     public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
     {
-        fillRect(destination, a -> a.call(0, 255, 255, 255));
+        if (texture instanceof OpenGLTextureHandle openGLtex)
+        {
+            tiles.accept((sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.bind(gl, () ->
+            {
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+                gl.glColor3f(1f, 1f, 1f);
+                gl.glBegin(GL2.GL_QUADS);
+                gl.glTexCoord2f(0f, sh);
+                gl.glVertex2f(dx, dy);
+                gl.glTexCoord2f(0f, 0f);
+                gl.glVertex2f(dx, dy + dh);
+                gl.glTexCoord2f(sw, 0f);
+                gl.glVertex2f(dx + dw, dy + dh);
+                gl.glTexCoord2f(sw, sh);
+                gl.glVertex2f(dx + dw, dy);
+                gl.glEnd();
+            })));
+        }
     }
 
     @Override

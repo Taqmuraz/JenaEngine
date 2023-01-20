@@ -27,7 +27,7 @@ public class OpenGLWindow extends JFrame
         Vector2f screenSize = a -> a.call(window.getWidth(), window.getHeight());
         Rectf paintRect = new GraphicsRectf(screenSize, a -> a.call(width, height));
 
-        new OpenGLWindowListener(window, paintRect);
+        window.addGLEventListener(new OpenGLWindowListener(window, paintRect));
 
         window.setVisible(true);
     }

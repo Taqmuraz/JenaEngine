@@ -15,7 +15,7 @@ public class StorageFileResource implements FileResource
 
     public StorageFileResource(String resourceName)
     {
-        this.fileName = String.format("../resources/%s", resourceName);
+        this.fileName = String.format("resources/%s", resourceName);
     }
 
     @Override

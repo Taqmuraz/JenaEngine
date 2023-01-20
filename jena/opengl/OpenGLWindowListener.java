@@ -4,8 +4,10 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 
+import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
@@ -28,36 +30,26 @@ public class OpenGLWindowListener implements GLEventListener
 
     class OpenGLGraphicsResource implements GraphicsResource
     {
+        GLProfile profile;
+        ErrorHandler errorHandler;
+
+        public OpenGLGraphicsResource(GLProfile profile, ErrorHandler errorHandler)
+        {
+            this.profile = profile;
+            this.errorHandler = errorHandler;
+        }
+
         @Override
         public TextureHandle loadTexture(FileResource file)
         {
-            return new TextureHandle() {};
+            return new OpenGLTextureHandle(profile, file, errorHandler);
         }
     }
 
     public OpenGLWindowListener(GLWindow window, Rectf paintArea)
     {
         this.paintArea = paintArea;
-        OpenGLKeyboard keyboard = new OpenGLKeyboard();
-        Player player = new Player(new OpenGLGraphicsResource(), keyboard);
-
-        frameStart = player;
-        frameEnd = () ->
-        {
-            player.onEndFrame();
-            keyboard.onEndFrame();
-        };
-
-        window.addGLEventListener(this);
-        window.addKeyListener(keyboard);
-        animator = new FPSAnimator(window, 60);
-        animator.start();
-
-        root = new Camera(a ->
-        {
-            RectfStruct area = new RectfStruct(paintArea);
-            a.call(0f, 0f, area.width, area.height);
-        }, a -> a.call(200, 100, 100, 255), player);
+        this.window = window;
     }
 
     @Override
@@ -86,6 +78,27 @@ public class OpenGLWindowListener implements GLEventListener
     public void init(GLAutoDrawable drawable)
     {
         System.out.println("init");
+
+        OpenGLKeyboard keyboard = new OpenGLKeyboard();
+        Player player = new Player(new OpenGLGraphicsResource(drawable.getGLProfile(), System.out::println), keyboard);
+
+        frameStart = player;
+        frameEnd = () ->
+        {
+            player.onEndFrame();
+            keyboard.onEndFrame();
+        };
+
+        window.addKeyListener(keyboard);
+
+        root = new Camera(a ->
+        {
+            RectfStruct area = new RectfStruct(paintArea);
+            a.call(0f, 0f, area.width, area.height);
+        }, a -> a.call(200, 100, 100, 255), player);
+
+        animator = new FPSAnimator(window, 60);
+        animator.start();
     }
 
     @Override
