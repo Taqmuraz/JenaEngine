@@ -21,7 +21,7 @@ public class StorageFileResource implements FileResource
     @Override
     public void read(InputStreamAcceptor acceptor, ErrorHandler errorHandler)
     {
-        InputStream stream = java.io.InputStream.nullInputStream();
+        InputStream stream = new NullInputStream();
         
         try
         {
