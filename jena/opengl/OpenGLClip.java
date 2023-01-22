@@ -3,15 +3,15 @@ package jena.opengl;
 import com.jogamp.opengl.GL;
 
 import jena.engine.common.Action;
-import jena.engine.common.ActionSingle;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
+import jena.engine.math.Matrix3fMul;
 import jena.engine.math.Matrix3fPipeline;
+import jena.engine.math.Matrix3fRect;
 import jena.engine.math.Rectf;
-import jena.engine.math.RectfStruct;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
@@ -19,51 +19,41 @@ import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 public class OpenGLClip implements GraphicsClip
 {
     GL gl;
-    ActionSingle<Rectf> quad;
-    Matrix3fPipeline matrixStack;
+    OpenGLPrimitiveBuilder primitives;
+    Matrix3fPipeline pipeline;
 
-    public OpenGLClip(GL gl, OpenGLPrimitiveBuilder primitives, Matrix3fPipeline matrixPipeline)
+    public OpenGLClip(GL gl, OpenGLPrimitiveBuilder primitives, Matrix3fPipeline pipeline)
     {
         this.gl = gl;
-
-        quad = new ActionSingle<Rectf>()
-        {
-            RectfStruct rect = new RectfStruct();
-            OpenGLPrimitive quad = primitives.quad(rect);
-
-            @Override
-            public void call(Rectf rect)
-            {
-                this.rect.apply(rect);
-                quad.draw();
-            }
-        };
-        matrixStack = matrixPipeline;
+        this.primitives = primitives;
+        this.pipeline = pipeline;
     }
 
     @Override
     public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
     {
-        if (texture instanceof OpenGLDiffuseTexture)
+        if (texture instanceof OpenGLTexture)
         {
-            OpenGLDiffuseTexture openGLtex = (OpenGLDiffuseTexture)texture;
-            openGLtex.point().clamp().transparent().bind(gl, () ->
+            OpenGLTexture openGLtex = (OpenGLTexture)texture;
+            primitives.fromUniforms(uniforms ->
             {
-                quad.call(destination);
-            });
+                return primitives.quad().transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
+            })
+            .textured(openGLtex.point().clamp().transparent(), gl).draw();
         }
     }
 
     @Override
     public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
     {
-        if (texture instanceof OpenGLDiffuseTexture)
+        if (texture instanceof OpenGLTexture)
         {
-            OpenGLDiffuseTexture openGLtex = (OpenGLDiffuseTexture)texture;
-            openGLtex.point().repeat().opaque().bind(gl, () ->
+            OpenGLTexture openGLtex = (OpenGLTexture)texture;
+            primitives.fromUniforms(uniforms ->
             {
-                quad.call(destination);
-            });
+                return primitives.quad().transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
+            })
+            .textured(openGLtex.point().repeat().opaque(), gl).draw();
         }
     }
 
@@ -100,14 +90,12 @@ public class OpenGLClip implements GraphicsClip
     @Override
     public void fillRect(Rectf rect, Color color)
     {
-        rect.accept((x, y, w, h) ->
-        {
-        });
+        
     }
 
     @Override
     public void matrixScope(Transformation transformation, Action action)
     {
-        matrixStack.matrixScope(transformation, action);
+        pipeline.matrixScope(transformation, action);
     }
 }

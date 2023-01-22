@@ -1,9 +1,10 @@
 package jena.opengl.primitive;
 
-import jena.engine.math.Rectf;
 import jena.opengl.OpenGLPrimitive;
+import jena.opengl.OpenGLUniformsPrimitive;
 
 public interface OpenGLPrimitiveBuilder
 {
-    OpenGLPrimitive quad(Rectf rect);
+    OpenGLPrimitive quad();
+    OpenGLPrimitive fromUniforms(OpenGLUniformsPrimitive acceptor);
 }

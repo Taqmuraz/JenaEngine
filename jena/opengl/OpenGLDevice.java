@@ -1,24 +1,27 @@
 package jena.opengl;
 
-import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL;
 
 import jena.engine.common.ErrorHandler;
+import jena.engine.common.Function;
 import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.math.Rectf;
-import jena.opengl.gles.OpenGLESBufferPrimitiveBuilder;
+import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
 public class OpenGLDevice implements GraphicsDevice
 {
-    GL2 gl;
+    GL gl;
     Rectf paintArea;
-    OpenGLESBufferPrimitiveBuilder primitives;
+    OpenGLPrimitiveBuilder primitives;
+    Function<OpenGLMatrixPipeline> pipelineConstructor;
 
-    public OpenGLDevice(GL2 gl, Rectf paintArea, ErrorHandler errorHandler)
+    public OpenGLDevice(GL gl, Function<OpenGLMatrixPipeline> pipelineConstructor, OpenGLPrimitiveBuilder primitives, Rectf paintArea, ErrorHandler errorHandler)
     {
+        this.pipelineConstructor = pipelineConstructor;
         this.gl = gl;
         this.paintArea = paintArea;
-        primitives = new OpenGLESBufferPrimitiveBuilder(gl, errorHandler);
+        this.primitives = primitives;
     }
 
     @Override
@@ -26,7 +29,7 @@ public class OpenGLDevice implements GraphicsDevice
     {
         paintArea.accept((px, py, pw, ph) -> rect.accept((x, y, w, h) ->
         {
-            OpenGLMatrixPipeline pipeline = new OpenGLMatrixPipeline(gl);
+            OpenGLMatrixPipeline pipeline = pipelineConstructor.call();
             pipeline.rectScope(a -> a.call(x + px, y + py, w, h), () ->
             {
                 painter.paint(new OpenGLClip(gl, primitives, pipeline));

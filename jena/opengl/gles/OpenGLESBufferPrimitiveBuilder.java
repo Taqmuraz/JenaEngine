@@ -8,9 +8,9 @@ import com.jogamp.opengl.GL2ES3;
 
 import jena.engine.common.ErrorHandler;
 import jena.engine.io.StorageFileResource;
-import jena.engine.math.Rectf;
 import jena.opengl.OpenGLPrimitive;
 import jena.opengl.OpenGLShader;
+import jena.opengl.OpenGLUniformsPrimitive;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 import jena.opengl.shader.OpenGLStandardShader;
 
@@ -18,6 +18,8 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
 {
     private GL2ES3 gl;
     private OpenGLShader shader;
+
+    private OpenGLPrimitive quad;
 
     public OpenGLESBufferPrimitiveBuilder(GL2ES3 gl, ErrorHandler errorHandler)
     {
@@ -33,6 +35,8 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
                 acceptor.call(1, "texcoord");
             }
         );
+
+        quad = createQuad();
     }
 
     private void loadAttributeBuffer(int index, int stride, float[] data, int vboID)
@@ -45,7 +49,12 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
     }
 
     @Override
-    public OpenGLPrimitive quad(Rectf rect)
+    public OpenGLPrimitive quad()
+    {
+        return quad;
+    }
+
+    private OpenGLPrimitive createQuad()
     {
         IntBuffer vaoBuffer = IntBuffer.allocate(1);
         gl.glGenVertexArrays(1, vaoBuffer);
@@ -67,8 +76,8 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
         float[] positions = new float[]
         {
             0f, 0f,
-            0f, 1f,
-            1f, 1f,
+            0f, -1f,
+            1f, -1f,
             1f, 0f
         };
         float[] uvs = new float[]
@@ -89,5 +98,11 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
             gl.glEnableVertexAttribArray(1);
             gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);
         });
+    }
+
+    @Override
+    public OpenGLPrimitive fromUniforms(OpenGLUniformsPrimitive acceptor)
+    {
+        return acceptor.create(shader);
     }
 }

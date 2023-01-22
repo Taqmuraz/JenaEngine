@@ -2,6 +2,7 @@ package jena.opengl;
 
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
@@ -18,6 +19,10 @@ import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
 import jena.engine.math.Rectf;
 import jena.engine.math.RectfStruct;
+import jena.opengl.gles.OpenGLESBufferPrimitiveBuilder;
+import jena.opengl.gles.OpenGLESMatrixPipeline;
+import jena.opengl.primitive.OpenGLPrimitiveBuilder;
+import jena.opengl.texture.OpenGLDiffuseTexture;
 
 public class OpenGLWindowListener implements GLEventListener
 {
@@ -27,6 +32,7 @@ public class OpenGLWindowListener implements GLEventListener
     GraphicsDevicePainter root;
     FrameStartListener frameStart;
     FrameEndListener frameEnd;
+    OpenGLPrimitiveBuilder primitives;
 
     class OpenGLGraphicsResource implements GraphicsResource
     {
@@ -57,12 +63,12 @@ public class OpenGLWindowListener implements GLEventListener
     {
         frameStart.onStartFrame();
 
-        GL2 gl = drawable.getGL().getGL2();
+        GL2ES1 gl = drawable.getGL().getGL2ES1();
         gl.glDisable(GL2.GL_DEPTH_TEST);
         gl.glClearColor(0.5f, 0.5f, 0.5f, 1f);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
-        root.paint(new OpenGLDevice(gl, paintArea, System.out::println));
+        root.paint(new OpenGLDevice(gl, () -> new OpenGLESMatrixPipeline(gl), primitives, paintArea, System.out::println));
 
         frameEnd.onEndFrame();
     }
@@ -70,17 +76,19 @@ public class OpenGLWindowListener implements GLEventListener
     @Override
     public void dispose(GLAutoDrawable drawable)
     {
-        System.out.println("stop");
+        System.out.println("disposed");
         animator.stop();
     }
 
     @Override
     public void init(GLAutoDrawable drawable)
     {
-        System.out.println("init");
+        System.out.println("initialized");
 
         OpenGLKeyboard keyboard = new OpenGLKeyboard();
         Player player = new Player(new OpenGLGraphicsResource(drawable.getGLProfile(), System.out::println), keyboard);
+
+        primitives = new OpenGLESBufferPrimitiveBuilder(drawable.getGL().getGL2ES3(), System.out::println);
 
         frameStart = player;
         frameEnd = () ->

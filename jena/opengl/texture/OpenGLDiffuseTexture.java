@@ -1,4 +1,4 @@
-package jena.opengl;
+package jena.opengl.texture;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLProfile;
@@ -9,6 +9,7 @@ import jena.engine.common.Action;
 import jena.engine.common.ActionSingle;
 import jena.engine.common.ErrorHandler;
 import jena.engine.io.FileResource;
+import jena.opengl.OpenGLTexture;
 
 import javax.imageio.ImageIO;
 

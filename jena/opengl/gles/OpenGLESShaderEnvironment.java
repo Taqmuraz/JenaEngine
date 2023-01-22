@@ -3,11 +3,16 @@ package jena.opengl.gles;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.jogamp.opengl.GL2ES3;
 
+import jena.engine.common.Action;
 import jena.engine.common.ErrorHandler;
 import jena.engine.common.FunctionThrowsHandler;
+import jena.engine.math.Matrix3f;
+import jena.engine.math.Matrix3fElements;
 import jena.opengl.OpenGLShaderAttributeCollection;
 import jena.opengl.OpenGLShaderEnvironment;
 import jena.opengl.OpenGLShaderProgram;
@@ -39,7 +44,9 @@ public class OpenGLESShaderEnvironment implements OpenGLShaderEnvironment
             ByteBuffer message = ByteBuffer.allocate(bufferSize);
             gl.glGetShaderInfoLog(shaderID, bufferSize, length, message);
 
-            errorHandler.call(new Exception(String.format("Shader compile error\n%s", new FunctionThrowsHandler<String, UnsupportedEncodingException>(() -> new String(message.array(), "UTF-8"), error -> "encoding error").call())));
+            String[] lines = source.split("\n");
+            errorHandler.call(new Exception(String.format("Shader compile error\n%s\n%s", new FunctionThrowsHandler<String, UnsupportedEncodingException>(() -> new String(message.array(), "UTF-8"), error -> "encoding error").call(),
+                String.join("\n", IntStream.range(0, lines.length).boxed().map(i -> String.format("%d\t%s", i, lines[i])).collect(Collectors.toList())))));
         }
         return shaderID;
     }
@@ -59,11 +66,25 @@ public class OpenGLESShaderEnvironment implements OpenGLShaderEnvironment
         gl.glLinkProgram(program);
         gl.glValidateProgram(program);
 
-        return action ->
+        return new OpenGLShaderProgram()
         {
-            gl.glUseProgram(program);
-            action.call();
-            gl.glUseProgram(0);
+
+            @Override
+            public void execute(Action action)
+            {
+                gl.glUseProgram(program);
+                action.call();
+                gl.glUseProgram(0);
+            }
+
+            @Override
+            public void loadUniformMatrix(String name, Matrix3f matrix)
+            {
+                Matrix3fElements elements = matrix.elements();
+                float[] buffer = new float[9];
+                for(int i = 0; i < 9; i++) buffer[i] = elements.at(i);
+                gl.glUniformMatrix4fv(gl.glGetUniformLocation(program, name), 1, false, buffer, 0);
+            }
         };
     }
 }
