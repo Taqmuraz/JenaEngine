@@ -101,8 +101,6 @@ public class OpenGLClip implements GraphicsClip
 
     }
 
-    int uniqueColor;
-
     @Override
     public void fillRect(Rectf rect, Color color)
     {
