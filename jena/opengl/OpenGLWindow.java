@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GLProfile;
 
 import jena.engine.graphics.GraphicsRectf;
@@ -22,6 +23,7 @@ public class OpenGLWindow extends JFrame
         GLProfile profile = GLProfile.get(GLProfile.GL3bc);
         GLCapabilities cap = new GLCapabilities(profile);
         GLWindow window = GLWindow.create(cap);
+        window.setContextCreationFlags(GLContext.CTX_OPTION_DEBUG);
         window.setSize(width, height);
 
         Vector2f screenSize = a -> a.call(window.getWidth(), window.getHeight());

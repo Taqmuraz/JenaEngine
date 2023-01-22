@@ -55,8 +55,7 @@ public class OpenGLESMatrixPipeline implements OpenGLMatrixPipeline
             gl.glPushMatrix();
             gl.glLoadIdentity();
             gl.glViewport((int)x, (int)y, (int)w, (int)h);
-            matrixScope(s -> new Matrix3fMul(s, new Matrix3fRect(a -> a.call(0f, 0f, w, h))), action);
-            action.call();
+            matrixScope(s -> new Matrix3fMul(s, new Matrix3fRect(a -> a.call(0f, 0f, 0.5f / w, 0.5f / h))), action);
             gl.glPopMatrix();
         });
     }

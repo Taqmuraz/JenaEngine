@@ -83,7 +83,7 @@ public class OpenGLESShaderEnvironment implements OpenGLShaderEnvironment
                 Matrix3fElements elements = matrix.elements();
                 float[] buffer = new float[9];
                 for(int i = 0; i < 9; i++) buffer[i] = elements.at(i);
-                gl.glUniformMatrix4fv(gl.glGetUniformLocation(program, name), 1, false, buffer, 0);
+                gl.glUniformMatrix3fv(gl.glGetUniformLocation(program, name), 1, false, buffer, 0);
             }
         };
     }
