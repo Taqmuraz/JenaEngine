@@ -62,7 +62,7 @@ public class OpenGLWindowListener implements GLEventListener
         gl.glClearColor(0.5f, 0.5f, 0.5f, 1f);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
-        root.paint(new OpenGLDevice(gl, paintArea));
+        root.paint(new OpenGLDevice(gl, paintArea, System.out::println));
 
         frameEnd.onEndFrame();
     }

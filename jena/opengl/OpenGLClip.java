@@ -1,27 +1,43 @@
 package jena.opengl;
 
-import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL;
 
 import jena.engine.common.Action;
+import jena.engine.common.ActionSingle;
 import jena.engine.graphics.Color;
-import jena.engine.graphics.ColorFloatStruct;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
 import jena.engine.math.Matrix3fPipeline;
 import jena.engine.math.Rectf;
+import jena.engine.math.RectfStruct;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
+import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
 public class OpenGLClip implements GraphicsClip
 {
-    GL2 gl;
+    GL gl;
+    ActionSingle<Rectf> quad;
     Matrix3fPipeline matrixStack;
 
-    public OpenGLClip(GL2 gl, Matrix3fPipeline matrixPipeline)
+    public OpenGLClip(GL gl, OpenGLPrimitiveBuilder primitives, Matrix3fPipeline matrixPipeline)
     {
         this.gl = gl;
+
+        quad = new ActionSingle<Rectf>()
+        {
+            RectfStruct rect = new RectfStruct();
+            OpenGLPrimitive quad = primitives.quad(rect);
+
+            @Override
+            public void call(Rectf rect)
+            {
+                this.rect.apply(rect);
+                quad.draw();
+            }
+        };
         matrixStack = matrixPipeline;
     }
 
@@ -31,20 +47,10 @@ public class OpenGLClip implements GraphicsClip
         if (texture instanceof OpenGLDiffuseTexture)
         {
             OpenGLDiffuseTexture openGLtex = (OpenGLDiffuseTexture)texture;
-            source.accept((sx, sy, sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.point().clamp().transparent().bind(gl, () ->
+            openGLtex.point().clamp().transparent().bind(gl, () ->
             {
-                gl.glColor3f(1f, 1f, 1f);
-                gl.glBegin(GL2.GL_QUADS);
-                gl.glTexCoord2f(sx, sy + sh);
-                gl.glVertex2f(dx, dy);
-                gl.glTexCoord2f(sx, sy);
-                gl.glVertex2f(dx, dy + dh);
-                gl.glTexCoord2f(sx + sw, sy);
-                gl.glVertex2f(dx + dw, dy + dh);
-                gl.glTexCoord2f(sx + sw, sy + sh);
-                gl.glVertex2f(dx + dw, dy);
-                gl.glEnd();
-            })));
+                quad.call(destination);
+            });
         }
     }
 
@@ -54,20 +60,10 @@ public class OpenGLClip implements GraphicsClip
         if (texture instanceof OpenGLDiffuseTexture)
         {
             OpenGLDiffuseTexture openGLtex = (OpenGLDiffuseTexture)texture;
-            tiles.accept((sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.point().repeat().opaque().bind(gl, () ->
+            openGLtex.point().repeat().opaque().bind(gl, () ->
             {
-                gl.glColor3f(1f, 1f, 1f);
-                gl.glBegin(GL2.GL_QUADS);
-                gl.glTexCoord2f(0f, sh);
-                gl.glVertex2f(dx, dy);
-                gl.glTexCoord2f(0f, 0f);
-                gl.glVertex2f(dx, dy + dh);
-                gl.glTexCoord2f(sw, 0f);
-                gl.glVertex2f(dx + dw, dy + dh);
-                gl.glTexCoord2f(sw, sh);
-                gl.glVertex2f(dx + dw, dy);
-                gl.glEnd();
-            })));
+                quad.call(destination);
+            });
         }
     }
 
@@ -106,13 +102,6 @@ public class OpenGLClip implements GraphicsClip
     {
         rect.accept((x, y, w, h) ->
         {
-            gl.glBegin(GL2.GL_QUADS);
-            new ColorFloatStruct(color).acceptFloats(gl::glColor4f);
-            gl.glVertex2f(x, y);
-            gl.glVertex2f(x, y + h);
-            gl.glVertex2f(x + w, y + h);
-            gl.glVertex2f(x + w, y);
-            gl.glEnd();
         });
     }
 

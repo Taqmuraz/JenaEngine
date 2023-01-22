@@ -14,12 +14,12 @@ import jena.opengl.OpenGLShader;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 import jena.opengl.shader.OpenGLStandardShader;
 
-public class OpenGL2ES3BufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
+public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
 {
     private GL2ES3 gl;
     private OpenGLShader shader;
 
-    public OpenGL2ES3BufferPrimitiveBuilder(GL2ES3 gl, ErrorHandler errorHandler)
+    public OpenGLESBufferPrimitiveBuilder(GL2ES3 gl, ErrorHandler errorHandler)
     {
         this.gl = gl;
         shader = new OpenGLStandardShader
