@@ -9,20 +9,19 @@ import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
-import jena.engine.math.Matrix3fPipeline;
 import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 
-public class OpenGLClip implements GraphicsClip
+public class OpenGL2Clip implements GraphicsClip
 {
     GL2 gl;
-    Matrix3fPipeline matrixStack;
+    OpenGLMatrixPipeline pipeline;
 
-    public OpenGLClip(GL2 gl, Matrix3fPipeline matrixPipeline)
+    public OpenGL2Clip(GL2 gl)
     {
         this.gl = gl;
-        matrixStack = matrixPipeline;
+        pipeline = new OpenGLMatrixPipeline(gl);
     }
 
     @Override
@@ -31,8 +30,12 @@ public class OpenGLClip implements GraphicsClip
         if (texture instanceof OpenGLDiffuseTexture)
         {
             OpenGLDiffuseTexture openGLtex = (OpenGLDiffuseTexture)texture;
-            source.accept((sx, sy, sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.point().clamp().transparent().bind(gl, () ->
+            source.accept((sx, sy, sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.bind(gl, () ->
             {
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_EDGE);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
                 gl.glColor3f(1f, 1f, 1f);
                 gl.glBegin(GL2.GL_QUADS);
                 gl.glTexCoord2f(sx, sy + sh);
@@ -54,8 +57,12 @@ public class OpenGLClip implements GraphicsClip
         if (texture instanceof OpenGLDiffuseTexture)
         {
             OpenGLDiffuseTexture openGLtex = (OpenGLDiffuseTexture)texture;
-            tiles.accept((sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.point().repeat().opaque().bind(gl, () ->
+            tiles.accept((sw, sh) -> destination.accept((dx, dy, dw, dh) -> openGLtex.bind(gl, () ->
             {
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
                 gl.glColor3f(1f, 1f, 1f);
                 gl.glBegin(GL2.GL_QUADS);
                 gl.glTexCoord2f(0f, sh);
@@ -101,8 +108,6 @@ public class OpenGLClip implements GraphicsClip
 
     }
 
-    int uniqueColor;
-
     @Override
     public void fillRect(Rectf rect, Color color)
     {
@@ -121,6 +126,6 @@ public class OpenGLClip implements GraphicsClip
     @Override
     public void matrixScope(Transformation transformation, Action action)
     {
-        matrixStack.matrixScope(transformation, action);
+        pipeline.matrixScope(transformation, action);
     }
 }

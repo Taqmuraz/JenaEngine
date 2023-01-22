@@ -1,10 +1,7 @@
 package jena.engine.io;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Objects;
 
 public class NullInputStream extends InputStream
 {

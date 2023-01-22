@@ -42,7 +42,7 @@ public class OpenGLWindowListener implements GLEventListener
         @Override
         public TextureHandle loadTexture(FileResource file)
         {
-            return new OpenGLTextureHandle(profile, file, errorHandler);
+            return new OpenGLDiffuseTexture(profile, file, errorHandler);
         }
     }
 

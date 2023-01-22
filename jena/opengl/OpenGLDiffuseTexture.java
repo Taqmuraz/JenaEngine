@@ -8,16 +8,15 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import jena.engine.common.Action;
 import jena.engine.common.ActionSingle;
 import jena.engine.common.ErrorHandler;
-import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
 
 import javax.imageio.ImageIO;
 
-public class OpenGLTextureHandle implements TextureHandle
+public class OpenGLDiffuseTexture implements OpenGLTexture
 {
     private ActionSingle<GL> binder;
 
-    public OpenGLTextureHandle(GLProfile profile, FileResource file, ErrorHandler errorHandler)
+    public OpenGLDiffuseTexture(GLProfile profile, FileResource file, ErrorHandler errorHandler)
     {
         binder = g -> { };
         file.read(stream ->
@@ -37,6 +36,7 @@ public class OpenGLTextureHandle implements TextureHandle
         }, errorHandler);
     }
 
+    @Override
     public void bind(GL gl, Action action)
     {
         gl.glEnable(GL.GL_TEXTURE_2D);
@@ -44,13 +44,6 @@ public class OpenGLTextureHandle implements TextureHandle
         action.call();
         gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
         gl.glDisable(GL.GL_TEXTURE_2D);
-        gl.glDisable(GL.GL_BLEND);
-    }
-    public void bindTransparent(GL gl, Action action)
-    {
-        gl.glEnable(GL.GL_BLEND);
-        gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
-        bind(gl, action);
         gl.glDisable(GL.GL_BLEND);
     }
 }
