@@ -45,7 +45,7 @@ public class OpenGLFileShaderSource implements OpenGLShaderSource
         {
             resultAcceptor.call(String.join("\n", lines));
         },
-        System.out::println), () -> "").call();
+        System.out::println), () -> "//default shader code").call();
         return String.join("\n", header, source);
     }
 }

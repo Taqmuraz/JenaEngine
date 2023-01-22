@@ -6,17 +6,33 @@ import java.nio.IntBuffer;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES3;
 
+import jena.engine.common.ErrorHandler;
+import jena.engine.io.StorageFileResource;
 import jena.engine.math.Rectf;
 import jena.opengl.OpenGLPrimitive;
+import jena.opengl.OpenGLShader;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
+import jena.opengl.shader.OpenGLStandardShader;
 
 public class OpenGL2ES3BufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
 {
     private GL2ES3 gl;
+    private OpenGLShader shader;
 
-    public OpenGL2ES3BufferPrimitiveBuilder(GL2ES3 gl)
+    public OpenGL2ES3BufferPrimitiveBuilder(GL2ES3 gl, ErrorHandler errorHandler)
     {
         this.gl = gl;
+        shader = new OpenGLStandardShader
+        (
+            new OpenGLESShaderEnvironment(gl, errorHandler),
+            new OpenGLESFileShaderSource(new StorageFileResource("shaders/vertex.glsl")),
+            new OpenGLESFileShaderSource(new StorageFileResource("shaders/fragment.glsl")),
+            acceptor ->
+            {
+                acceptor.call(0, "position");
+                acceptor.call(1, "texcoord");
+            }
+        );
     }
 
     private void loadAttributeBuffer(int index, int stride, float[] data, int vboID)
@@ -66,12 +82,12 @@ public class OpenGL2ES3BufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
         loadAttributeBuffer(0, 2, positions, vboBuffer.get(1));
         loadAttributeBuffer(1, 2, uvs, vboBuffer.get(2));
 
-        return () ->
+        return () -> shader.play(() ->
         {
             gl.glBindVertexArray(vaoID);
             gl.glEnableVertexAttribArray(0);
             gl.glEnableVertexAttribArray(1);
             gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);
-        };
+        });
     }
 }
