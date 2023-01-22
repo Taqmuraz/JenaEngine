@@ -17,8 +17,11 @@ public class OpenGLPointFilterTexture implements OpenGLTexture
     @Override
     public void bind(GL gl, Action action)
     {
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-        texture.bind(gl, action);
+        texture.bind(gl, () ->
+        {
+            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+            action.call();
+        });
     }
 }
