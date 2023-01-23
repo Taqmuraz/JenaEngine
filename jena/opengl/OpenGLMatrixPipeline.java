@@ -7,4 +7,5 @@ import jena.engine.math.Rectf;
 public interface OpenGLMatrixPipeline extends Matrix3fPipeline
 {
     void rectScope(Rectf rect, Action action);
+    void identity(Action action);
 }

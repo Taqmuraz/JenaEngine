@@ -20,7 +20,7 @@ public class OpenGLWindow extends JFrame
         int height = 600;
         
         GLProfile.initSingleton();
-        GLProfile profile = GLProfile.get(GLProfile.GLES3);
+        GLProfile profile = GLProfile.get(GLProfile.GL3bc);
         GLCapabilities cap = new GLCapabilities(profile);
         GLWindow window = GLWindow.create(cap);
         window.setContextCreationFlags(GLContext.CTX_OPTION_DEBUG);
