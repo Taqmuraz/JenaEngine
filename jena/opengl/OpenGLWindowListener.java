@@ -1,8 +1,8 @@
 package jena.opengl;
 
 import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLES3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
@@ -63,10 +63,10 @@ public class OpenGLWindowListener implements GLEventListener
     {
         frameStart.onStartFrame();
 
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
-        gl.glDisable(GL2.GL_DEPTH_TEST);
+        GLES3 gl = drawable.getGL().getGLES3();
+        gl.glDisable(GL.GL_DEPTH_TEST);
         gl.glClearColor(0.5f, 0.5f, 0.5f, 1f);
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
         root.paint(new OpenGLDevice(gl, () -> new OpenGLESMatrixPipeline(gl), primitives, paintArea, System.out::println));
 
@@ -88,7 +88,7 @@ public class OpenGLWindowListener implements GLEventListener
         OpenGLKeyboard keyboard = new OpenGLKeyboard();
         Player player = new Player(new OpenGLGraphicsResource(drawable.getGLProfile(), System.out::println), keyboard);
 
-        primitives = new OpenGLESBufferPrimitiveBuilder(drawable.getGL().getGL2ES3(), System.out::println);
+        primitives = new OpenGLESBufferPrimitiveBuilder(drawable.getGL().getGLES3(), System.out::println);
 
         frameStart = player;
         frameEnd = () ->
