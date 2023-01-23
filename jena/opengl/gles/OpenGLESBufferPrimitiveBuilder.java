@@ -4,7 +4,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES3;
+import com.jogamp.opengl.GLES3;
 
 import jena.engine.common.ErrorHandler;
 import jena.engine.io.StorageFileResource;
@@ -16,12 +16,12 @@ import jena.opengl.shader.OpenGLStandardShader;
 
 public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
 {
-    private GL2ES3 gl;
+    private GLES3 gl;
     private OpenGLShader shader;
 
     private OpenGLPrimitive quad;
 
-    public OpenGLESBufferPrimitiveBuilder(GL2ES3 gl, ErrorHandler errorHandler)
+    public OpenGLESBufferPrimitiveBuilder(GLES3 gl, ErrorHandler errorHandler)
     {
         this.gl = gl;
         shader = new OpenGLStandardShader
@@ -41,11 +41,11 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
 
     private void loadAttributeBuffer(int index, int stride, float[] data, int vboID)
     {
-        gl.glBindBuffer(GL2ES3.GL_ARRAY_BUFFER, vboID);
+        gl.glBindBuffer(GLES3.GL_ARRAY_BUFFER, vboID);
         FloatBuffer buffer = FloatBuffer.wrap(data);
-        gl.glBufferData(GL2ES3.GL_ARRAY_BUFFER, data.length * 4, buffer, GL2ES3.GL_STATIC_DRAW);
-        gl.glVertexAttribPointer(index, stride, GL2ES3.GL_FLOAT, false, 0, 0);
-        gl.glBindBuffer(GL2ES3.GL_ARRAY_BUFFER, 0);
+        gl.glBufferData(GLES3.GL_ARRAY_BUFFER, data.length * 4, buffer, GLES3.GL_STATIC_DRAW);
+        gl.glVertexAttribPointer(index, stride, GLES3.GL_FLOAT, false, 0, 0);
+        gl.glBindBuffer(GLES3.GL_ARRAY_BUFFER, 0);
     }
 
     @Override
@@ -57,9 +57,9 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
     private OpenGLPrimitive createQuad()
     {
         IntBuffer vaoBuffer = IntBuffer.allocate(1);
-        gl.glGenVertexArrays(1, vaoBuffer);
+        gl.glGenVertexArraysOES(1, vaoBuffer);
         int vaoID = vaoBuffer.get(0);
-        gl.glBindVertexArray(vaoID);
+        gl.glBindVertexArrayOES(vaoID);
 
         IntBuffer vboBuffer = IntBuffer.allocate(3);
         gl.glGenBuffers(3, vboBuffer);
@@ -70,8 +70,8 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
             2, 3, 0
         };
 
-        gl.glBindBuffer(GL2ES3.GL_ELEMENT_ARRAY_BUFFER, vboBuffer.get(0));
-        gl.glBufferData(GL2ES3.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, IntBuffer.wrap(indices), GL2ES3.GL_STATIC_DRAW);
+        gl.glBindBuffer(GLES3.GL_ELEMENT_ARRAY_BUFFER, vboBuffer.get(0));
+        gl.glBufferData(GLES3.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, IntBuffer.wrap(indices), GLES3.GL_STATIC_DRAW);
 
         float[] positions = new float[]
         {
@@ -94,7 +94,7 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
         return () -> shader.play(() ->
         {
             gl.glDisable(GL.GL_CULL_FACE);
-            gl.glBindVertexArray(vaoID);
+            gl.glBindVertexArrayOES(vaoID);
             gl.glEnableVertexAttribArray(0);
             gl.glEnableVertexAttribArray(1);
             gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);
