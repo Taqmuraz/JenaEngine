@@ -2,6 +2,7 @@ package jena.opengl.shader;
 
 import jena.engine.common.Action;
 import jena.engine.math.Matrix3f;
+import jena.engine.math.Rectf;
 import jena.opengl.OpenGLShader;
 import jena.opengl.OpenGLShaderAttributeCollection;
 import jena.opengl.OpenGLShaderEnvironment;
@@ -27,5 +28,11 @@ public class OpenGLStandardShader implements OpenGLShader
     public void loadUniformMatrix(String name, Matrix3f matrix)
     {
         program.loadUniformMatrix(name, matrix);
+    }
+
+    @Override
+    public void loadUniformRect(String name, Rectf rect)
+    {
+        program.loadUniformRect(name, rect);
     }
 }

@@ -14,6 +14,7 @@ import jena.engine.math.Matrix3fRect;
 import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
+import jena.engine.math.Vector2fStruct;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
 public class OpenGLClip implements GraphicsClip
@@ -37,7 +38,7 @@ public class OpenGLClip implements GraphicsClip
             OpenGLTexture openGLtex = (OpenGLTexture)texture;
             primitives.fromUniforms(uniforms ->
             {
-                return primitives.quad().transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
+                return primitives.quad().rect(source, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
             })
             .textured(openGLtex.point().clamp().transparent(), gl).draw();
         }
@@ -51,7 +52,8 @@ public class OpenGLClip implements GraphicsClip
             OpenGLTexture openGLtex = (OpenGLTexture)texture;
             primitives.fromUniforms(uniforms ->
             {
-                return primitives.quad().transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
+                Vector2fStruct t = new Vector2fStruct(tiles);
+                return primitives.quad().rect(a -> a.call(0f, 0f, t.x, t.y), uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
             })
             .textured(openGLtex.point().repeat().opaque(), gl).draw();
         }

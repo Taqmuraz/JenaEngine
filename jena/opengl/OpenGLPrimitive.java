@@ -3,7 +3,9 @@ package jena.opengl;
 import com.jogamp.opengl.GL;
 
 import jena.engine.math.Matrix3f;
+import jena.engine.math.Rectf;
 import jena.opengl.primitive.OpenGLTransformedPrimitive;
+import jena.opengl.primitive.OpenGLRectPrimitive;
 import jena.opengl.primitive.OpenGLTexturedPrimitive;
 
 public interface OpenGLPrimitive
@@ -17,5 +19,9 @@ public interface OpenGLPrimitive
     default OpenGLPrimitive transformed(Matrix3f matrix, OpenGLUniforms uniforms)
     {
         return new OpenGLTransformedPrimitive(this, matrix, uniforms);
+    }
+    default OpenGLPrimitive rect(Rectf rect, OpenGLUniforms uniforms)
+    {
+        return new OpenGLRectPrimitive(this, rect, uniforms);
     }
 }

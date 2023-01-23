@@ -76,16 +76,16 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
         float[] positions = new float[]
         {
             0f, 0f,
-            0f, -1f,
-            1f, -1f,
+            0f, 1f,
+            1f, 1f,
             1f, 0f
         };
         float[] uvs = new float[]
         {
+            0f, 1f,
             0f, 0f,
             1f, 0f,
-            1f, 1f,
-            0f, 1f
+            1f, 1f
         };
 
         loadAttributeBuffer(0, 2, positions, vboBuffer.get(1));
@@ -93,6 +93,7 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
 
         return () -> shader.play(() ->
         {
+            gl.glDisable(GL.GL_CULL_FACE);
             gl.glBindVertexArray(vaoID);
             gl.glEnableVertexAttribArray(0);
             gl.glEnableVertexAttribArray(1);
@@ -103,6 +104,6 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
     @Override
     public OpenGLPrimitive fromUniforms(OpenGLUniformsPrimitive acceptor)
     {
-        return acceptor.create(shader);
+        return () -> shader.play(acceptor.create(shader)::draw);
     }
 }

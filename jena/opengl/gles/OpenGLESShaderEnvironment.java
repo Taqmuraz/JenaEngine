@@ -13,6 +13,7 @@ import jena.engine.common.ErrorHandler;
 import jena.engine.common.FunctionThrowsHandler;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fElements;
+import jena.engine.math.Rectf;
 import jena.opengl.OpenGLShaderAttributeCollection;
 import jena.opengl.OpenGLShaderEnvironment;
 import jena.opengl.OpenGLShaderProgram;
@@ -84,6 +85,15 @@ public class OpenGLESShaderEnvironment implements OpenGLShaderEnvironment
                 float[] buffer = new float[9];
                 for(int i = 0; i < 9; i++) buffer[i] = elements.at(i);
                 gl.glUniformMatrix3fv(gl.glGetUniformLocation(program, name), 1, false, buffer, 0);
+            }
+
+            @Override
+            public void loadUniformRect(String name, Rectf rect)
+            {
+                rect.accept((x, y, w, h) ->
+                {
+                    gl.glUniform4f(gl.glGetUniformLocation(program, name), x, y, w, h);
+                });
             }
         };
     }
