@@ -1,16 +1,10 @@
-package jena.swing;
+package jena.engine.graphics;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 import jena.engine.common.Action;
-import jena.engine.graphics.Color;
-import jena.engine.graphics.GraphicsClip;
-import jena.engine.graphics.GraphicsClipPainter;
-import jena.engine.graphics.Text;
-import jena.engine.graphics.TextureHandle;
-import jena.engine.graphics.Transformation;
 import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;

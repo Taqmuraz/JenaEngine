@@ -1,11 +1,8 @@
-package jena.swing;
+package jena.engine.graphics;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jena.engine.graphics.GraphicsClipPainter;
-import jena.engine.graphics.GraphicsDevice;
-import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.math.Rectf;
 
 public class PostponedGraphicsDevice implements GraphicsDevice, GraphicsDevicePainter

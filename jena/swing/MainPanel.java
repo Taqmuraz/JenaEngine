@@ -19,6 +19,7 @@ import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.TimeMeter;
 import jena.engine.entity.human.Player;
 import jena.engine.graphics.GraphicsResource;
+import jena.engine.graphics.PostponedGraphicsDevice;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.TextureHandle;

@@ -15,6 +15,7 @@ import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.human.Player;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.GraphicsResource;
+import jena.engine.graphics.PostponedGraphicsDevice;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
 import jena.engine.math.Rectf;
@@ -99,11 +100,14 @@ public class OpenGLWindowListener implements GLEventListener
 
         window.addKeyListener(keyboard);
 
-        root = new Camera(a ->
+        PostponedGraphicsDevice device = new PostponedGraphicsDevice();
+        new Camera(a ->
         {
             RectfStruct area = new RectfStruct(paintArea);
             a.call(0f, 0f, area.width, area.height);
-        }, a -> a.call(200, 100, 100, 255), player);
+        }, a -> a.call(200, 100, 100, 255), player)
+        .paint(device);
+        root = device;
 
         animator = new FPSAnimator(window, 60);
         animator.start();
