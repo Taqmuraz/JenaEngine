@@ -16,7 +16,6 @@ import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.human.Player;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.GraphicsResource;
-import jena.engine.graphics.PostponedGraphicsDevice;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
 import jena.engine.math.Rectf;
