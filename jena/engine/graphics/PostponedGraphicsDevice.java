@@ -9,9 +9,10 @@ public class PostponedGraphicsDevice implements GraphicsDevice, GraphicsDevicePa
 {
     List<GraphicsDevicePainter> painters;
 
-    public PostponedGraphicsDevice()
+    public PostponedGraphicsDevice(GraphicsDevicePainter painter)
     {
         painters = new ArrayList<GraphicsDevicePainter>();
+        painter.paint(this);
     }
 
     @Override

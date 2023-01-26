@@ -85,16 +85,14 @@ public class MainPanel extends JPanel implements GraphicsResource
             keyboard.onEndFrame();
             mouse.onEndFrame();
         };
-        GraphicsDevicePainter painter = device ->
+        
+        rootPainter = new PostponedGraphicsDevice(device ->
         {
             for(GraphicsDevicePainter p : painters)
             {
                 p.paint(device);
             }
-        };
-        PostponedGraphicsDevice bakedDevice = new PostponedGraphicsDevice();
-        painter.paint(bakedDevice);
-        rootPainter = bakedDevice;
+        });
 
         screenBuffer = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
     }
