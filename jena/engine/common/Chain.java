@@ -1,7 +1,7 @@
 package jena.engine.common;
 
-public interface Chain<TIn, TOut>
+public interface Chain<TIn, TOut, TResult>
 {
-    <NOut> Chain<TOut, NOut> join(FunctionSingle<TOut, NOut> out);
-    TOut close(TIn in);
+    <NIn> Chain<NIn, TIn, TResult> join(FunctionSingle<NIn, TIn> out);
+    TResult close(TIn in);
 }

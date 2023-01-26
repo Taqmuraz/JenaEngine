@@ -1,6 +1,6 @@
 package jena.engine.common;
 
-public class CallChain<TIn, TOut> implements Chain<TIn, TOut>
+public class CallChain<TIn, TOut> implements Chain<TIn, TOut, TOut>
 {
     FunctionSingle<TIn, TOut> value;
 
@@ -10,11 +10,11 @@ public class CallChain<TIn, TOut> implements Chain<TIn, TOut>
     }
 
     @Override
-    public <NOut> Chain<TOut, NOut> join(FunctionSingle<TOut, NOut> out)
+    public <NIn> Chain<NIn, TIn, TOut> join(FunctionSingle<NIn, TIn> out)
     {
-        return new CallChain<TOut, NOut>(out);    
+        return new CallJoinChain<NIn, TIn, TOut>(v -> value.call(out.call(v)));
     }
-    
+
     @Override
     public TOut close(TIn in)
     {
