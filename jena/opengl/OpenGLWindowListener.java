@@ -101,9 +101,7 @@ public class OpenGLWindowListener implements GLEventListener
         window.addKeyListener(keyboard);
 
         root = new Camera(
-            a -> new CallChain<RectfStruct, Rectf>(r -> n -> n.call(0f, 0f, r.width, r.height))
-            .<Rectf>join(r -> new RectfStruct(r))
-            .close(paintArea).accept(a),
+            a -> paintArea.accept((x, y, w, h) -> a.call(0f, 0f, w, h)),
             a -> a.call(200, 100, 100, 255), player);
 
         animator = new FPSAnimator(window, 60);
