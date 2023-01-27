@@ -2,21 +2,18 @@ package jena.engine.common;
 
 public class Box<TValue>
 {
-    private TValue value;
-    private boolean hasValue;
-    private Function<TValue> defaultValue;
+    private Function<TValue> value;
 
-    public Box(Function<TValue> defaultValue)
+    public Box(Function<TValue> value)
     {
-        this.defaultValue = defaultValue;
+        this.value = value;
     }
     public void write(TValue value)
     {
-        this.value = value;
-        hasValue = true;
+        this.value = () -> value;
     }
     public TValue read()
     {
-        return hasValue ? value : defaultValue.call();
+        return value.call();
     }
 }

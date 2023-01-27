@@ -19,6 +19,7 @@ import jena.engine.math.Vector2fStruct;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.stream.IntStream;
 import java.awt.Shape;
 
 public class SwingGraphicsClip implements GraphicsClip
@@ -82,26 +83,14 @@ public class SwingGraphicsClip implements GraphicsClip
     @Override
     public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
     {
-        if (texture instanceof SwingTextureResource)
+        tiles.accept((x, y) -> destination.accept((dx, dy, dw, dh) ->
         {
-            SwingTextureResource swingTexture = (SwingTextureResource)texture;
-            swingTexture.accept(descriptor -> descriptor.acceptPaint(paint ->
-            {
-                destination.accept((dx, dy, dw, dh) ->
-                {
-                    tiles.accept((sw, sh) ->
-                    {
-                        graphics.setPaint(paint);
-                        float scaleX = sw == 0f ? 0f : 1f / sw;
-                        float scaleY = sh == 0f ? 0f : 1f / sh;
-                        graphics.translate(dx, dy + dh);
-                        graphics.scale(scaleX * dw, -scaleY * dh);
-                        graphics.fill(new java.awt.geom.Rectangle2D.Float(0f, 0f, sw, sh));
-                        graphics.setTransform(transform);
-                    });
-                });
-            }));
-        }
+            int ix = (int)x;
+            int iy = (int)y;
+            float tw = dw / ix;
+            float th = dh / iy;
+            IntStream.range(0, ix * iy).boxed().forEach(i -> drawSprite(texture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(dx + (i % ix) * tw, dy + (i / ix) * th, tw, th)));
+        }));
     }
 
     @Override

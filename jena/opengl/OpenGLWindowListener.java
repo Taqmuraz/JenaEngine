@@ -19,6 +19,7 @@ import jena.engine.graphics.PostponedGraphicsDevice;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
 import jena.engine.math.Rectf;
+import jena.environment.EnvironmentVariables;
 import jena.opengl.gles.OpenGLESBufferPrimitiveBuilder;
 import jena.opengl.gles.OpenGLESMatrixPipeline;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
@@ -33,6 +34,7 @@ public class OpenGLWindowListener implements GLEventListener
     FrameStartListener frameStart;
     FrameEndListener frameEnd;
     OpenGLPrimitiveBuilder primitives;
+    EnvironmentVariables variables;
 
     class OpenGLGraphicsResource implements GraphicsResource
     {
@@ -52,10 +54,11 @@ public class OpenGLWindowListener implements GLEventListener
         }
     }
 
-    public OpenGLWindowListener(GLWindow window, Rectf paintArea)
+    public OpenGLWindowListener(GLWindow window, Rectf paintArea, EnvironmentVariables variables)
     {
         this.paintArea = paintArea;
         this.window = window;
+        this.variables = variables;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class OpenGLWindowListener implements GLEventListener
 
         GL2ES1 gl = drawable.getGL().getGL2ES1();
         gl.glDisable(GL2.GL_DEPTH_TEST);
-        gl.glClearColor(0.5f, 0.5f, 0.5f, 1f);
+        gl.glClearColor(0f, 0f, 0f, 1f);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
         root.paint(new OpenGLDevice(gl, () -> new OpenGLESMatrixPipeline(gl), primitives, paintArea, System.out::println));

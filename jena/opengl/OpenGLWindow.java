@@ -7,6 +7,7 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GLProfile;
 
+import jena.engine.common.Box;
 import jena.engine.graphics.GraphicsRectf;
 import jena.engine.math.Rectf;
 import jena.engine.math.Vector2f;
@@ -16,20 +17,20 @@ public class OpenGLWindow extends JFrame
 {
     public OpenGLWindow(EnvironmentVariables variables)
     {
-        int width = 800;
-        int height = 600;
+        Box<Integer> width = new Box<Integer>(() -> 800);
+        Box<Integer> height = new Box<Integer>(() -> 600);
         
         GLProfile.initSingleton();
         GLProfile profile = GLProfile.get(GLProfile.GL3bc);
         GLCapabilities cap = new GLCapabilities(profile);
         GLWindow window = GLWindow.create(cap);
         window.setContextCreationFlags(GLContext.CTX_OPTION_DEBUG);
-        window.setSize(width, height);
+        window.setSize(width.read(), height.read());
 
         Vector2f screenSize = a -> a.call(window.getWidth(), window.getHeight());
-        Rectf paintRect = new GraphicsRectf(screenSize, a -> a.call(width, height));
+        Rectf paintRect = new GraphicsRectf(screenSize, a -> a.call(width.read(), height.read()));
 
-        window.addGLEventListener(new OpenGLWindowListener(window, paintRect));
+        window.addGLEventListener(new OpenGLWindowListener(window, paintRect, variables));
 
         window.setVisible(true);
     }

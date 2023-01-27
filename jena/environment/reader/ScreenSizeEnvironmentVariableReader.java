@@ -7,10 +7,12 @@ import jena.environment.variable.DimensionVariable;
 
 public class ScreenSizeEnvironmentVariableReader implements EnvironmentVariableReader
 {
+    @Override
     public boolean isKey(String key)
     {
         return key.equals("resolution");
     }
+    @Override
     public DimensionVariable read(Iterator<String> iterator)
     {
         int width = Integer.valueOf(iterator.next());

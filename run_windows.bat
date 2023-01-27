@@ -1,1 +1,1 @@
-java -Xms64M -jar build/jena.jar fps 144
+java -Xms64M -jar build/jena.jar fps 144 graphics opengl resolution 800 600

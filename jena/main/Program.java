@@ -3,21 +3,32 @@ package jena.main;
 import java.awt.EventQueue;
 import java.util.Scanner;
 
+import jena.environment.EnvironmentVariables;
 import jena.environment.StandardEnvironmentVariables;
+import jena.environment.variable.StringVariable;
 import jena.opengl.OpenGLWindow;
+import jena.swing.MainWindow;
 
 public class Program
 {
     public static void main(String[] args)
     {
         System.setProperty("sun.java2d.uiScale", "1.0"); // to disable Windows UI scaling
-        System.out.println("OpenGL version : " + com.jogamp.opengl.GL.GL_VERSION);
 
         EventQueue.invokeLater(() ->
         {
             try
             {
-                new OpenGLWindow(new StandardEnvironmentVariables(args));
+                EnvironmentVariables variables = new StandardEnvironmentVariables(args);
+                variables.<StringVariable>findVariable("graphics", v ->
+                {
+                    switch(v.value())
+                    {
+                        case "opengl": new OpenGLWindow(variables); break;
+                        default: new MainWindow(variables);
+                    }
+                },
+                () -> new MainWindow(variables));
             }
             catch(Throwable error)
             {
