@@ -8,6 +8,7 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 
+import jena.engine.common.Box;
 import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.FrameEndListener;
@@ -20,6 +21,7 @@ import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
 import jena.engine.math.Rectf;
 import jena.environment.EnvironmentVariables;
+import jena.environment.variable.IntegerVariable;
 import jena.opengl.gles.OpenGLESBufferPrimitiveBuilder;
 import jena.opengl.gles.OpenGLESMatrixPipeline;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
@@ -106,7 +108,11 @@ public class OpenGLWindowListener implements GLEventListener
             a -> paintArea.accept((x, y, w, h) -> a.call(0f, 0f, w, h)),
             a -> a.call(200, 100, 100, 255), player));
 
-        animator = new FPSAnimator(window, 60);
+        Box<Integer> fps = new Box<Integer>(() -> 60);
+
+        variables.<IntegerVariable>findVariable("fps", v -> fps.write(v::value), () -> {});
+
+        animator = new FPSAnimator(window, fps.read());
         animator.start();
     }
 

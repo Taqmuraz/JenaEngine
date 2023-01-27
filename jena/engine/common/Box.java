@@ -12,6 +12,10 @@ public class Box<TValue>
     {
         this.value = () -> value;
     }
+    public void write(Function<TValue> value)
+    {
+        this.value = value;
+    }
     public TValue read()
     {
         return value.call();
