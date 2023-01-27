@@ -8,7 +8,6 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 
-import jena.engine.common.CallChain;
 import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.FrameEndListener;
@@ -16,10 +15,10 @@ import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.human.Player;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.GraphicsResource;
+import jena.engine.graphics.PostponedGraphicsDevice;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileResource;
 import jena.engine.math.Rectf;
-import jena.engine.math.RectfStruct;
 import jena.opengl.gles.OpenGLESBufferPrimitiveBuilder;
 import jena.opengl.gles.OpenGLESMatrixPipeline;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
@@ -100,9 +99,9 @@ public class OpenGLWindowListener implements GLEventListener
 
         window.addKeyListener(keyboard);
 
-        root = new Camera(
+        root = new PostponedGraphicsDevice(new Camera(
             a -> paintArea.accept((x, y, w, h) -> a.call(0f, 0f, w, h)),
-            a -> a.call(200, 100, 100, 255), player);
+            a -> a.call(200, 100, 100, 255), player));
 
         animator = new FPSAnimator(window, 60);
         animator.start();
