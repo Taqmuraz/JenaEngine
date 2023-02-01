@@ -14,9 +14,9 @@ public class Matrix3fOrtho extends Matrix3fStruct
     @Override
     public void accept(Matrix3fAcceptor acceptor)
     {
-        clipSize.accept((sx, sy) -> acceptor.call(index ->
+        clipSize.accept((sx, sy) -> worldScale.accept(scale -> acceptor.call(index ->
         {
-            float dScale = 1f / worldScale.read();
+            float dScale = 1f / scale;
             if (sx > sy)
             {
                 switch (index)
@@ -37,6 +37,6 @@ public class Matrix3fOrtho extends Matrix3fStruct
                     default: return 0f;
                 }
             }
-        }));
+        })));
     }
 }

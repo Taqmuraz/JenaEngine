@@ -47,11 +47,10 @@ public class ClipGraphicsInspector implements GraphicsInspector, GraphicsClipPai
             }
             public void paint(GraphicsClip clip)
             {
-                position.accept((x, y) -> clip.drawEllipse(a ->
+                position.accept((x, y) -> radius.accept(r -> clip.drawEllipse(a ->
                 {
-                    float r = radius.read();
                     a.call(x - r, y - r, r * 2f, r * 2f);
-                }, color, () -> 0.2f));
+                }, color, a -> a.call(0.2f))));
             }
         };
     }

@@ -122,9 +122,8 @@ public class SwingGraphicsClip implements GraphicsClip
     @Override
     public void drawText(Text text, Rectf rect, Color color)
     {
-        rect.accept((x, y, w, h) ->
+        rect.accept((x, y, w, h) -> text.accept(content ->
         {
-            String content = text.content();
             java.awt.FontMetrics metrics = graphics.getFontMetrics(graphics.getFont());
             float bw = metrics.stringWidth(content);
             float bh = metrics.getLineMetrics(content, graphics).getHeight();
@@ -153,7 +152,7 @@ public class SwingGraphicsClip implements GraphicsClip
             graphics.scale(sw / bw, sh / bh);
             graphics.drawString(content, 0, 0);
             graphics.setTransform(transform);
-        });
+        }));
     }
 
     @Override
@@ -186,10 +185,10 @@ public class SwingGraphicsClip implements GraphicsClip
     @Override
     public void drawLine(Vector2f a, Vector2f b, Color color, ValueFloat width)
     {
-        a.accept((ax, ay) -> b.accept((bx, by) ->
+        a.accept((ax, ay) -> b.accept((bx, by) -> width.accept(w ->
         {
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
-            graphics.setStroke(new java.awt.BasicStroke(width.read()));
+            graphics.setStroke(new java.awt.BasicStroke(w));
             Vector2fStruct d = new Vector2fStruct(new Vector2fNormalized(v -> v.call(bx - ax, by - ay)));
             line.setTransform(transform);
             buffer.setTransform(bx - ax, by - ay, -d.y, d.x, ax, ay);
@@ -197,31 +196,31 @@ public class SwingGraphicsClip implements GraphicsClip
             graphics.setTransform(line);
             graphics.drawLine(0, 0, 1, 0);
             graphics.setTransform(transform);
-        }));
+        })));
     }
     @Override
     public void drawEllipse(Rectf rect, Color color, ValueFloat width)
     {
-        rect.accept((x, y, w, h) ->
+        rect.accept((x, y, w, h) -> width.accept(strokeWidth ->
         {
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.translate(x, y);
             graphics.scale(w, h);
-            graphics.setStroke(new java.awt.BasicStroke(width.read()));
+            graphics.setStroke(new java.awt.BasicStroke(strokeWidth));
             graphics.drawArc(0, 0, 1, 1, 0, 360);
             graphics.setTransform(transform);
-        });
+        }));
     }
     @Override
     public void drawRect(Rectf rect, Color color, ValueFloat width)
     {
-        rect.accept((x, y, w, h) ->
+        rect.accept((x, y, w, h) -> width.accept(strokeWidth ->
         {
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
-            graphics.setStroke(new java.awt.BasicStroke(width.read()));
+            graphics.setStroke(new java.awt.BasicStroke(strokeWidth));
             graphics.drawRect((int)x, (int)y, (int)w, (int)h);
             graphics.setTransform(transform);
-        });
+        }));
     }
     @Override
     public void fillEllipse(Rectf rect, Color color)

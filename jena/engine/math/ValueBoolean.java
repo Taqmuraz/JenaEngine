@@ -2,5 +2,5 @@ package jena.engine.math;
 
 public interface ValueBoolean
 {
-    boolean read();
+    void accept(BooleanAcceptor acceptor);
 }

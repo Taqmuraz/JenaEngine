@@ -2,5 +2,5 @@ package jena.engine.math;
 
 public interface ValueFloat
 {
-    float read();
+    void accept(FloatAcceptor acceptor);
 }

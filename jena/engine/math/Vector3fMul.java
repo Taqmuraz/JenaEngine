@@ -14,15 +14,15 @@ public final class Vector3fMul implements Vector3f
             r.call(x, y, z);
         }));
     }
-    public Vector3fMul(Vector3f a, float b)
+    public Vector3fMul(Vector3f a, ValueFloat b)
     {
-        result = r -> a.accept((ax, ay, az) ->
+        result = r -> a.accept((ax, ay, az) -> b.accept(m ->
         {
-            float x = ax * b;
-            float y = ay * b;
-            float z = az * b;
+            float x = ax * m;
+            float y = ay * m;
+            float z = az * m;
             r.call(x, y, z);
-        });
+        }));
     }
     public Vector3fMul(Vector3f a, Matrix3f b)
     {

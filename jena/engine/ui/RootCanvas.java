@@ -37,7 +37,7 @@ public class RootCanvas implements GraphicsDevicePainter
                 RectfStruct r = new RectfStruct(rect);
                 a.call(r.x - outline, r.y - outline, r.width + outline * 2f, r.height + outline * 2f);
             },
-            a -> a.call(0, 0, 0, 255), () -> outline * 2f);
+            a -> a.call(0, 0, 0, 255), a -> a.call(outline * 2f));
         }
         @Override
         public Mouse mouse()

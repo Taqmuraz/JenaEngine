@@ -11,9 +11,8 @@ public class Matrix3fRotation implements Matrix3f
     @Override
     public void accept(Matrix3fAcceptor acceptor)
     {
-        acceptor.call(index ->
+        angle.accept(angle -> acceptor.call(index ->
         {
-            float angle = this.angle.read();
             float sin = (float) Math.sin(angle);
             float cos = (float) Math.cos(angle);
             switch (index)
@@ -25,6 +24,6 @@ public class Matrix3fRotation implements Matrix3f
                 case 8: return 1f;
                 default: return 0f;
             }
-        });
+        }));
     }
 }

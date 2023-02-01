@@ -13,15 +13,15 @@ public final class Vector3fDiv implements Vector3f
             r.call(x, y, z);
         }));
     }
-    public Vector3fDiv(Vector3f a, float b)
+    public Vector3fDiv(Vector3f a, ValueFloat b)
     {
-        result = r -> a.accept((ax, ay, az) ->
+        result = r -> a.accept((ax, ay, az) -> b.accept(d ->
         {
-            if (b != 0f)
-                r.call(ax / b, ay / b, az / b);
+            if (d != 0f)
+                r.call(ax / d, ay / d, az / d);
             else
                 r.call(0f, 0f, 0f);
-        });
+        }));
     }
     
     @Override

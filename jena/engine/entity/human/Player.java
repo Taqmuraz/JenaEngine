@@ -10,6 +10,7 @@ import jena.engine.graphics.TextureHandle;
 import jena.engine.input.Key;
 import jena.engine.input.Keyboard;
 import jena.engine.io.StorageFileResource;
+import jena.engine.math.FloatAcceptor;
 import jena.engine.math.Matrix3fBuilder;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
@@ -70,11 +71,11 @@ public class Player implements GraphicsClipPainter, FrameStartListener, FrameEnd
         }
 
         @Override
-        public float read()
+        public void accept(FloatAcceptor acceptor)
         {
             float time = Time.time();
             if ((time - start) * speed >= max) start = time;
-            return (time - start) * speed;
+            acceptor.call((time - start) * speed);
         }
     }
 
@@ -86,8 +87,8 @@ public class Player implements GraphicsClipPainter, FrameStartListener, FrameEnd
 
         clip.matrixScope(s -> new Matrix3fBuilder(s).translate(a -> a.call(1f, -2f)).build(), () ->
         {
-            clip.drawTile(skyTexture, a -> a.call(2f, 1f), a -> a.call(-20f - skyOffset.read(), 0f, 60f, 5f));
-            clip.drawTile(groundTexture, a -> a.call(3f, 1f), a -> a.call(-10f - groundOffset.read(), -8f, 30f, 8f));
+            clip.drawTile(skyTexture, a -> a.call(2f, 1f), a -> skyOffset.accept(sky -> a.call(-20f - sky, 0f, 60f, 5f)));
+            clip.drawTile(groundTexture, a -> a.call(3f, 1f), a -> groundOffset.accept(ground -> a.call(-10f - ground, -8f, 30f, 8f)));
             human.paint(clip);
         });
     }

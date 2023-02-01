@@ -9,7 +9,6 @@ public final class Vector3fAdd implements Vector3f
     {
         this.a = a;
         this.b = b;
-        
     }
     @Override
     public void accept(Vector3fAcceptor acceptor)

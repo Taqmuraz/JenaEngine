@@ -10,11 +10,10 @@ public final class Vector2fMul implements Vector2f
     }
     public Vector2fMul(Vector2f a, ValueFloat b)
     {
-        result = r -> a.accept((ax, ay) ->
+        result = r -> a.accept((ax, ay) -> b.accept(m ->
         {
-            float m = b.read();
             r.call(ax * m, ay * m);
-        });
+        }));
     }
 
     @Override
