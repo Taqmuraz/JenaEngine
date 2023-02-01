@@ -9,22 +9,22 @@ public class Matrix3fRotation implements Matrix3f
     }
 
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        float angle = this.angle.read();
-        float sin = (float)Math.sin(angle);
-        float cos = (float)Math.cos(angle);
-        return index ->
+        acceptor.call(index ->
         {
-            switch(index)
+            float angle = this.angle.read();
+            float sin = (float) Math.sin(angle);
+            float cos = (float) Math.cos(angle);
+            switch (index)
             {
-                case 0:return cos;
-                case 1:return sin;
-                case 3:return -sin;
-                case 4:return cos;
-                case 8:return 1f;
-                default:return 0f;
+                case 0: return cos;
+                case 1: return sin;
+                case 3: return -sin;
+                case 4: return cos;
+                case 8: return 1f;
+                default: return 0f;
             }
-        };
+        });
     }
 }

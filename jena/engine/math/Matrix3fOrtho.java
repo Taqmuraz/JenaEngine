@@ -12,35 +12,31 @@ public class Matrix3fOrtho extends Matrix3fStruct
     }
 
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        Vector2fStruct size = new Vector2fStruct(clipSize);
-        float dScale = 1f / worldScale.read();
-        if (size.x > size.y)
+        clipSize.accept((sx, sy) -> acceptor.call(index ->
         {
-            return index ->
+            float dScale = 1f / worldScale.read();
+            if (sx > sy)
             {
-                switch(index)
+                switch (index)
                 {
-                    case 0: return (size.y / size.x) * dScale;
+                    case 0: return (sy / sx) * dScale;
                     case 4: return dScale;
                     case 8: return 1f;
                     default: return 0f;
                 }
-            };
-        }
-        else
-        {
-            return index ->
+            }
+            else
             {
-                switch(index)
+                switch (index)
                 {
                     case 0: return dScale;
-                    case 4: return (size.x / size.y) * dScale;
+                    case 4: return (sx / sy) * dScale;
                     case 8: return 1f;
                     default: return 0f;
                 }
-            };
-        }
+            }
+        }));
     }
 }

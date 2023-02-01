@@ -10,18 +10,17 @@ public class Matrix3fScale implements Matrix3f
     }
     
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        Vector2fStruct s = new Vector2fStruct(scale);
-        return index ->
+        scale.accept((x, y) -> acceptor.call(index ->
         {
             switch(index)
             {
-                case 0: return s.x;
-                case 4: return s.y;
+                case 0: return x;
+                case 4: return y;
                 case 8: return 1f;
                 default: return 0f;
             }
-        };
+        }));
     }
 }

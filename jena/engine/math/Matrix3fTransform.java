@@ -19,24 +19,21 @@ public class Matrix3fTransform extends Matrix3fRotation
     }
 
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        Matrix3fElements base = super.elements();
-        Vector2fStruct position = new Vector2fStruct(this.position);
-        Vector2fStruct scale = new Vector2fStruct(this.scale);
-        return index ->
+        super.accept(base -> position.accept((px, py) -> scale.accept((sx, sy) -> acceptor.call(index ->
         {
             switch(index)
             {
-                case 0: return base.at(0) * scale.x;
-                case 1: return base.at(1) * scale.x;
-                case 3: return base.at(3) * scale.y;
-                case 4: return base.at(4) * scale.y;
-                case 6: return position.x;
-                case 7: return position.y;
+                case 0: return base.at(0) * sx;
+                case 1: return base.at(1) * sx;
+                case 3: return base.at(3) * sy;
+                case 4: return base.at(4) * sy;
+                case 6: return px;
+                case 7: return py;
                 case 8: return 1f;
                 default: return 0f;
             }
-        };
+        }))));
     }
 }

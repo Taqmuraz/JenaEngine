@@ -8,7 +8,6 @@ import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
-import jena.engine.math.Matrix3fElements;
 import jena.engine.math.Matrix3fPipeline;
 import jena.engine.math.Matrix3fStack;
 import jena.engine.math.Rectf;
@@ -170,9 +169,11 @@ public class SwingGraphicsClip implements GraphicsClip
 
     private void updateTransform()
     {
-        Matrix3fElements e = matrixStack.elements();
-        transform.setTransform(e.at(0), e.at(1), e.at(3), e.at(4), e.at(6), e.at(7));
-        graphics.setTransform(transform);
+        matrixStack.accept(e ->
+        {
+            transform.setTransform(e.at(0), e.at(1), e.at(3), e.at(4), e.at(6), e.at(7));
+            graphics.setTransform(transform);
+        });
     }
 
     private void reset()

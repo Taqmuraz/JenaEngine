@@ -10,24 +10,23 @@ public class Matrix3fRect implements Matrix3f
     }
 
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        RectfStruct r = new RectfStruct(rect);
-        return i ->
+        rect.accept((x, y, w, h) -> acceptor.call(i ->
         {
             switch(i)
             {
-                case 0: return r.width;
-                case 4: return r.height;
+                case 0: return w;
+                case 4: return h;
                 default:
                 case 1:
                 case 2:
                 case 3:
                 case 5: return 0f;
-                case 6: return r.x;
-                case 7: return r.y;
+                case 6: return x;
+                case 7: return y;
                 case 8: return 1f;
             }
-        };
+        }));
     }
 }

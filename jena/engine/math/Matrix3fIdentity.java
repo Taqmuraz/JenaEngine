@@ -5,9 +5,9 @@ public class Matrix3fIdentity implements Matrix3f, Matrix3fElements
     public static final Matrix3f identity = new Matrix3fIdentity();
 
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        return this;
+        acceptor.call(this);
     }
 
     @Override

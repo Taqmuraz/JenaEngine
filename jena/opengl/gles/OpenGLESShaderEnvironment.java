@@ -12,7 +12,6 @@ import jena.engine.common.Action;
 import jena.engine.common.ErrorHandler;
 import jena.engine.common.FunctionThrowsHandler;
 import jena.engine.math.Matrix3f;
-import jena.engine.math.Matrix3fElements;
 import jena.engine.math.Rectf;
 import jena.opengl.OpenGLShaderAttributeCollection;
 import jena.opengl.OpenGLShaderEnvironment;
@@ -81,10 +80,12 @@ public class OpenGLESShaderEnvironment implements OpenGLShaderEnvironment
             @Override
             public void loadUniformMatrix(String name, Matrix3f matrix)
             {
-                Matrix3fElements elements = matrix.elements();
-                float[] buffer = new float[9];
-                for(int i = 0; i < 9; i++) buffer[i] = elements.at(i);
-                gl.glUniformMatrix3fv(gl.glGetUniformLocation(program, name), 1, false, buffer, 0);
+                matrix.accept(elements ->
+                {
+                    float[] buffer = new float[9];
+                    for(int i = 0; i < 9; i++) buffer[i] = elements.at(i);
+                    gl.glUniformMatrix3fv(gl.glGetUniformLocation(program, name), 1, false, buffer, 0);
+                });
             }
 
             @Override

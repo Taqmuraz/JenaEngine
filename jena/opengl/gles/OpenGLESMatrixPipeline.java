@@ -4,7 +4,7 @@ import com.jogamp.opengl.GL2ES1;
 
 import jena.engine.common.Action;
 import jena.engine.graphics.Transformation;
-import jena.engine.math.Matrix3fElements;
+import jena.engine.math.Matrix3fAcceptor;
 import jena.engine.math.Matrix3fIdentity;
 import jena.engine.math.Matrix3fMul;
 import jena.engine.math.Matrix3fRect;
@@ -24,18 +24,17 @@ public class OpenGLESMatrixPipeline implements OpenGLMatrixPipeline
     }
 
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        return stack.elements();
+        stack.accept(acceptor);
     }
 
     @Override
     public void matrixScope(Transformation transformation, Action action)
     {
-        stack.matrixScope(transformation, () ->
+        stack.matrixScope(transformation, () -> transformation.transform(Matrix3fIdentity.identity).accept(elements ->
         {
             gl.glPushMatrix();
-            Matrix3fElements elements = transformation.transform(Matrix3fIdentity.identity).elements();
             gl.glMultMatrixf(new float[] 
             {
                 elements.at(0), elements.at(1), 0f, 0f,
@@ -45,7 +44,7 @@ public class OpenGLESMatrixPipeline implements OpenGLMatrixPipeline
             }, 0);
             action.call();
             gl.glPopMatrix();
-        });
+        }));
     }
 
     public void rectScope(Rectf rect, Action action)

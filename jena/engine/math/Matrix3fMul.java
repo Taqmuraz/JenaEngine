@@ -12,21 +12,21 @@ public class Matrix3fMul implements Matrix3f
     }
 
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        Matrix3fElements ea = a.elements();
-        Matrix3fElements eb = b.elements();
-        return index ->
+        a.accept(ea -> b.accept(eb ->
         {
-            int i = index % 3;
-            int j = index / 3;
-            int startA = i;
-            int startB = j * 3;
+            acceptor.call(index ->
+            {
+                int i = index % 3;
+                int j = index / 3;
+                int startA = i;
+                int startB = j * 3;
 
-            return
-                ea.at(startA) * eb.at(startB) +
-                ea.at(startA + 3) * eb.at(startB + 1) +
-                ea.at(startA + 6) * eb.at(startB + 2);
-        };
+                return ea.at(startA) * eb.at(startB) +
+                        ea.at(startA + 3) * eb.at(startB + 1) +
+                        ea.at(startA + 6) * eb.at(startB + 2);
+            });
+        }));
     }
 }

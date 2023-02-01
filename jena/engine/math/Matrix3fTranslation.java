@@ -10,20 +10,19 @@ public class Matrix3fTranslation implements Matrix3f
     }
     
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        Vector2fStruct t = new Vector2fStruct(translation);
-        return index ->
+        translation.accept((tx, ty) -> acceptor.call(index ->
         {
             switch(index)
             {
-                case 6: return t.x;
-                case 7: return t.y;
+                case 6: return tx;
+                case 7: return ty;
                 case 0:
                 case 4:
                 case 8: return 1f;
                 default: return 0f;
             }
-        };
+        }));
     }
 }

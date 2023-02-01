@@ -26,14 +26,13 @@ public final class Vector3fMul implements Vector3f
     }
     public Vector3fMul(Vector3f a, Matrix3f b)
     {
-        result = r -> a.accept((ax, ay, az) ->
+        result = r -> a.accept((ax, ay, az) -> b.accept(e ->
         {
-            Matrix3fElements e = b.elements();
             float x = ax * e.at(0) + ay * e.at(3) + az * e.at(6);
             float y = ax * e.at(1) + ay * e.at(4) + az * e.at(7);
             float z = ax * e.at(2) + ay * e.at(5) + az * e.at(8);
             r.call(x, y, z);
-        });
+        }));
     }
     @Override
     public void accept(Vector3fAcceptor acceptor)

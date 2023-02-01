@@ -16,9 +16,9 @@ public class Matrix3fStack implements Matrix3fPipeline
     }
 
     @Override
-    public Matrix3fElements elements()
+    public void accept(Matrix3fAcceptor acceptor)
     {
-        return stack.peek().elements();
+        stack.peek().accept(acceptor);
     }
 
     @Override
