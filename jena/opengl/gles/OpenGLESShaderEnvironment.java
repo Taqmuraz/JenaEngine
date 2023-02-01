@@ -55,9 +55,11 @@ public class OpenGLESShaderEnvironment implements OpenGLShaderEnvironment
     public OpenGLShaderProgram createProgram(OpenGLShaderSource vertex, OpenGLShaderSource fragment, OpenGLShaderAttributeCollection attributes)
     {
         int program = gl.glCreateProgram();
-        gl.glAttachShader(program, loadShaderSubprogram(vertex.read(), GL2ES3.GL_VERTEX_SHADER, errorHandler));
-        gl.glAttachShader(program, loadShaderSubprogram(fragment.read(), GL2ES3.GL_FRAGMENT_SHADER, errorHandler));
-
+        vertex.accept(vert -> fragment.accept(frag ->
+        {
+            gl.glAttachShader(program, loadShaderSubprogram(vert, GL2ES3.GL_VERTEX_SHADER, errorHandler));
+            gl.glAttachShader(program, loadShaderSubprogram(frag, GL2ES3.GL_FRAGMENT_SHADER, errorHandler));
+        }));
         attributes.acceptAll((index, name) ->
         {
             gl.glBindAttribLocation(program, index, name);

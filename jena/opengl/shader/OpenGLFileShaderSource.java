@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jena.engine.common.FunctionBox;
 import jena.engine.io.TextFileReader;
 import jena.engine.io.FileResource;
 import jena.opengl.OpenGLShaderSource;
+import jena.opengl.OpenGLShaderSourceAcceptor;
 
 public class OpenGLFileShaderSource implements OpenGLShaderSource
 {
@@ -22,7 +22,7 @@ public class OpenGLFileShaderSource implements OpenGLShaderSource
     }
 
     @Override
-    public String read()
+    public void accept(OpenGLShaderSourceAcceptor acceptor)
     {
         List<String> appendStart = new ArrayList<String>();
         List<String> prependStart = new ArrayList<String>();
@@ -41,11 +41,11 @@ public class OpenGLFileShaderSource implements OpenGLShaderSource
         };
         for(OpenGLShaderMacro macro : macros) macro.edit(editable);
         String header = String.join("\n", Stream.concat(prependStart.stream(), appendStart.stream()).collect(Collectors.toList()));
-        String source = new FunctionBox<String>(resultAcceptor -> new TextFileReader(file).read(lines -> 
+        new TextFileReader(file).read(lines -> 
         {
-            resultAcceptor.call(String.join("\n", lines));
+            String source = String.join("\n", lines);
+            acceptor.call(String.join("\n", header, source));
         },
-        System.out::println), () -> "//default shader code").call();
-        return String.join("\n", header, source);
+        System.out::println);
     }
 }

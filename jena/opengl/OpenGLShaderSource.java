@@ -2,5 +2,5 @@ package jena.opengl;
 
 public interface OpenGLShaderSource
 {
-    String read();
+    void accept(OpenGLShaderSourceAcceptor acceptor);
 }

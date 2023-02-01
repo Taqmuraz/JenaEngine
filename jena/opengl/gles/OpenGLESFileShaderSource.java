@@ -2,6 +2,7 @@ package jena.opengl.gles;
 
 import jena.engine.io.FileResource;
 import jena.opengl.OpenGLShaderSource;
+import jena.opengl.OpenGLShaderSourceAcceptor;
 import jena.opengl.shader.OpenGLFileShaderSource;
 import jena.opengl.shader.OpenGLShaderPrecisionMacro;
 import jena.opengl.shader.OpenGLShaderVersionMacro;
@@ -18,8 +19,8 @@ public class OpenGLESFileShaderSource implements OpenGLShaderSource
     }
 
     @Override
-    public String read()
+    public void accept(OpenGLShaderSourceAcceptor acceptor)
     {
-        return source.read();
+        source.accept(acceptor);
     }
 }
