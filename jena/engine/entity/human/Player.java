@@ -62,20 +62,23 @@ public class Player implements GraphicsClipPainter, FrameStartListener, FrameEnd
     {
         float max;
         float speed;
-        float start = Time.time();
+        float start;
 
         public BackgroundOffset(float max, float speed)
         {
             this.max = max;
             this.speed = speed;
+            Time.accept(time -> start = time);
         }
 
         @Override
         public void accept(FloatAcceptor acceptor)
         {
-            float time = Time.time();
-            if ((time - start) * speed >= max) start = time;
-            acceptor.call((time - start) * speed);
+            Time.accept(time ->
+            {
+                if ((time - start) * speed >= max) start = time;
+                acceptor.call((time - start) * speed);
+            });
         }
     }
 

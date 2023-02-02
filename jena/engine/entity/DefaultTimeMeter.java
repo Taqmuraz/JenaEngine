@@ -6,15 +6,17 @@ public class DefaultTimeMeter implements TimeMeter
 
     public DefaultTimeMeter()
     {
-        lastTime = Time.time();
+        Time.accept(time -> lastTime = time);
     }
 
     @Override
-    public float measureTime()
+    public void measureTime(TimeAcceptor acceptor)
     {
-        float currentTime = Time.time();
-        float delta = currentTime - lastTime;
-        lastTime = currentTime;
-        return delta;
+        Time.accept(currentTime ->
+        {
+            float delta = currentTime - lastTime;
+            lastTime = currentTime;
+            acceptor.call(delta);
+        });
     }
 }

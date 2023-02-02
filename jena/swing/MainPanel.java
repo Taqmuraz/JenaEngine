@@ -72,7 +72,7 @@ public class MainPanel extends JPanel implements GraphicsResource
         {
             UserCanvas userCanvas = new MenuCanvas(canvas);
             TimeMeter frameMeter = new DefaultTimeMeter();
-            canvas.drawText(a -> a.call(String.format("fps = %s", String.valueOf((int)(1f / frameMeter.measureTime())))), a -> a.call(0f, 0f, 300f, 50f), a -> a.call(255, 255, 255, 255));
+            canvas.drawText(a -> frameMeter.measureTime(time ->  a.call(String.format("fps = %s", String.valueOf((int)(1f / time))))), a -> a.call(0f, 0f, 300f, 50f), a -> a.call(255, 255, 255, 255));
             IntStream.range(0, buttons.length).boxed().forEach(b -> 
             {
                 userCanvas.drawButton(a -> a.call(buttons[b]), a -> a.call(0f, (b + 1) * 55f, 300f, 50f), c -> c.call(255, 150, 50, 255), c -> c.call(100, 100, 100, 255), () -> System.out.println(b));
