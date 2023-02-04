@@ -6,16 +6,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jena.engine.io.TextFileReader;
-import jena.engine.io.FileResource;
+import jena.engine.io.StorageResource;
 import jena.opengl.OpenGLShaderSource;
 import jena.opengl.OpenGLShaderSourceAcceptor;
 
 public class OpenGLFileShaderSource implements OpenGLShaderSource
 {
-    FileResource file;
+    StorageResource file;
     OpenGLShaderMacro[] macros;
 
-    public OpenGLFileShaderSource(FileResource file, OpenGLShaderMacro... macros)
+    public OpenGLFileShaderSource(StorageResource file, OpenGLShaderMacro... macros)
     {
         this.file = file;
         this.macros = macros;

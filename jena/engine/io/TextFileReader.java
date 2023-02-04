@@ -9,8 +9,8 @@ import jena.engine.common.ErrorHandler;
 
 public class TextFileReader
 {
-    private FileResource file;
-    public TextFileReader(FileResource file)
+    private StorageResource file;
+    public TextFileReader(StorageResource file)
     {
         this.file = file;
     }

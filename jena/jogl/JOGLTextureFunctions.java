@@ -9,7 +9,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
 import jena.engine.common.Action;
 import jena.engine.common.ErrorHandler;
-import jena.engine.io.FileResource;
+import jena.engine.io.StorageResource;
 import jena.opengl.OpenGLTexture;
 import jena.opengl.OpenGLTextureFunctions;
 
@@ -19,7 +19,7 @@ public class JOGLTextureFunctions implements OpenGLTextureFunctions
     {
         OpenGLTexture binder;
 
-        JOGLTexture(GLProfile profile, FileResource file, ErrorHandler errorHandler)
+        JOGLTexture(GLProfile profile, StorageResource file, ErrorHandler errorHandler)
         {
             binder = (gl, action) -> {};
             file.read(stream ->

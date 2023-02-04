@@ -10,7 +10,7 @@ import jena.engine.entity.Time;
 import jena.engine.entity.TimeMeter;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
-import jena.engine.io.StorageFileResource;
+import jena.engine.io.Storage;
 import jena.engine.math.IntAcceptor;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fBuilder;
@@ -63,9 +63,9 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
     private Vector2f movement;
     private TimeMeter frameMeter;
 
-    public Human(GraphicsResource graphicsResource, Controller controller)
+    public Human(GraphicsResource graphicsResource, Storage storage, Controller controller)
     {
-        texture = graphicsResource.loadTexture(new StorageFileResource("HumanMap.png"));
+        texture = graphicsResource.loadTexture(storage.open("HumanMap.png"));
         position = new Vector2fStruct();
         movement = controller.movement();
         

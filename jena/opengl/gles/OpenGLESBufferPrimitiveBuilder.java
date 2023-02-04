@@ -1,7 +1,7 @@
 package jena.opengl.gles;
 
 import jena.engine.common.ErrorHandler;
-import jena.engine.io.StorageFileResource;
+import jena.engine.io.Storage;
 import jena.opengl.OpenGLBufferFunctions;
 import jena.opengl.OpenGLPrimitive;
 import jena.opengl.OpenGLShader;
@@ -19,14 +19,14 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
 
     private OpenGLPrimitive quad;
 
-    public OpenGLESBufferPrimitiveBuilder(OpenGLBufferFunctions gl, OpenGLShaderEnvironment shaderEnvironment, ErrorHandler errorHandler)
+    public OpenGLESBufferPrimitiveBuilder(OpenGLBufferFunctions gl, OpenGLShaderEnvironment shaderEnvironment, Storage storage, ErrorHandler errorHandler)
     {
         this.gl = gl;
         shader = new OpenGLStandardShader
         (
             shaderEnvironment,
-            new OpenGLESFileShaderSource(new StorageFileResource("shaders/vertex.glsl")),
-            new OpenGLESFileShaderSource(new StorageFileResource("shaders/fragment.glsl")),
+            new OpenGLESFileShaderSource(storage.open("shaders/vertex.glsl")),
+            new OpenGLESFileShaderSource(storage.open("shaders/fragment.glsl")),
             acceptor ->
             {
                 acceptor.call(0, "position");

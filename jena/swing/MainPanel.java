@@ -25,7 +25,9 @@ import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.input.Mouse;
 import jena.engine.input.WindowToGraphicsMouse;
-import jena.engine.io.FileResource;
+import jena.engine.io.FileStorage;
+import jena.engine.io.Storage;
+import jena.engine.io.StorageResource;
 import jena.engine.math.Rectf;
 import jena.engine.math.Vector2f;
 import jena.engine.ui.MenuCanvas;
@@ -52,8 +54,9 @@ public class MainPanel extends JPanel implements GraphicsResource
         Vector2f panelSize = a -> a.call(getWidth(), getHeight());
         this.graphicsRect = new GraphicsRectf(panelSize, a -> a.call(canvasWidth, canvasHeight));
         Mouse windowMouse = new WindowToGraphicsMouse(mouse, canvasSize, graphicsRect);
+        Storage storage = new FileStorage();
         
-        Player player = new Player(this, keyboard);
+        Player player = new Player(this, storage, keyboard);
 
         int num = 1;
         float dnum = 1f / num;
@@ -139,7 +142,7 @@ public class MainPanel extends JPanel implements GraphicsResource
     }
 
     @Override
-    public TextureHandle loadTexture(FileResource file) 
+    public TextureHandle loadTexture(StorageResource file) 
     {
         return new FileImageResource(file, errorHandler);
     }

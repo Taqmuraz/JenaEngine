@@ -1,8 +1,8 @@
 package jena.engine.graphics;
 
-import jena.engine.io.FileResource;
+import jena.engine.io.StorageResource;
 
 public interface GraphicsResource
 {
-    TextureHandle loadTexture(FileResource file);
+    TextureHandle loadTexture(StorageResource file);
 }

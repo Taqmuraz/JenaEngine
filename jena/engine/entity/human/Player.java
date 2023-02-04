@@ -9,7 +9,7 @@ import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.input.Key;
 import jena.engine.input.Keyboard;
-import jena.engine.io.StorageFileResource;
+import jena.engine.io.Storage;
 import jena.engine.math.FloatAcceptor;
 import jena.engine.math.Matrix3fBuilder;
 import jena.engine.math.ValueFloat;
@@ -22,9 +22,9 @@ public class Player implements GraphicsClipPainter, FrameStartListener, FrameEnd
     TextureHandle groundTexture;
     TextureHandle skyTexture;
 
-    public Player(GraphicsResource graphicsResource, Keyboard keyboard)
+    public Player(GraphicsResource graphicsResource, Storage storage, Keyboard keyboard)
     {
-        human = new Human(graphicsResource, () -> new Vector2f()
+        human = new Human(graphicsResource, storage, () -> new Vector2f()
         {
             Key w = keyboard.keyOf('W');
             Key a = keyboard.keyOf('A');
@@ -43,8 +43,8 @@ public class Player implements GraphicsClipPainter, FrameStartListener, FrameEnd
                 acceptor.call(x, y);
             }
         });
-        groundTexture = graphicsResource.loadTexture(new StorageFileResource("Ground.png"));
-        skyTexture = graphicsResource.loadTexture(new StorageFileResource("Sky.png"));
+        groundTexture = graphicsResource.loadTexture(storage.open("Ground.png"));
+        skyTexture = graphicsResource.loadTexture(storage.open("Sky.png"));
     }
 
     @Override

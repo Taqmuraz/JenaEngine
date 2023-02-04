@@ -9,11 +9,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.File;
 
-public class StorageFileResource implements FileResource
+public class FileStorageResource implements StorageResource
 {
     String fileName;
 
-    public StorageFileResource(String resourceName)
+    public FileStorageResource(String resourceName)
     {
         this.fileName = String.format("resources/%s", resourceName);
     }

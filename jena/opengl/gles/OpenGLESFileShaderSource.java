@@ -1,6 +1,6 @@
 package jena.opengl.gles;
 
-import jena.engine.io.FileResource;
+import jena.engine.io.StorageResource;
 import jena.opengl.OpenGLShaderSource;
 import jena.opengl.OpenGLShaderSourceAcceptor;
 import jena.opengl.shader.OpenGLFileShaderSource;
@@ -11,7 +11,7 @@ public class OpenGLESFileShaderSource implements OpenGLShaderSource
 {
     OpenGLShaderSource source;
 
-    public OpenGLESFileShaderSource(FileResource file)
+    public OpenGLESFileShaderSource(StorageResource file)
     {
         source = new OpenGLFileShaderSource(file,
             new OpenGLShaderVersionMacro("300 es"),

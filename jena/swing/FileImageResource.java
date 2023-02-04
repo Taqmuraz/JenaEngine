@@ -5,7 +5,7 @@ import java.awt.TexturePaint;
 
 import javax.imageio.ImageIO;
 import jena.engine.common.ErrorHandler;
-import jena.engine.io.FileResource;
+import jena.engine.io.StorageResource;
 
 public class FileImageResource implements SwingTextureResource
 {
@@ -13,7 +13,7 @@ public class FileImageResource implements SwingTextureResource
     private static final BufferedImage nullImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
     private TexturePaint paint;
 
-    public FileImageResource(FileResource file, ErrorHandler errorHandler)
+    public FileImageResource(StorageResource file, ErrorHandler errorHandler)
     {
         file.read(stream ->
         {

@@ -19,7 +19,9 @@ import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.PostponedGraphicsDevice;
 import jena.engine.graphics.TextureHandle;
-import jena.engine.io.FileResource;
+import jena.engine.io.FileStorage;
+import jena.engine.io.Storage;
+import jena.engine.io.StorageResource;
 import jena.engine.math.Rectf;
 import jena.environment.EnvironmentVariables;
 import jena.environment.variable.IntegerVariable;
@@ -52,7 +54,7 @@ public class JOGLWindowListener implements GLEventListener
         }
 
         @Override
-        public TextureHandle loadTexture(FileResource file)
+        public TextureHandle loadTexture(StorageResource file)
         {
             return new JOGLTextureFunctions.JOGLTexture(profile, file, System.out::println);
         }
@@ -95,12 +97,13 @@ public class JOGLWindowListener implements GLEventListener
     {
         System.out.println("initialized");
 
+        Storage storage = new FileStorage();
         JOGLKeyboard keyboard = new JOGLKeyboard();
-        Player player = new Player(new OpenGLGraphicsResource(drawable.getGL(), drawable.getGLProfile(), System.out::println), keyboard);
+        Player player = new Player(new OpenGLGraphicsResource(drawable.getGL(), drawable.getGLProfile(), System.out::println), storage, keyboard);
 
         primitives = new OpenGLESBufferPrimitiveBuilder(
             new JOGLBufferFunctions(drawable.getGL().getGL2ES3()),
-            new JOGLShaderEnvironment(drawable.getGL().getGL2ES3(), System.out::println), System.out::println);
+            new JOGLShaderEnvironment(drawable.getGL().getGL2ES3(), System.out::println), storage, System.out::println);
 
         frameStart = player;
         frameEnd = () ->
