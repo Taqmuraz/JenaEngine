@@ -1,6 +1,7 @@
 package jena.jogl;
 
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -26,7 +27,6 @@ import jena.opengl.OpenGLDevice;
 import jena.opengl.gles.OpenGLESBufferPrimitiveBuilder;
 import jena.opengl.gles.OpenGLESMatrixPipeline;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
-import jena.opengl.texture.OpenGLDiffuseTexture;
 
 public class JOGLWindowListener implements GLEventListener
 {
@@ -41,10 +41,11 @@ public class JOGLWindowListener implements GLEventListener
 
     class OpenGLGraphicsResource implements GraphicsResource
     {
+        GL gl;
         GLProfile profile;
         ErrorHandler errorHandler;
 
-        public OpenGLGraphicsResource(GLProfile profile, ErrorHandler errorHandler)
+        public OpenGLGraphicsResource(GL gl, GLProfile profile, ErrorHandler errorHandler)
         {
             this.profile = profile;
             this.errorHandler = errorHandler;
@@ -53,7 +54,7 @@ public class JOGLWindowListener implements GLEventListener
         @Override
         public TextureHandle loadTexture(FileResource file)
         {
-            return new OpenGLDiffuseTexture(profile, file, errorHandler);
+            return new JOGLTextureFunctions.JOGLTexture(profile, file, System.out::println);
         }
     }
 
@@ -74,7 +75,10 @@ public class JOGLWindowListener implements GLEventListener
         gl.glClearColor(0f, 0f, 0f, 1f);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
-        root.paint(new OpenGLDevice(gl, () -> new OpenGLESMatrixPipeline(gl), primitives, paintArea, System.out::println));
+        root.paint(
+            new OpenGLDevice((new JOGLTextureFunctions(drawable.getGL())),
+            () -> new OpenGLESMatrixPipeline(new JOGLMatrixFunctions(gl)),
+            primitives, paintArea, System.out::println));
 
         frameEnd.onEndFrame();
     }
@@ -92,9 +96,11 @@ public class JOGLWindowListener implements GLEventListener
         System.out.println("initialized");
 
         JOGLKeyboard keyboard = new JOGLKeyboard();
-        Player player = new Player(new OpenGLGraphicsResource(drawable.getGLProfile(), System.out::println), keyboard);
+        Player player = new Player(new OpenGLGraphicsResource(drawable.getGL(), drawable.getGLProfile(), System.out::println), keyboard);
 
-        primitives = new OpenGLESBufferPrimitiveBuilder(drawable.getGL().getGL2ES3(), System.out::println);
+        primitives = new OpenGLESBufferPrimitiveBuilder(
+            new JOGLBufferFunctions(drawable.getGL().getGL2ES3()),
+            new JOGLShaderEnvironment(drawable.getGL().getGL2ES3(), System.out::println), System.out::println);
 
         frameStart = player;
         frameEnd = () ->

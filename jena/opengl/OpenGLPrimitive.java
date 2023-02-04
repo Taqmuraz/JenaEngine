@@ -10,7 +10,7 @@ public interface OpenGLPrimitive
 {
     void draw();
 
-    default OpenGLPrimitive textured(OpenGLTexture texture, OpenGLFunctions gl)
+    default OpenGLPrimitive textured(OpenGLTexture texture, OpenGLTextureFunctions gl)
     {
         return new OpenGLTexturedPrimitive(this, texture, gl);
     }

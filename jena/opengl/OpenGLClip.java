@@ -17,11 +17,11 @@ import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
 public class OpenGLClip implements GraphicsClip
 {
-    OpenGLFunctions gl;
+    OpenGLTextureFunctions gl;
     OpenGLPrimitiveBuilder primitives;
     Matrix3fPipeline pipeline;
 
-    public OpenGLClip(OpenGLFunctions gl, OpenGLPrimitiveBuilder primitives, Matrix3fPipeline pipeline)
+    public OpenGLClip(OpenGLTextureFunctions gl, OpenGLPrimitiveBuilder primitives, Matrix3fPipeline pipeline)
     {
         this.gl = gl;
         this.primitives = primitives;

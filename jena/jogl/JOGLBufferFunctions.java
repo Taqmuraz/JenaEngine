@@ -1,4 +1,4 @@
-package jena.opengl;
+package jena.jogl;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -8,10 +8,20 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES3;
 
 import jena.engine.common.ActionSingle;
+import jena.opengl.OpenGLBufferFunctions;
+import jena.opengl.OpenGLVertexArray;
+import jena.opengl.OpenGLVertexArrayContext;
+import jena.opengl.OpenGLVertexBuffer;
+import jena.opengl.OpenGLVertexBufferContext;
 
-public class JOGLFunctions implements OpenGLFunctions
+public class JOGLBufferFunctions implements OpenGLBufferFunctions
 {
     GL2ES3 gl;
+
+    public JOGLBufferFunctions(GL2ES3 gl)
+    {
+        this.gl = gl;
+    }
 
     @Override
     public OpenGLVertexArray genVertexArray(int attributesCount, int[] elements)

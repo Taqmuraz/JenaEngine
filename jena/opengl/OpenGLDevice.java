@@ -9,12 +9,12 @@ import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
 public class OpenGLDevice implements GraphicsDevice
 {
-    OpenGLFunctions gl;
+    OpenGLTextureFunctions gl;
     Rectf paintArea;
     OpenGLPrimitiveBuilder primitives;
     Function<OpenGLMatrixPipeline> pipelineConstructor;
 
-    public OpenGLDevice(OpenGLFunctions gl, Function<OpenGLMatrixPipeline> pipelineConstructor, OpenGLPrimitiveBuilder primitives, Rectf paintArea, ErrorHandler errorHandler)
+    public OpenGLDevice(OpenGLTextureFunctions gl, Function<OpenGLMatrixPipeline> pipelineConstructor, OpenGLPrimitiveBuilder primitives, Rectf paintArea, ErrorHandler errorHandler)
     {
         this.pipelineConstructor = pipelineConstructor;
         this.gl = gl;

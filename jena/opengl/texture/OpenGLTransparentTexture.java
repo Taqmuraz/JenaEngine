@@ -1,9 +1,8 @@
 package jena.opengl.texture;
 
-import com.jogamp.opengl.GL;
-
 import jena.engine.common.Action;
 import jena.opengl.OpenGLTexture;
+import jena.opengl.OpenGLTextureFunctions;
 
 public class OpenGLTransparentTexture implements OpenGLTexture
 {
@@ -15,10 +14,10 @@ public class OpenGLTransparentTexture implements OpenGLTexture
     }
 
     @Override
-    public void bind(GL gl, Action action)
+    public void bind(OpenGLTextureFunctions gl, Action action)
     {
-        gl.glEnable(GL.GL_BLEND);
-        gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+        gl.enableBlend();
         texture.bind(gl, action);
+        gl.disableBlend();
     }
 }

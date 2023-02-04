@@ -1,4 +1,4 @@
-package jena.opengl.gles;
+package jena.jogl;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -6,23 +6,24 @@ import java.nio.IntBuffer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.jogamp.opengl.GL2ES3;
+
 import jena.engine.common.Action;
 import jena.engine.common.ErrorHandler;
 import jena.engine.common.FunctionThrowsHandler;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Rectf;
-import jena.opengl.OpenGLFunctions;
 import jena.opengl.OpenGLShaderAttributeCollection;
 import jena.opengl.OpenGLShaderEnvironment;
 import jena.opengl.OpenGLShaderProgram;
 import jena.opengl.OpenGLShaderSource;
 
-public class OpenGLESShaderEnvironment implements OpenGLShaderEnvironment
+public class JOGLShaderEnvironment implements OpenGLShaderEnvironment
 {
-    OpenGLFunctions gl;
+    GL2ES3 gl;
     ErrorHandler errorHandler;
 
-    public OpenGLESShaderEnvironment(OpenGLFunctions gl, ErrorHandler errorHandler)
+    public JOGLShaderEnvironment(GL2ES3 gl, ErrorHandler errorHandler)
     {
         this.gl = gl;
         this.errorHandler = errorHandler;

@@ -10,7 +10,7 @@ import jena.opengl.texture.OpenGLTransparentTexture;
 
 public interface OpenGLTexture extends TextureHandle
 {
-    void bind(OpenGLFunctions gl, Action action);
+    void bind(OpenGLTextureFunctions gl, Action action);
 
     default OpenGLTexture clamp()
     {

@@ -1,9 +1,8 @@
 package jena.opengl.texture;
 
-import com.jogamp.opengl.GL;
-
 import jena.engine.common.Action;
 import jena.opengl.OpenGLTexture;
+import jena.opengl.OpenGLTextureFunctions;
 
 public class OpenGLOpaqueTexture implements OpenGLTexture
 {
@@ -15,9 +14,9 @@ public class OpenGLOpaqueTexture implements OpenGLTexture
     }
 
     @Override
-    public void bind(GL gl, Action action)
+    public void bind(OpenGLTextureFunctions gl, Action action)
     {
-        gl.glDisable(GL.GL_BLEND);
+        gl.disableBlend();
         texture.bind(gl, action);
     }
 }
