@@ -1,7 +1,5 @@
 package jena.opengl;
 
-import com.jogamp.opengl.GL;
-
 import jena.engine.common.ErrorHandler;
 import jena.engine.common.Function;
 import jena.engine.graphics.GraphicsClipPainter;
@@ -11,12 +9,12 @@ import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
 public class OpenGLDevice implements GraphicsDevice
 {
-    GL gl;
+    OpenGLFunctions gl;
     Rectf paintArea;
     OpenGLPrimitiveBuilder primitives;
     Function<OpenGLMatrixPipeline> pipelineConstructor;
 
-    public OpenGLDevice(GL gl, Function<OpenGLMatrixPipeline> pipelineConstructor, OpenGLPrimitiveBuilder primitives, Rectf paintArea, ErrorHandler errorHandler)
+    public OpenGLDevice(OpenGLFunctions gl, Function<OpenGLMatrixPipeline> pipelineConstructor, OpenGLPrimitiveBuilder primitives, Rectf paintArea, ErrorHandler errorHandler)
     {
         this.pipelineConstructor = pipelineConstructor;
         this.gl = gl;

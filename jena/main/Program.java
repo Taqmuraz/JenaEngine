@@ -6,7 +6,7 @@ import java.util.Scanner;
 import jena.environment.EnvironmentVariables;
 import jena.environment.StandardEnvironmentVariables;
 import jena.environment.variable.StringVariable;
-import jena.opengl.OpenGLWindow;
+import jena.jogl.JOGLWindow;
 import jena.swing.MainWindow;
 
 public class Program
@@ -24,7 +24,7 @@ public class Program
                 {
                     switch(v.value())
                     {
-                        case "opengl": new OpenGLWindow(variables); break;
+                        case "opengl": new JOGLWindow(variables); break;
                         default: new MainWindow(variables);
                     }
                 },

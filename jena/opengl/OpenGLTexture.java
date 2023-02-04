@@ -1,7 +1,5 @@
 package jena.opengl;
 
-import com.jogamp.opengl.GL;
-
 import jena.engine.common.Action;
 import jena.engine.graphics.TextureHandle;
 import jena.opengl.texture.OpenGLClampedTexture;
@@ -12,7 +10,7 @@ import jena.opengl.texture.OpenGLTransparentTexture;
 
 public interface OpenGLTexture extends TextureHandle
 {
-    void bind(GL gl, Action action);
+    void bind(OpenGLFunctions gl, Action action);
 
     default OpenGLTexture clamp()
     {

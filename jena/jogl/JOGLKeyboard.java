@@ -1,4 +1,4 @@
-package jena.opengl;
+package jena.jogl;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
@@ -7,9 +7,9 @@ import jena.engine.input.Key;
 import jena.engine.input.KeySystem;
 import jena.engine.input.Keyboard;
 
-public class OpenGLKeyboard extends KeySystem implements Keyboard, KeyListener
+public class JOGLKeyboard extends KeySystem implements Keyboard, KeyListener
 {
-    public OpenGLKeyboard()
+    public JOGLKeyboard()
     {
         super(256);
     }

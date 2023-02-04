@@ -1,7 +1,6 @@
 package jena.opengl.primitive;
 
-import com.jogamp.opengl.GL;
-
+import jena.opengl.OpenGLFunctions;
 import jena.opengl.OpenGLPrimitive;
 import jena.opengl.OpenGLTexture;
 
@@ -9,9 +8,9 @@ public class OpenGLTexturedPrimitive implements OpenGLPrimitive
 {
     private OpenGLTexture texture;
     private OpenGLPrimitive primitive;
-    private GL gl;
+    private OpenGLFunctions gl;
 
-    public OpenGLTexturedPrimitive(OpenGLPrimitive primitive, OpenGLTexture texture, GL gl)
+    public OpenGLTexturedPrimitive(OpenGLPrimitive primitive, OpenGLTexture texture, OpenGLFunctions gl)
     {
         this.texture = texture;
         this.primitive = primitive;

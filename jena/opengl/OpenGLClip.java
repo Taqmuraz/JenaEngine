@@ -1,7 +1,5 @@
 package jena.opengl;
 
-import com.jogamp.opengl.GL;
-
 import jena.engine.common.Action;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsClip;
@@ -19,11 +17,11 @@ import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
 public class OpenGLClip implements GraphicsClip
 {
-    GL gl;
+    OpenGLFunctions gl;
     OpenGLPrimitiveBuilder primitives;
     Matrix3fPipeline pipeline;
 
-    public OpenGLClip(GL gl, OpenGLPrimitiveBuilder primitives, Matrix3fPipeline pipeline)
+    public OpenGLClip(OpenGLFunctions gl, OpenGLPrimitiveBuilder primitives, Matrix3fPipeline pipeline)
     {
         this.gl = gl;
         this.primitives = primitives;

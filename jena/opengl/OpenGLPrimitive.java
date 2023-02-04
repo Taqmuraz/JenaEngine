@@ -1,7 +1,5 @@
 package jena.opengl;
 
-import com.jogamp.opengl.GL;
-
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Rectf;
 import jena.opengl.primitive.OpenGLTransformedPrimitive;
@@ -12,7 +10,7 @@ public interface OpenGLPrimitive
 {
     void draw();
 
-    default OpenGLPrimitive textured(OpenGLTexture texture, GL gl)
+    default OpenGLPrimitive textured(OpenGLTexture texture, OpenGLFunctions gl)
     {
         return new OpenGLTexturedPrimitive(this, texture, gl);
     }

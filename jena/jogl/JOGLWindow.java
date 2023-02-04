@@ -1,4 +1,4 @@
-package jena.opengl;
+package jena.jogl;
 
 import javax.swing.JFrame;
 
@@ -15,9 +15,9 @@ import jena.engine.math.Vector2f;
 import jena.environment.EnvironmentVariables;
 import jena.environment.variable.DimensionVariable;
 
-public class OpenGLWindow extends JFrame
+public class JOGLWindow extends JFrame
 {
-    public OpenGLWindow(EnvironmentVariables variables)
+    public JOGLWindow(EnvironmentVariables variables)
     {
         Dimension resolution = new DimensionStruct(acceptor -> variables.<DimensionVariable>findVariable("resolution", d ->
         {
@@ -41,7 +41,7 @@ public class OpenGLWindow extends JFrame
         Vector2f screenSize = a -> a.call(window.getWidth(), window.getHeight());
         Rectf paintRect = new GraphicsRectf(screenSize, a -> resolution.accept(a::call));
 
-        window.addGLEventListener(new OpenGLWindowListener(window, paintRect, variables));
+        window.addGLEventListener(new JOGLWindowListener(window, paintRect, variables));
 
         window.setVisible(true);
     }

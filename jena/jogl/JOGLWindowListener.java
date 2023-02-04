@@ -1,4 +1,4 @@
-package jena.opengl;
+package jena.jogl;
 
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -22,12 +22,13 @@ import jena.engine.io.FileResource;
 import jena.engine.math.Rectf;
 import jena.environment.EnvironmentVariables;
 import jena.environment.variable.IntegerVariable;
+import jena.opengl.OpenGLDevice;
 import jena.opengl.gles.OpenGLESBufferPrimitiveBuilder;
 import jena.opengl.gles.OpenGLESMatrixPipeline;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 import jena.opengl.texture.OpenGLDiffuseTexture;
 
-public class OpenGLWindowListener implements GLEventListener
+public class JOGLWindowListener implements GLEventListener
 {
     FPSAnimator animator;
     GLWindow window;
@@ -56,7 +57,7 @@ public class OpenGLWindowListener implements GLEventListener
         }
     }
 
-    public OpenGLWindowListener(GLWindow window, Rectf paintArea, EnvironmentVariables variables)
+    public JOGLWindowListener(GLWindow window, Rectf paintArea, EnvironmentVariables variables)
     {
         this.paintArea = paintArea;
         this.window = window;
@@ -90,7 +91,7 @@ public class OpenGLWindowListener implements GLEventListener
     {
         System.out.println("initialized");
 
-        OpenGLKeyboard keyboard = new OpenGLKeyboard();
+        JOGLKeyboard keyboard = new JOGLKeyboard();
         Player player = new Player(new OpenGLGraphicsResource(drawable.getGLProfile(), System.out::println), keyboard);
 
         primitives = new OpenGLESBufferPrimitiveBuilder(drawable.getGL().getGL2ES3(), System.out::println);
