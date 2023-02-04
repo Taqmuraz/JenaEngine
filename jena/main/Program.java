@@ -3,6 +3,11 @@ package jena.main;
 import java.awt.EventQueue;
 import java.util.Scanner;
 
+import jena.engine.io.FileStorageResource;
+import jena.engine.io.encoding.FileDecoder;
+import jena.engine.io.encoding.FileEncoder;
+import jena.engine.io.encoding.ResourcesDecoder;
+import jena.engine.io.encoding.ResourcesEncoder;
 import jena.environment.EnvironmentVariables;
 import jena.environment.StandardEnvironmentVariables;
 import jena.environment.variable.StringVariable;
@@ -14,6 +19,9 @@ public class Program
     public static void main(String[] args)
     {
         System.setProperty("sun.java2d.uiScale", "1.0"); // to disable Windows UI scaling
+
+        //new FileEncoder(new FileStorageResource("../resources.txt")).encode(new ResourcesEncoder(), System.out::println);
+        new FileDecoder(new FileStorageResource("../resources.txt")).decode(new ResourcesDecoder(), System.out::println);
 
         EventQueue.invokeLater(() ->
         {

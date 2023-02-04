@@ -49,18 +49,13 @@ public class FileStorageResource implements StorageResource
     }
 
     @Override
-    public void write(InputStream input, ErrorHandler errorHandler)
+    public void write(OutputStreamAcceptor acceptor, ErrorHandler errorHandler)
     {
         OutputStream output = null;
         try
         {
             output = new FileOutputStream(new File(fileName));
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = input.read(buffer)) != -1)
-            {
-                output.write(buffer, 0, length);
-            }
+            acceptor.call(output);
         }
         catch (Throwable exception)
         {
