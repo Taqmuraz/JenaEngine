@@ -11,6 +11,8 @@ import com.jogamp.opengl.GL2ES3;
 import jena.engine.common.Action;
 import jena.engine.common.ErrorHandler;
 import jena.engine.common.FunctionThrowsHandler;
+import jena.engine.graphics.Color;
+import jena.engine.graphics.ColorFloatStruct;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Rectf;
 import jena.opengl.OpenGLShaderAttributeCollection;
@@ -96,6 +98,15 @@ public class JOGLShaderEnvironment implements OpenGLShaderEnvironment
                 rect.accept((x, y, w, h) ->
                 {
                     gl.glUniform4f(gl.glGetUniformLocation(program, name), x, y, w, h);
+                });
+            }
+
+            @Override
+            public void loadUniformColor(String name, Color color)
+            {
+                new ColorFloatStruct(color).acceptFloats((r, g, b, a) ->
+                {
+                    gl.glUniform4f(gl.glGetUniformLocation(program, name), r, g, b, a);
                 });
             }
         };

@@ -5,6 +5,7 @@ import jena.engine.io.Storage;
 import jena.opengl.OpenGLBufferFunctions;
 import jena.opengl.OpenGLPrimitive;
 import jena.opengl.OpenGLShader;
+import jena.opengl.OpenGLShaderAttributeCollection;
 import jena.opengl.OpenGLShaderEnvironment;
 import jena.opengl.OpenGLUniformsPrimitive;
 import jena.opengl.OpenGLVertexArray;
@@ -15,26 +16,65 @@ import jena.opengl.shader.OpenGLStandardShader;
 public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
 {
     private OpenGLBufferFunctions gl;
-    private OpenGLShader shader;
+    private OpenGLShader diffuseShader;
+    private OpenGLShader rectContourShader;
+    private OpenGLShader ellipseContourShader;
+    private OpenGLShader rectShader;
+    private OpenGLShader ellipseShader;
 
     private OpenGLPrimitive quad;
 
     public OpenGLESBufferPrimitiveBuilder(OpenGLBufferFunctions gl, OpenGLShaderEnvironment shaderEnvironment, Storage storage, ErrorHandler errorHandler)
     {
         this.gl = gl;
-        shader = new OpenGLStandardShader
+
+        OpenGLShaderAttributeCollection attributes = acceptor ->
+        {
+            acceptor.call(0, "position");
+            acceptor.call(1, "texcoord");
+        };
+
+        diffuseShader = new OpenGLStandardShader
         (
             shaderEnvironment,
             new OpenGLESFileShaderSource(storage.open("shaders/vertex.glsl")),
             new OpenGLESFileShaderSource(storage.open("shaders/fragment.glsl")),
-            acceptor ->
-            {
-                acceptor.call(0, "position");
-                acceptor.call(1, "texcoord");
-            }
+            attributes
         );
 
-        createQuad();
+        rectContourShader = new OpenGLStandardShader
+        (
+            shaderEnvironment,
+            new OpenGLESFileShaderSource(storage.open("shaders/drawVertex.glsl")),
+            new OpenGLESFileShaderSource(storage.open("shaders/drawRectFragment.glsl")),
+            attributes
+        );
+
+        ellipseContourShader = new OpenGLStandardShader
+        (
+            shaderEnvironment,
+            new OpenGLESFileShaderSource(storage.open("shaders/drawVertex.glsl")),
+            new OpenGLESFileShaderSource(storage.open("shaders/drawEllipseFragment.glsl")),
+            attributes
+        );
+
+        rectShader = new OpenGLStandardShader
+        (
+            shaderEnvironment,
+            new OpenGLESFileShaderSource(storage.open("shaders/drawVertex.glsl")),
+            new OpenGLESFileShaderSource(storage.open("shaders/fillRectFragment.glsl")),
+            attributes
+        );
+
+        ellipseShader = new OpenGLStandardShader
+        (
+            shaderEnvironment,
+            new OpenGLESFileShaderSource(storage.open("shaders/drawVertex.glsl")),
+            new OpenGLESFileShaderSource(storage.open("shaders/fillEllipseFragment.glsl")),
+            attributes
+        );
+
+        createPrimitives();
     }
 
     private void loadAttributeBuffer(int index, int stride, float[] data, OpenGLVertexBuffer buffer)
@@ -46,13 +86,38 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
         });
     }
 
-    @Override
-    public OpenGLPrimitive quad()
+    private OpenGLPrimitive create(OpenGLUniformsPrimitive acceptor, OpenGLPrimitive primitive, OpenGLShader shader)
     {
-        return quad;
+        return () -> shader.play(acceptor.create(primitive, shader)::draw);
     }
 
-    private void createQuad()
+    @Override
+    public OpenGLPrimitive quad(OpenGLUniformsPrimitive acceptor)
+    {
+        return create(acceptor, quad, diffuseShader);
+    }
+    @Override
+    public OpenGLPrimitive rect(OpenGLUniformsPrimitive acceptor)
+    {
+        return create(acceptor, quad, rectShader);
+    }
+    @Override
+    public OpenGLPrimitive ellipse(OpenGLUniformsPrimitive acceptor)
+    {
+        return create(acceptor, quad, ellipseShader);
+    }
+    @Override
+    public OpenGLPrimitive rectContour(OpenGLUniformsPrimitive acceptor)
+    {
+        return create(acceptor, quad, rectContourShader);
+    }
+    @Override
+    public OpenGLPrimitive ellipseContour(OpenGLUniformsPrimitive acceptor)
+    {
+        return create(acceptor, quad, ellipseContourShader);
+    }
+
+    private void createPrimitives()
     {
         int[] indices = new int[]
         {
@@ -83,13 +148,7 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
             loadAttributeBuffer(0, 2, positions, vbos[0]);
             loadAttributeBuffer(1, 2, uvs, vbos[1]);
 
-            quad = () -> shader.play(vao::drawTriangles);
+            quad = vao::drawTriangles;
         });
-    }
-
-    @Override
-    public OpenGLPrimitive fromUniforms(OpenGLUniformsPrimitive acceptor)
-    {
-        return () -> shader.play(acceptor.create(shader)::draw);
     }
 }

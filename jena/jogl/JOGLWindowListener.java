@@ -19,7 +19,6 @@ import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.PostponedGraphicsDevice;
 import jena.engine.graphics.TextureHandle;
-import jena.engine.io.FileStorage;
 import jena.engine.io.FileStorageResource;
 import jena.engine.io.Storage;
 import jena.engine.io.StorageResource;

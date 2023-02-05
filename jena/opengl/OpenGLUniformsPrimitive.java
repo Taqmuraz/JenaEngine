@@ -2,5 +2,5 @@ package jena.opengl;
 
 public interface OpenGLUniformsPrimitive
 {
-    OpenGLPrimitive create(OpenGLUniforms uniforms);
+    OpenGLPrimitive create(OpenGLPrimitive primitive, OpenGLUniforms uniforms);
 }

@@ -5,6 +5,9 @@ import jena.opengl.OpenGLUniformsPrimitive;
 
 public interface OpenGLPrimitiveBuilder
 {
-    OpenGLPrimitive quad();
-    OpenGLPrimitive fromUniforms(OpenGLUniformsPrimitive acceptor);
+    OpenGLPrimitive quad(OpenGLUniformsPrimitive acceptor);
+    OpenGLPrimitive rect(OpenGLUniformsPrimitive acceptor);
+    OpenGLPrimitive ellipse(OpenGLUniformsPrimitive acceptor);
+    OpenGLPrimitive rectContour(OpenGLUniformsPrimitive acceptor);
+    OpenGLPrimitive ellipseContour(OpenGLUniformsPrimitive acceptor);
 }

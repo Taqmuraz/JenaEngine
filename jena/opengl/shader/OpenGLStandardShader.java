@@ -1,6 +1,7 @@
 package jena.opengl.shader;
 
 import jena.engine.common.Action;
+import jena.engine.graphics.Color;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Rectf;
 import jena.opengl.OpenGLShader;
@@ -34,5 +35,11 @@ public class OpenGLStandardShader implements OpenGLShader
     public void loadUniformRect(String name, Rectf rect)
     {
         program.loadUniformRect(name, rect);
+    }
+
+    @Override
+    public void loadUniformColor(String name, Color color)
+    {
+        program.loadUniformColor(name, color);
     }
 }

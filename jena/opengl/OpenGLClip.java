@@ -14,6 +14,7 @@ import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fStruct;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
+import jena.opengl.texture.OpenGLTransparentTexture;
 
 public class OpenGLClip implements GraphicsClip
 {
@@ -34,9 +35,9 @@ public class OpenGLClip implements GraphicsClip
         if (texture instanceof OpenGLTexture)
         {
             OpenGLTexture openGLtex = (OpenGLTexture)texture;
-            primitives.fromUniforms(uniforms ->
+            primitives.quad((quad, uniforms) ->
             {
-                return primitives.quad().rect(source, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
+                return quad.rect(source, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
             })
             .textured(openGLtex.point().clamp().transparent(), gl).draw();
         }
@@ -48,10 +49,10 @@ public class OpenGLClip implements GraphicsClip
         if (texture instanceof OpenGLTexture)
         {
             OpenGLTexture openGLtex = (OpenGLTexture)texture;
-            primitives.fromUniforms(uniforms ->
+            primitives.quad((quad, uniforms) ->
             {
                 Vector2fStruct t = new Vector2fStruct(tiles);
-                return primitives.quad().rect(a -> a.call(0f, 0f, t.x, t.y), uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
+                return quad.rect(a -> a.call(0f, 0f, t.x, t.y), uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
             })
             .textured(openGLtex.point().repeat().opaque(), gl).draw();
         }
@@ -66,13 +67,19 @@ public class OpenGLClip implements GraphicsClip
     @Override
     public void drawEllipse(Rectf rect, Color color, ValueFloat width) 
     {
-
+        primitives.ellipseContour((ellipse, uniforms) ->
+        {
+            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
+        }).textured(new OpenGLTransparentTexture((g, a) -> a.call()), gl).draw();
     }
 
     @Override
     public void drawRect(Rectf rect, Color color, ValueFloat width)
     {
-
+        primitives.rectContour((contour, uniforms) ->
+        {
+            return contour.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
+        }).textured(new OpenGLTransparentTexture((g, a) -> a.call()), gl).draw();
     }
 
     @Override
@@ -84,13 +91,19 @@ public class OpenGLClip implements GraphicsClip
     @Override
     public void fillEllipse(Rectf rect, Color color)
     {
-
+        primitives.ellipse((ellipse, uniforms) ->
+        {
+            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
+        }).textured(new OpenGLTransparentTexture((g, a) -> a.call()), gl).draw();;
     }
 
     @Override
     public void fillRect(Rectf rect, Color color)
     {
-        
+        primitives.rect((shape, uniforms) ->
+        {
+            return shape.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
+        }).draw();
     }
 
     @Override
