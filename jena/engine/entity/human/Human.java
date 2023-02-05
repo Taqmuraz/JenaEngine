@@ -71,13 +71,13 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
         
         frameMeter = new DefaultTimeMeter();
 
-        ValueFloat sin = a -> Time.accept(time -> a.call((float)Math.sin(time * 3f) * 0.5f * new Vector2fStruct(movement).length()));
+        ValueFloat sin = a -> Time.accept(time -> a.call((float)Math.sin(time * 6f) * 0.5f * new Vector2fStruct(movement).length()));
         ValueInt dir = new ValueInt()
         {
             int dir = 1;
             public void accept(IntAcceptor acceptor)
             {
-                //movement.accept((x, y) -> dir = x == 0 ? dir : (x < 0 ? -1 : 1));
+                movement.accept((x, y) -> dir = x == 0 ? dir : (x < 0 ? -1 : 1));
                 acceptor.call(dir);
             }
         };
@@ -99,8 +99,8 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
             @Override
             public void paint(GraphicsClip clip)
             {
-                //clip.fillEllipse(a -> a.call(position.x - 0.25f, position.y - 0.25f, 0.5f, 0.5f), a -> a.call(50, 150, 50, 255));
-                //clip.drawEllipse(a -> a.call(position.x - 0.5f, position.y - 0.5f, 1f, 1f), a -> a.call(150, 0, 150, 255), a -> a.call(0.02f));
+                clip.fillEllipse(a -> a.call(position.x - 0.25f, position.y - 0.25f, 0.5f, 0.5f), a -> a.call(50, 150, 50, 255));
+                clip.drawEllipse(a -> a.call(position.x - 0.5f, position.y - 0.5f, 1f, 1f), a -> a.call(150, 0, 150, 255), a -> a.call(0.02f));
                 //clip.drawLine(position, a -> a.call(0f, 0f), a -> a.call(150, 150, 0, 255), a -> a.call(0.01f));
                 clip.matrixScope(source -> new Matrix3fBuilder(source).translate(new Vector2fAdd(position, a -> a.call(0f, 1.25f))).scale(a -> dir.accept(d -> a.call(d, 1f))).build(), () ->
                 {
@@ -131,8 +131,13 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
     {
         movement.accept((x, y) -> frameMeter.measureTime(dt ->
         {
-            //position.x += x * dt * 3f;
-            //position.y += y * dt * 3f;
+            position.x += x * dt * 3f;
+            position.y += y * dt * 3f;
         }));
+    }
+
+    public Vector2f position()
+    {
+        return position;
     }
 }

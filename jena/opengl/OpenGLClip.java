@@ -94,7 +94,7 @@ public class OpenGLClip implements GraphicsClip
         primitives.ellipse((ellipse, uniforms) ->
         {
             return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
-        }).textured(new OpenGLTransparentTexture((g, a) -> a.call()), gl).draw();;
+        }).textured(new OpenGLTransparentTexture((g, a) -> a.call()), gl).draw();
     }
 
     @Override

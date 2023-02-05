@@ -121,7 +121,7 @@ public class JOGLWindowListener implements GLEventListener
 
         root = new PostponedGraphicsDevice(new Camera(
             a -> paintArea.accept((x, y, w, h) -> a.call(0f, 0f, w, h)),
-            a -> a.call(200, 100, 100, 255), player));
+            a -> a.call(200, 100, 100, 255), player.position(), player));
 
         Acceptable<Integer> fps = a -> variables.<IntegerVariable>findVariable("fps", v -> a.call(v.value()), () -> a.call(60));
         fps.accept(f -> animator = new FPSAnimator(window, f));
