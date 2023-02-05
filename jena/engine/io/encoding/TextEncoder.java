@@ -18,8 +18,6 @@ public class TextEncoder
     
     public String readText(DecodingStream stream)
     {
-        int length = stream.readInt();
-        System.out.println("text length : " + length);
-        return charset.decode(ByteBuffer.wrap(stream.read(length))).toString();
+        return charset.decode(ByteBuffer.wrap(stream.readByteArray())).toString();
     }
 }

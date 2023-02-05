@@ -20,8 +20,11 @@ import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.PostponedGraphicsDevice;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileStorage;
+import jena.engine.io.FileStorageResource;
 import jena.engine.io.Storage;
 import jena.engine.io.StorageResource;
+import jena.engine.io.encoding.ResourcesDecoder;
+import jena.engine.io.encoding.FileDecoder;
 import jena.engine.math.Rectf;
 import jena.environment.EnvironmentVariables;
 import jena.environment.variable.IntegerVariable;
@@ -97,7 +100,10 @@ public class JOGLWindowListener implements GLEventListener
     {
         System.out.println("initialized");
 
-        Storage storage = new FileStorage();
+        ResourcesDecoder decoder = new ResourcesDecoder();
+        new FileDecoder(new FileStorageResource("../resources.txt")).decode(decoder, System.out::println);
+        
+        Storage storage = decoder.storage();
         JOGLKeyboard keyboard = new JOGLKeyboard();
         Player player = new Player(new OpenGLGraphicsResource(drawable.getGL(), drawable.getGLProfile(), System.out::println), storage, keyboard);
 

@@ -21,7 +21,7 @@ public class Program
         System.setProperty("sun.java2d.uiScale", "1.0"); // to disable Windows UI scaling
 
         //new FileEncoder(new FileStorageResource("../resources.txt")).encode(new ResourcesEncoder(), System.out::println);
-        new FileDecoder(new FileStorageResource("../resources.txt")).decode(new ResourcesDecoder(), System.out::println);
+        //new FileDecoder(new FileStorageResource("../resources.txt")).decode(new ResourcesDecoder(), System.out::println);
 
         EventQueue.invokeLater(() ->
         {

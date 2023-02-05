@@ -18,7 +18,7 @@ public class ResourcesEncoder implements Encodable
         File root = new File("resources");
         try
         {
-            resources = Files.find(Paths.get(root.getAbsolutePath()), 1024, (a, b) -> b.isRegularFile()).map(p -> p.toFile()).map(file -> file.getAbsolutePath().replace(root.getAbsolutePath(), "")).collect(Collectors.toMap(file -> file, file -> new FileStorageResource(file)));
+            resources = Files.find(Paths.get(root.getAbsolutePath()), 1024, (a, b) -> b.isRegularFile()).map(p -> p.toFile()).map(file -> file.getAbsolutePath().replace(root.getAbsolutePath() + "\\", "").replace("\\", "/")).collect(Collectors.toMap(file -> file, file -> new FileStorageResource(file)));
         }
         catch(Throwable error)
         {

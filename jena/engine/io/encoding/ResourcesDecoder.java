@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import jena.engine.io.Storage;
 import jena.engine.io.StorageResource;
 
 public class ResourcesDecoder implements Decodable
@@ -24,5 +25,10 @@ public class ResourcesDecoder implements Decodable
             resources.put(name, new VirtualStorageResource(bytes));
         });
         resources.entrySet().stream().forEach(name -> System.out.println("Resource decoded : " + name));
+    }
+
+    public Storage storage()
+    {
+        return resources::get;
     }
 }
