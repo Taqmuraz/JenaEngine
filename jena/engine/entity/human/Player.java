@@ -40,7 +40,7 @@ public class Player implements GraphicsClipPainter, FrameStartListener, FrameEnd
                 if (s.isHold()) y -= 1f;
                 if (a.isHold()) x -= 1f;
                 if (d.isHold()) x += 1f;
-                acceptor.call(x, y);
+                acceptor.call(1f, 0f);
             }
         });
         groundTexture = graphicsResource.loadTexture(storage.open("Ground.png"));
@@ -85,10 +85,10 @@ public class Player implements GraphicsClipPainter, FrameStartListener, FrameEnd
     @Override
     public void paint(GraphicsClip clip)
     {
-        ValueFloat groundOffset = new BackgroundOffset(10f, 0f);
-        ValueFloat skyOffset = new BackgroundOffset(40f, 0f);
+        ValueFloat groundOffset = new BackgroundOffset(10f, 0.5f);
+        ValueFloat skyOffset = new BackgroundOffset(40f, 0.2f);
 
-        clip.matrixScope(s -> new Matrix3fBuilder(s).translate(a -> a.call(1f, -2f)).build(), () ->
+        clip.matrixScope(s -> new Matrix3fBuilder(s).translate(a -> a.call(-2f, -2f)).build(), () ->
         {
             clip.drawTile(skyTexture, a -> a.call(2f, 1f), a -> skyOffset.accept(sky -> a.call(-20f - sky, 0f, 60f, 5f)));
             clip.drawTile(groundTexture, a -> a.call(3f, 1f), a -> groundOffset.accept(ground -> a.call(-10f - ground, -8f, 30f, 8f)));
