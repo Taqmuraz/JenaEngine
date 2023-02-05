@@ -103,7 +103,7 @@ public class OpenGLClip implements GraphicsClip
         primitives.rect((shape, uniforms) ->
         {
             return shape.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
-        }).draw();
+        }).textured(new OpenGLTransparentTexture((g, a) -> a.call()), gl).draw();
     }
 
     @Override
