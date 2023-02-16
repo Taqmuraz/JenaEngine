@@ -28,11 +28,7 @@ public final class Vector2fStruct implements Vector2f
     {
         acceptor.call(x, y);
     }
-
-    public float length()
-    {
-        return (float)Math.sqrt(x * x + y * y);
-    }
+    
     @Override
     public Vector2f clone()
     {

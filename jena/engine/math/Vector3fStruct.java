@@ -30,11 +30,6 @@ public final class Vector3fStruct implements Vector3f
         acceptor.call(x, y, z);
     }
 
-    public float length()
-    {
-        return (float)Math.sqrt(x * x + y * y + z * z);
-    }
-
     @Override
     public Vector3f clone()
     {

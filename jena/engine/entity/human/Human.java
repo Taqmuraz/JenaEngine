@@ -21,6 +21,7 @@ import jena.engine.math.ValueFloat;
 import jena.engine.math.ValueInt;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAdd;
+import jena.engine.math.Vector2fLength;
 import jena.engine.math.Vector2fStruct;
 
 public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndListener
@@ -71,7 +72,8 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
         
         frameMeter = new DefaultTimeMeter();
 
-        ValueFloat sin = a -> Time.accept(time -> a.call((float)Math.sin(time * 6f) * 0.5f * new Vector2fStruct(movement).length()));
+        ValueFloat movementLength = new Vector2fLength(movement);
+        ValueFloat sin = a -> movementLength.accept(mlen -> Time.accept(time -> a.call((float)Math.sin(time * 6f) * 0.5f * mlen)));
         ValueInt dir = new ValueInt()
         {
             int dir = 1;

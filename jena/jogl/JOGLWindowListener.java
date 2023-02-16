@@ -14,7 +14,8 @@ import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
-import jena.engine.entity.human.Player;
+import jena.engine.entity.KeyboardController;
+import jena.engine.game.Game;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.PostponedGraphicsDevice;
@@ -104,7 +105,7 @@ public class JOGLWindowListener implements GLEventListener
         
         Storage storage = decoder.storage();
         JOGLKeyboard keyboard = new JOGLKeyboard();
-        Player player = new Player(new OpenGLGraphicsResource(drawable.getGL(), drawable.getGLProfile(), System.out::println), storage, keyboard);
+        Game player = new Game(new OpenGLGraphicsResource(drawable.getGL(), drawable.getGLProfile(), System.out::println), storage, new KeyboardController(keyboard));
 
         primitives = new OpenGLESBufferPrimitiveBuilder(
             new JOGLBufferFunctions(drawable.getGL().getGL2ES3()),

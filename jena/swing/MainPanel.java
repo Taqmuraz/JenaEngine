@@ -16,8 +16,9 @@ import jena.engine.entity.Camera;
 import jena.engine.entity.DefaultTimeMeter;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
+import jena.engine.entity.KeyboardController;
 import jena.engine.entity.TimeMeter;
-import jena.engine.entity.human.Player;
+import jena.engine.game.Game;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.PostponedGraphicsDevice;
 import jena.engine.graphics.GraphicsDevice;
@@ -56,7 +57,7 @@ public class MainPanel extends JPanel implements GraphicsResource
         Mouse windowMouse = new WindowToGraphicsMouse(mouse, canvasSize, graphicsRect);
         Storage storage = new FileStorage();
         
-        Player player = new Player(this, storage, keyboard);
+        Game game = new Game(this, storage, new KeyboardController(keyboard));
 
         int num = 1;
         float dnum = 1f / num;
@@ -65,7 +66,7 @@ public class MainPanel extends JPanel implements GraphicsResource
         {
             float x = (i % num) * dnum;
             float y = (i / num) * dnum;
-            return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(0f, 0f, 0f, 1f), player);
+            return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(0f, 0f, 0f, 1f), game);
         })
         .collect(Collectors.toList());
 
@@ -82,7 +83,7 @@ public class MainPanel extends JPanel implements GraphicsResource
             });
         }));
 
-        frameStartHandler = player;
+        frameStartHandler = game;
         frameEndHandler = () ->
         {
             keyboard.onEndFrame();

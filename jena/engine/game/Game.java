@@ -1,48 +1,29 @@
-package jena.engine.entity.human;
+package jena.engine.game;
 
+import jena.engine.entity.Controller;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.Time;
+import jena.engine.entity.human.Human;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.TextureHandle;
-import jena.engine.input.Key;
-import jena.engine.input.Keyboard;
 import jena.engine.io.Storage;
 import jena.engine.math.FloatAcceptor;
 import jena.engine.math.Matrix3fBuilder;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
-import jena.engine.math.Vector2fAcceptor;
 
-public class Player implements GraphicsClipPainter, FrameStartListener, FrameEndListener
+public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndListener
 {
     Human human;
     TextureHandle groundTexture;
     TextureHandle skyTexture;
 
-    public Player(GraphicsResource graphicsResource, Storage storage, Keyboard keyboard)
+    public Game(GraphicsResource graphicsResource, Storage storage, Controller controller)
     {
-        human = new Human(graphicsResource, storage, () -> new Vector2f()
-        {
-            Key w = keyboard.keyOf('W');
-            Key a = keyboard.keyOf('A');
-            Key s = keyboard.keyOf('S');
-            Key d = keyboard.keyOf('D');
-
-            @Override
-            public void accept(Vector2fAcceptor acceptor)
-            {
-                float x = 0f;
-                float y = 0f;
-                if (w.isHold()) y += 1f;
-                if (s.isHold()) y -= 1f;
-                if (a.isHold()) x -= 1f;
-                if (d.isHold()) x += 1f;
-                acceptor.call(x, y);
-            }
-        });
+        human = new Human(graphicsResource, storage, controller);
         groundTexture = graphicsResource.loadTexture(storage.open("Ground.png"));
         skyTexture = graphicsResource.loadTexture(storage.open("Sky.png"));
     }
