@@ -25,7 +25,7 @@ public class MultipleFieldVector2f implements FieldVector2f
                 new Vector2fLength(new Vector2fSub(b, source)).accept(f -> min.put(1, f));
                 return Float.compare(min.get(0), min.get(1));
             })
-            .ifPresent(v -> v.accept(acceptor));
+            .ifPresentOrElse(v -> v.accept(acceptor), () -> source.accept(acceptor));
         };
     }
 }
