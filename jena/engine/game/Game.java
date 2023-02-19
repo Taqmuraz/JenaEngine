@@ -12,6 +12,7 @@ import jena.engine.graphics.TextureHandle;
 import jena.engine.io.Storage;
 import jena.engine.math.FloatAcceptor;
 import jena.engine.math.Matrix3fBuilder;
+import jena.engine.math.RectFieldVector2f;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 
@@ -23,7 +24,7 @@ public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndLi
 
     public Game(GraphicsResource graphicsResource, Storage storage, Controller controller)
     {
-        human = new Human(graphicsResource, storage, controller);
+        human = new Human(graphicsResource, storage, controller, new RectFieldVector2f(a -> a.call(-5f, -5f, 10f, 10f)));
         groundTexture = graphicsResource.loadTexture(storage.open("Ground.png"));
         skyTexture = graphicsResource.loadTexture(storage.open("Sky.png"));
     }

@@ -11,6 +11,7 @@ import jena.engine.entity.TimeMeter;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.Storage;
+import jena.engine.math.FieldVector2f;
 import jena.engine.math.IntAcceptor;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fBuilder;
@@ -63,12 +64,14 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
     private Vector2fStruct position;
     private Vector2f movement;
     private TimeMeter frameMeter;
+    private Vector2f walkFieldPoint;
 
-    public Human(GraphicsResource graphicsResource, Storage storage, Controller controller)
+    public Human(GraphicsResource graphicsResource, Storage storage, Controller controller, FieldVector2f walkField)
     {
         texture = graphicsResource.loadTexture(storage.open("HumanMap.png"));
         position = new Vector2fStruct();
         movement = controller.movement();
+        walkFieldPoint = walkField.project(position);
         
         frameMeter = new DefaultTimeMeter();
 
@@ -136,6 +139,11 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
             position.x += x * dt * 3f;
             position.y += y * dt * 3f;
         }));
+        walkFieldPoint.accept((x, y) ->
+        {
+            position.x = x;
+            position.y = y;
+        });
     }
 
     public Vector2f position()
