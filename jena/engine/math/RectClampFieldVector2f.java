@@ -1,10 +1,10 @@
 package jena.engine.math;
 
-public class RectFieldVector2f implements FieldVector2f
+public class RectClampFieldVector2f implements FieldVector2f
 {
     Rectf rect;
 
-    public RectFieldVector2f(Rectf rect)
+    public RectClampFieldVector2f(Rectf rect)
     {
         this.rect = rect;
     }
