@@ -39,12 +39,7 @@ public class Camera implements GraphicsDevicePainter
             .translate(new Vector2fNegative(position))
             .accept(r));
 
-        s2w = r -> clip.accept((x, y, w, h) ->
-            new Matrix3fTranslation(position)
-            .multiply(new Matrix3fOrtho(a -> a.call(1f / w, 1f / h), a -> orthoSize.accept(f -> a.call(1f / f))))
-            .multiply(new Matrix3fViewport(1f / w, 1f / h))
-            .translate(a -> a.call(-x, -y))
-            .accept(r));
+        s2w = w2s.inverse();
     }
 
     public Camera(Rectf clip, Color clearColor, GraphicsClipPainter scene)
@@ -60,9 +55,8 @@ public class Camera implements GraphicsDevicePainter
             graphicsClip.fillRect(clip, clearColor);
             graphicsClip.matrixScope(source -> new Matrix3fMul(source, w2s), () -> scene.paint(graphicsClip));
             
-            graphicsClip.matrixScope(source -> new Matrix3fMul(source, w2s), () -> graphicsClip.drawEllipse(r -> screenToWorld().project(a -> a.call(0f, 0f)).accept((x, y) ->
+            graphicsClip.matrixScope(source -> new Matrix3fMul(source, w2s), () -> graphicsClip.drawEllipse(r -> screenToWorld().project(a -> a.call(512f, 420f)).accept((x, y) ->
             {
-                System.out.println(String.format("%f, %f", x, y));
                 r.call(x, y, 0.25f, 0.25f);
             }), a -> a.call(0, 255, 0, 255), a -> a.call(1f)));
         });

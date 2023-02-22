@@ -28,4 +28,8 @@ public interface Matrix3f
     {
         return new Matrix3fStruct(this);
     }
+    default ValueFloat det()
+    {
+        return new Matrix3fDet(this);
+    }
 }
