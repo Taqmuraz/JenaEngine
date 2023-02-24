@@ -1,5 +1,7 @@
 package jena.jogl;
 
+import java.io.BufferedInputStream;
+
 import javax.imageio.ImageIO;
 
 import com.jogamp.opengl.GL;
@@ -27,7 +29,7 @@ public class JOGLTextureFunctions implements OpenGLTextureFunctions
             {
                 try
                 {
-                    Texture texture = AWTTextureIO.newTexture(profile, ImageIO.read(new InputStreamFromFlow(stream)), false);
+                    Texture texture = AWTTextureIO.newTexture(profile, ImageIO.read(new BufferedInputStream(new InputStreamFromFlow(stream))), false);
                     binder = (gl, action) ->
                     {
                         if (gl instanceof JOGLTextureFunctions)

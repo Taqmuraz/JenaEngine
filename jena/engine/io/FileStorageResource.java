@@ -35,7 +35,7 @@ public class FileStorageResource implements StorageResource
         {
             try
             {
-                acceptor.call(new InputFlowFromStream(stream));
+                acceptor.call(new BufferedInputFlowFromStream(stream));
             }
             finally
             {
