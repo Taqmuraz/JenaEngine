@@ -1,6 +1,7 @@
 package jena.engine.io.encoding;
 
 import jena.engine.common.ErrorHandler;
+import jena.engine.io.ByteArrayInput;
 import jena.engine.io.StorageResource;
 
 public class FileEncoder
@@ -16,7 +17,7 @@ public class FileEncoder
     {
         output.write(flow -> encodable.encode(bytes ->
         {
-            for (int i = 0; i < bytes.length; i++) flow.write(bytes[i]);
+            flow.write(new ByteArrayInput(bytes, 0, bytes.length));
         }), errorHandler);
     }
 }

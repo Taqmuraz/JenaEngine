@@ -14,6 +14,6 @@ public class OutputStreamFromFlow extends OutputStream
     @Override
     public void write(int b)
     {
-        flow.write(Byte.valueOf((byte)b));
+        flow.write(out -> out.out((byte)b));
     }
 }

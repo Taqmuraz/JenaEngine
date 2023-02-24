@@ -38,6 +38,8 @@ public class Program
             }
             catch(Throwable error)
             {
+                while(error.getCause() != null) error = error.getCause();
+
                 System.out.println(error.toString());
                 for (Object trace : error.getStackTrace())
                 {

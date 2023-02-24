@@ -13,9 +13,12 @@ public class OutputFlowFromStream implements OutputFlow
     }
 
     @Override
-    public void write(byte in)
+    public void write(Input input)
     {
-        try { stream.write(in); }
-        catch(IOException error) {}
+        input.in(in ->
+        {
+            try { stream.write(in); }
+            catch(IOException error) {}
+        });
     }
 }

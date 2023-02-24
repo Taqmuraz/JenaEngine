@@ -2,23 +2,19 @@ package jena.engine.io;
 
 public class ByteArrayInputFlow implements InputFlow
 {
+    private byte[] array;
+    private int position;
+
     public ByteArrayInputFlow(byte[] array)
     {
         this.array = array;
     }
 
-    private byte[] array;
-    private int position;
-
     @Override
-    public byte next()
+    public void read(Count count, Output output)
     {
-        return array[position++];
-    }
-
-    @Override
-    public boolean hasNext()
-    {
-        return position < array.length;
+        int c = count.count(array.length);
+        new ByteArrayInput(array, position, c).in(output);
+        position += c;
     }
 }

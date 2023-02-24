@@ -1,23 +1,23 @@
 package jena.engine.io;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InputStreamFromFlow extends InputStream
 {
-    private InputFlow flow;
+    private List<Byte> buffer = new ArrayList<Byte>();
+    private int position;
 
     public InputStreamFromFlow(InputFlow flow)
     {
-        this.flow = flow;
+        flow.read(MaxCount.identity, buffer::add);
     }
 
     @Override
     public int read()
     {
-        if (flow.hasNext())
-        {
-            return Byte.toUnsignedInt(flow.next());
-        }
+        if (position < buffer.size()) return Byte.toUnsignedInt(buffer.get(position++));
         else return -1;
     }
 }

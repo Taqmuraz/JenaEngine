@@ -6,31 +6,21 @@ import java.io.InputStream;
 public class InputFlowFromStream implements InputFlow
 {
     InputStream stream;
-    int r;
 
     public InputFlowFromStream(InputStream stream)
     {
         this.stream = stream;
-        read();
-    }
-
-    private void read()
-    {
-        try { r = stream.read(); }
-        catch(IOException error) { r = -1; }
     }
 
     @Override
-    public byte next()
-    {
-        byte result = (byte)r;
-        read();
-        return result;
+    public void read(Count count, Output output) {
+        try
+        {
+            int index = 0;
+            int r;
+            int c = count.count(Integer.MAX_VALUE);
+            while(index++ < c && (r = stream.read()) != -1) output.out((byte)r);
+        }
+        catch(IOException error) {}
     }
-
-    @Override
-    public boolean hasNext()
-    {
-        return r != -1;
-    }   
 }

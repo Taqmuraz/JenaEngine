@@ -1,6 +1,8 @@
 package jena.engine.io.encoding;
 
 import jena.engine.common.ErrorHandler;
+import jena.engine.io.ByteArrayOutput;
+import jena.engine.io.MinCount;
 import jena.engine.io.StorageResource;
 
 public class FileDecoder
@@ -17,7 +19,7 @@ public class FileDecoder
         input.read(flow -> decodable.decode(length ->
         {
             byte[] buffer = new byte[length];
-            for(int i = 0; i < length && flow.hasNext(); i++) buffer[i] = flow.next();
+            flow.read(new MinCount(length), new ByteArrayOutput(buffer));
             return buffer;
         }),
         errorHandler);

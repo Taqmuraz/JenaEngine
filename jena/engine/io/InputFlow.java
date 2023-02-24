@@ -2,6 +2,5 @@ package jena.engine.io;
 
 public interface InputFlow
 {
-    byte next();
-    boolean hasNext();
+    void read(Count count, Output output);
 }
