@@ -13,7 +13,7 @@ public class ByteArrayInputFlow implements InputFlow
     @Override
     public void read(Count count, Output output)
     {
-        int c = count.count(array.length);
+        int c = count.count(array.length - position);
         new ByteArrayInput(array, position, c).in(output);
         position += c;
     }
