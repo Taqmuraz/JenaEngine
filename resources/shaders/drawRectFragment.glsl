@@ -9,7 +9,7 @@ void main (void)
 {	
 	float min = 0.1;
 	float max = 0.9;
-	if ((uv.x < min || uv.x > max) && (uv.y < min || uv.y > max))
+	if ((uv.x < min || uv.x > max) || (uv.y < min || uv.y > max))
 	{
 		out_Color = color;
 	}

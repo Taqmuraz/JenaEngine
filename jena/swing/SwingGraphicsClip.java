@@ -217,8 +217,10 @@ public class SwingGraphicsClip implements GraphicsClip
         rect.accept((x, y, w, h) -> width.accept(strokeWidth ->
         {
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
-            graphics.setStroke(new java.awt.BasicStroke(strokeWidth));
-            graphics.drawRect((int)x, (int)y, (int)w, (int)h);
+            graphics.setStroke(new java.awt.BasicStroke(strokeWidth / ((w + h) * 0.5f)));
+            graphics.translate(x, y);
+            graphics.scale(w, h);
+            graphics.drawRect(0, 0, 1, 1);
             graphics.setTransform(transform);
         }));
     }

@@ -66,7 +66,7 @@ public class MainPanel extends JPanel implements GraphicsResource
         {
             float x = (i % num) * dnum;
             float y = (i / num) * dnum;
-            return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(0f, 0f, 0f, 1f), game);
+            return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(0f, 0f, 0f, 1f), game.position(), game);
         })
         .collect(Collectors.toList());
 

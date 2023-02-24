@@ -54,11 +54,6 @@ public class Camera implements GraphicsDevicePainter
         {
             graphicsClip.fillRect(clip, clearColor);
             graphicsClip.matrixScope(source -> new Matrix3fMul(source, w2s), () -> scene.paint(graphicsClip));
-            
-            graphicsClip.matrixScope(source -> new Matrix3fMul(source, w2s), () -> graphicsClip.drawEllipse(r -> screenToWorld().project(a -> a.call(512f, 420f)).accept((x, y) ->
-            {
-                r.call(x, y, 0.25f, 0.25f);
-            }), a -> a.call(0, 255, 0, 255), a -> a.call(1f)));
         });
     }
 
