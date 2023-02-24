@@ -3,6 +3,7 @@ package jena.engine.io;
 public class ByteArrayOutputFlow implements OutputFlow
 {
     private byte[] array;
+    private int position;
 
     public ByteArrayOutputFlow(byte[] array)
     {
@@ -12,6 +13,9 @@ public class ByteArrayOutputFlow implements OutputFlow
     @Override
     public void write(Input input)
     {
-        input.in(new ByteArrayOutput(array));
+        input.in(in ->
+        {
+            array[position++] = in;
+        });
     }
 }
