@@ -14,19 +14,9 @@ public class FileEncoder
 
     public void encode(Encodable encodable, ErrorHandler errorHandler)
     {
-        output.write(stream ->
+        output.write(flow -> encodable.encode(bytes ->
         {
-            encodable.encode(bytes ->
-            {
-                try
-                {
-                    stream.write(bytes);
-                }
-                catch (Throwable error)
-                {
-                    errorHandler.call(error);
-                }
-            });
-        }, errorHandler);
+            for (int i = 0; i < bytes.length; i++) flow.write(bytes[i]);
+        }), errorHandler);
     }
 }

@@ -4,6 +4,6 @@ import jena.engine.common.ErrorHandler;
 
 public interface StorageResource
 {
-    void read(InputStreamAcceptor acceptor, ErrorHandler errorHandler);
-    void write(OutputStreamAcceptor acceptor, ErrorHandler errorHandler);
+    void read(InputFlowAcceptor acceptor, ErrorHandler errorHandler);
+    void write(OutputFlowAcceptor acceptor, ErrorHandler errorHandler);
 }

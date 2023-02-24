@@ -16,9 +16,9 @@ public class TextFileReader
     }
     public void read(ActionSingle<Iterable<String>> scannerAcceptor, ErrorHandler errorHandler)
     {
-        file.read(stream ->
+        file.read(flow ->
         {
-            Scanner scanner = new Scanner(stream);
+            Scanner scanner = new Scanner(new InputStreamFromFlow(flow));
             List<String> lines = new ArrayList<String>();
             while(scanner.hasNextLine())
             {

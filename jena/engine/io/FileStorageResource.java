@@ -19,7 +19,7 @@ public class FileStorageResource implements StorageResource
     }
 
     @Override
-    public void read(InputStreamAcceptor acceptor, ErrorHandler errorHandler)
+    public void read(InputFlowAcceptor acceptor, ErrorHandler errorHandler)
     {
         InputStream stream = new NullInputStream();
         
@@ -35,7 +35,7 @@ public class FileStorageResource implements StorageResource
         {
             try
             {
-                acceptor.call(stream);
+                acceptor.call(new InputFlowFromStream(stream));
             }
             finally
             {
@@ -49,13 +49,13 @@ public class FileStorageResource implements StorageResource
     }
 
     @Override
-    public void write(OutputStreamAcceptor acceptor, ErrorHandler errorHandler)
+    public void write(OutputFlowAcceptor acceptor, ErrorHandler errorHandler)
     {
         OutputStream output = null;
         try
         {
             output = new FileOutputStream(new File(fileName));
-            acceptor.call(output);
+            acceptor.call(new OutputFlowFromStream(output));
         }
         catch (Throwable exception)
         {

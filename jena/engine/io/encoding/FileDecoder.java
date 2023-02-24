@@ -14,22 +14,12 @@ public class FileDecoder
 
     public void decode(Decodable decodable, ErrorHandler errorHandler)
     {
-        input.read(stream ->
+        input.read(flow -> decodable.decode(length ->
         {
-            decodable.decode(length ->
-            {
-                byte[] buffer = new byte[length];
-                try
-                {
-                    stream.read(buffer);
-                }
-                catch(Throwable error)
-                {
-                    errorHandler.call(error);
-                }
-                return buffer;
-            });
-        },
+            byte[] buffer = new byte[length];
+            for(int i = 0; i < length && flow.hasNext(); i++) buffer[i] = flow.next();
+            return buffer;
+        }),
         errorHandler);
     }
 }

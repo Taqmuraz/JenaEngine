@@ -1,12 +1,14 @@
 package jena.engine.io.encoding;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import jena.engine.io.FileStorageResource;
+import jena.engine.io.InputStreamFromFlow;
 import jena.engine.io.StorageResource;
 
 public class ResourcesEncoder implements Encodable
@@ -33,11 +35,14 @@ public class ResourcesEncoder implements Encodable
         resources.forEach((name, resource) ->
         {
             System.out.println("Resource encoded : " + name);
-            resource.read(input ->
+            resource.read(flow ->
             {
+                InputStream input = new InputStreamFromFlow(flow);
                 try
                 {
                     byte[] bytes = input.readAllBytes();
+                    input.close();
+                    
                     stream.writeText(name);
                     stream.writeByteArray(bytes);
                 }

@@ -1,10 +1,9 @@
 package jena.engine.io.encoding;
 
-import java.io.ByteArrayInputStream;
-
 import jena.engine.common.ErrorHandler;
-import jena.engine.io.InputStreamAcceptor;
-import jena.engine.io.OutputStreamAcceptor;
+import jena.engine.io.ByteArrayInputFlow;
+import jena.engine.io.InputFlowAcceptor;
+import jena.engine.io.OutputFlowAcceptor;
 import jena.engine.io.StorageResource;
 
 public class VirtualStorageResource implements StorageResource
@@ -17,13 +16,13 @@ public class VirtualStorageResource implements StorageResource
     }
 
     @Override
-    public void read(InputStreamAcceptor acceptor, ErrorHandler errorHandler)
+    public void read(InputFlowAcceptor acceptor, ErrorHandler errorHandler)
     {
-        acceptor.call(new ByteArrayInputStream(bytes));
+        acceptor.call(new ByteArrayInputFlow(bytes));
     }
 
     @Override
-    public void write(OutputStreamAcceptor acceptor, ErrorHandler errorHandler)
+    public void write(OutputFlowAcceptor acceptor, ErrorHandler errorHandler)
     {
         errorHandler.call(new Exception("Can't write to virtual storage"));
     }

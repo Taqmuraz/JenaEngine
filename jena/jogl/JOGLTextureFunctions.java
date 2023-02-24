@@ -9,6 +9,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
 import jena.engine.common.Action;
 import jena.engine.common.ErrorHandler;
+import jena.engine.io.InputStreamFromFlow;
 import jena.engine.io.StorageResource;
 import jena.opengl.OpenGLTexture;
 import jena.opengl.OpenGLTextureFunctions;
@@ -26,7 +27,7 @@ public class JOGLTextureFunctions implements OpenGLTextureFunctions
             {
                 try
                 {
-                    Texture texture = AWTTextureIO.newTexture(profile, ImageIO.read(stream), false);
+                    Texture texture = AWTTextureIO.newTexture(profile, ImageIO.read(new InputStreamFromFlow(stream)), false);
                     binder = (gl, action) ->
                     {
                         if (gl instanceof JOGLTextureFunctions)

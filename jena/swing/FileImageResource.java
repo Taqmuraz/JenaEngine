@@ -5,6 +5,7 @@ import java.awt.TexturePaint;
 
 import javax.imageio.ImageIO;
 import jena.engine.common.ErrorHandler;
+import jena.engine.io.InputStreamFromFlow;
 import jena.engine.io.StorageResource;
 
 public class FileImageResource implements SwingTextureResource
@@ -19,7 +20,7 @@ public class FileImageResource implements SwingTextureResource
         {
             try 
             {
-                image = ImageIO.read(stream);
+                image = ImageIO.read(new InputStreamFromFlow(stream));
             }
             catch(Throwable error) 
             {
