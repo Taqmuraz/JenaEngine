@@ -36,9 +36,10 @@ public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndLi
 
         ValueFloat groundOffset = new BackgroundOffset(10f, 0f);
         ValueFloat skyOffset = new BackgroundOffset(40f, 0f);
+        ValueFloat time = new Time();
         skyRect = a -> skyOffset.accept(sky -> a.call(-20f - sky, 0f, 60f, 5f));
         groundRect = a -> groundOffset.accept(ground -> a.call(-10f - ground, -8f, 30f, 8f));
-        obstacleRect = a -> Time.accept(t -> a.call(-4f + (float)Math.sin(t) * 2f, -5f + (float)Math.cos(t) * 2f, 8f, 2f));
+        obstacleRect = a -> time.accept(t -> a.call(-4f + (float)Math.sin(t) * 2f, -5f + (float)Math.cos(t) * 2f, 8f, 2f));
 
         FieldVector2f clampField = new MultipleClampFieldVector2f(
             new RectClampFieldVector2f(skyRect),
@@ -67,18 +68,20 @@ public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndLi
         float max;
         float speed;
         float start;
+        ValueFloat time;
 
         public BackgroundOffset(float max, float speed)
         {
             this.max = max;
             this.speed = speed;
-            Time.accept(time -> start = time);
+            time = new Time();
+            time.accept(time -> start = time);
         }
 
         @Override
         public void accept(FloatAcceptor acceptor)
         {
-            Time.accept(time ->
+            time.accept(time ->
             {
                 if ((time - start) * speed >= max) start = time;
                 acceptor.call((time - start) * speed);

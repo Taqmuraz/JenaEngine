@@ -1,18 +1,22 @@
 package jena.engine.entity;
 
+import jena.engine.math.ValueFloat;
+
 public class DefaultTimeMeter implements TimeMeter
 {
     private float lastTime;
+    private ValueFloat time;
 
     public DefaultTimeMeter()
     {
-        Time.accept(time -> lastTime = time);
+        time = new Time();
+        time.accept(time -> lastTime = time);
     }
 
     @Override
     public void measureTime(TimeAcceptor acceptor)
     {
-        Time.accept(currentTime ->
+        time.accept(currentTime ->
         {
             float delta = currentTime - lastTime;
             lastTime = currentTime;

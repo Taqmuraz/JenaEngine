@@ -4,9 +4,13 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
-public class Time
+import jena.engine.math.FloatAcceptor;
+import jena.engine.math.ValueFloat;
+
+public class Time implements ValueFloat
 {
-    public static void accept(TimeAcceptor acceptor)
+    @Override
+    public void accept(FloatAcceptor acceptor)
     {
         Temporal currentFrame = LocalTime.now();
         Duration frameTime = Duration.between(LocalTime.MIN, currentFrame);

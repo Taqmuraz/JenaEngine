@@ -74,8 +74,10 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
         
         frameMeter = new DefaultTimeMeter();
 
+        ValueFloat time = new Time();
+
         ValueFloat movementLength = new Vector2fLength(movement);
-        ValueFloat sin = a -> movementLength.accept(mlen -> Time.accept(time -> a.call((float)Math.sin(time * 6f) * 0.5f * mlen)));
+        ValueFloat sin = time.mul(6f).sin().mul(0.5f).mul(movementLength);
         ValueInt dir = new ValueInt()
         {
             int dir = 1;
