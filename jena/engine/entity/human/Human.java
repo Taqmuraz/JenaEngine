@@ -4,10 +4,9 @@ import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.Controller;
-import jena.engine.entity.DefaultTimeMeter;
+import jena.engine.entity.FrameDeltaTime;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.Time;
-import jena.engine.entity.TimeMeter;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.Storage;
@@ -62,7 +61,7 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
     private BodyPart root;
     private Vector2fStruct position;
     private Vector2f movement;
-    private TimeMeter frameMeter;
+    private ValueFloat deltaTime;
     private Vector2f walkFieldPoint;
 
     public Human(GraphicsResource graphicsResource, Storage storage, Controller controller, FieldVector2f walkField)
@@ -71,10 +70,9 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
         position = new Vector2fStruct();
         movement = controller.movement();
         walkFieldPoint = walkField.project(position);
-        
-        frameMeter = new DefaultTimeMeter();
 
         ValueFloat time = new Time();
+        deltaTime = new FrameDeltaTime(time);
 
         ValueFloat movementLength = new Vector2fLength(movement);
         ValueFloat sin = time.mul(6f).sin().mul(0.5f).mul(movementLength);
@@ -135,7 +133,7 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
     @Override
     public void onStartFrame()
     {
-        movement.accept((x, y) -> frameMeter.measureTime(dt ->
+        movement.accept((x, y) -> deltaTime.accept(dt ->
         {
             position.x += x * dt * 3f;
             position.y += y * dt * 3f;

@@ -13,11 +13,11 @@ import javax.swing.JPanel;
 
 import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
-import jena.engine.entity.DefaultTimeMeter;
+import jena.engine.entity.FrameDeltaTime;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.KeyboardController;
-import jena.engine.entity.TimeMeter;
+import jena.engine.entity.Time;
 import jena.engine.game.Game;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.PostponedGraphicsDevice;
@@ -30,6 +30,7 @@ import jena.engine.io.FileStorage;
 import jena.engine.io.Storage;
 import jena.engine.io.StorageResource;
 import jena.engine.math.Rectf;
+import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.engine.ui.MenuCanvas;
 import jena.engine.ui.RootCanvas;
@@ -75,8 +76,8 @@ public class MainPanel extends JPanel implements GraphicsResource
         painters.add(new RootCanvas(a -> a.call(450f, 550f, 300f, 55f * buttons.length + 1), windowMouse, canvas ->
         {
             UserCanvas userCanvas = new MenuCanvas(canvas);
-            TimeMeter frameMeter = new DefaultTimeMeter();
-            canvas.drawText(a -> frameMeter.measureTime(time ->  a.call(String.format("fps = %s", String.valueOf((int)(1f / time))))), a -> a.call(0f, 0f, 300f, 50f), a -> a.call(255, 255, 255, 255));
+            ValueFloat deltaTime = new FrameDeltaTime(new Time());
+            canvas.drawText(a -> deltaTime.accept(time ->  a.call(String.format("fps = %s", String.valueOf((int)(1f / time))))), a -> a.call(0f, 0f, 300f, 50f), a -> a.call(255, 255, 255, 255));
             IntStream.range(0, buttons.length).boxed().forEach(b -> 
             {
                 userCanvas.drawButton(a -> a.call(buttons[b]), a -> a.call(0f, (b + 1) * 55f, 300f, 50f), c -> c.call(255, 150, 50, 255), c -> c.call(100, 100, 100, 255), () -> System.out.println(b));
