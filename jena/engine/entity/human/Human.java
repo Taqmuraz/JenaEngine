@@ -4,7 +4,7 @@ import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.Controller;
-import jena.engine.entity.FrameDeltaTime;
+import jena.engine.entity.DeltaTime;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.Time;
 import jena.engine.graphics.GraphicsClip;
@@ -72,7 +72,7 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
         walkFieldPoint = walkField.project(position);
 
         ValueFloat time = new Time();
-        deltaTime = new FrameDeltaTime(time);
+        deltaTime = new DeltaTime(time);
 
         ValueFloat movementLength = new Vector2fLength(movement);
         ValueFloat sin = time.mul(6f).sin().mul(0.5f).mul(movementLength);

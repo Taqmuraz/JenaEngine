@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
-import jena.engine.entity.FrameDeltaTime;
+import jena.engine.entity.DeltaTime;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.KeyboardController;
@@ -76,7 +76,7 @@ public class MainPanel extends JPanel implements GraphicsResource
         painters.add(new RootCanvas(a -> a.call(450f, 550f, 300f, 55f * buttons.length + 1), windowMouse, canvas ->
         {
             UserCanvas userCanvas = new MenuCanvas(canvas);
-            ValueFloat deltaTime = new FrameDeltaTime(new Time());
+            ValueFloat deltaTime = new DeltaTime(new Time());
             canvas.drawText(a -> deltaTime.accept(time ->  a.call(String.format("fps = %s", String.valueOf((int)(1f / time))))), a -> a.call(0f, 0f, 300f, 50f), a -> a.call(255, 255, 255, 255));
             IntStream.range(0, buttons.length).boxed().forEach(b -> 
             {

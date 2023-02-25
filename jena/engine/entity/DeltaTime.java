@@ -3,12 +3,12 @@ package jena.engine.entity;
 import jena.engine.math.FloatAcceptor;
 import jena.engine.math.ValueFloat;
 
-public class FrameDeltaTime implements ValueFloat
+public class DeltaTime implements ValueFloat
 {
     private float lastTime;
     private ValueFloat time;
 
-    public FrameDeltaTime(ValueFloat time)
+    public DeltaTime(ValueFloat time)
     {
         this.time = time;
         time.accept(t -> lastTime = t);
