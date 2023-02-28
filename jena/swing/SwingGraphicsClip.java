@@ -88,7 +88,7 @@ public class SwingGraphicsClip implements GraphicsClip
             int iy = (int)y;
             float tw = dw / ix;
             float th = dh / iy;
-            IntStream.range(0, ix * iy).boxed().forEach(i -> drawSprite(texture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(dx + (i % ix) * tw, dy + (i / ix) * th, tw, th)));
+            IntStream.range(0, ix * iy).forEach(i -> drawSprite(texture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(dx + (i % ix) * tw, dy + (i / ix) * th, tw, th)));
         }));
     }
 
