@@ -66,7 +66,7 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
 
     public Human(GraphicsResource graphicsResource, Storage storage, Controller controller, FieldVector2f walkField)
     {
-        texture = graphicsResource.loadTexture(storage.open("Knight.png"));
+        texture = graphicsResource.loadTexture(storage.open("HumanMap.png"));
         position = new Vector2fStruct();
         movement = controller.movement();
         walkFieldPoint = walkField.project(position);

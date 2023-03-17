@@ -101,7 +101,7 @@ public class JOGLWindowListener implements GLEventListener
         System.out.println("initialized");
 
         ResourcesDecoder decoder = new ResourcesDecoder();
-        new FileDecoder(new FileStorageResource("../resources.txt")).decode(decoder, System.out::println);
+        new FileDecoder(new FileStorageResource("../resources.resource")).decode(decoder, System.out::println);
         
         Storage storage = decoder.storage();
         JOGLKeyboard keyboard = new JOGLKeyboard();
