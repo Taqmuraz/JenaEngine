@@ -4,6 +4,7 @@ import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
+import jena.engine.graphics.MultiplicationTransformation;
 import jena.engine.math.Matrix3fOrtho;
 import jena.engine.math.Matrix3fTranslation;
 import jena.engine.math.Matrix3fViewport;
@@ -14,7 +15,6 @@ import jena.engine.math.Vector2fNegative;
 import jena.engine.math.Vector2fTransformPoint;
 import jena.engine.math.FieldVector2f;
 import jena.engine.math.Matrix3f;
-import jena.engine.math.Matrix3fMul;
 
 public class Camera implements GraphicsDevicePainter
 {
@@ -53,7 +53,7 @@ public class Camera implements GraphicsDevicePainter
         graphicsDevice.paintRect(clip, graphicsClip ->
         {
             graphicsClip.fillRect(clip, clearColor);
-            graphicsClip.matrixScope(source -> new Matrix3fMul(source, w2s), () -> scene.paint(graphicsClip));
+            graphicsClip.matrixScope(new MultiplicationTransformation(w2s), () -> scene.paint(graphicsClip));
         });
     }
 

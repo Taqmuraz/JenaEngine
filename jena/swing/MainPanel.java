@@ -5,12 +5,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.swing.JPanel;
 
+import jena.editor.ClipGraphicsInspector;
 import jena.engine.common.ErrorHandler;
 import jena.engine.entity.Camera;
 import jena.engine.entity.DeltaTime;
@@ -21,6 +23,7 @@ import jena.engine.entity.Time;
 import jena.engine.game.Game;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.PostponedGraphicsDevice;
+import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.TextureHandle;
@@ -57,17 +60,31 @@ public class MainPanel extends JPanel implements GraphicsResource
         this.graphicsRect = new GraphicsRectf(panelSize, a -> a.call(canvasWidth, canvasHeight));
         Mouse windowMouse = new WindowToGraphicsMouse(mouse, canvasSize, graphicsRect);
         Storage storage = new FileStorage();
-        
+
         Game game = new Game(this, storage, new KeyboardController(keyboard));
+        ArrayList<ClipGraphicsInspector> inspectors = new ArrayList<ClipGraphicsInspector>();
+        GraphicsClipPainter scene = clip ->
+        {
+            game.paint(clip);
+            for(ClipGraphicsInspector inspector : inspectors) inspector.paint(clip);
+        };
 
         int num = 1;
         float dnum = 1f / num;
 
-        List<GraphicsDevicePainter> painters = java.util.stream.IntStream.range(0, num * num).boxed().map(i ->
+        List<GraphicsDevicePainter> painters = java.util.stream.IntStream.range(0, num * num).boxed().<GraphicsDevicePainter>map(i ->
         {
             float x = (i % num) * dnum;
             float y = (i / num) * dnum;
-            return (GraphicsDevicePainter)new Camera(a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum), new jena.engine.graphics.ColorFloatStruct(0f, 0f, 0f, 1f), game.position(), game);
+            Camera camera = new Camera(
+                a -> a.call(x * canvasWidth, y * canvasHeight, canvasWidth * dnum, canvasHeight * dnum),
+                new jena.engine.graphics.ColorFloatStruct(0f, 0f, 0f, 1f),
+                game.position(),
+                scene
+            );
+            ClipGraphicsInspector inspector = new ClipGraphicsInspector(game, windowMouse, camera.screenToWorld());
+            inspectors.add(inspector);
+            return camera;
         })
         .collect(Collectors.toList());
 

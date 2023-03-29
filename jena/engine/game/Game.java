@@ -1,5 +1,7 @@
 package jena.engine.game;
 
+import jena.editor.GraphicsInspectable;
+import jena.editor.GraphicsInspector;
 import jena.engine.entity.Controller;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
@@ -20,7 +22,7 @@ import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAdd;
 
-public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndListener
+public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndListener, GraphicsInspectable
 {
     Human human;
     TextureHandle groundTexture;
@@ -101,5 +103,11 @@ public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndLi
     public Vector2f position()
     {
         return new Vector2fAdd(human.position(), a -> a.call(0f, 2f));
+    }
+
+    @Override
+    public GraphicsClipPainter inspect(GraphicsInspector inspector)
+    {
+        return human.inspect(inspector);
     }
 }

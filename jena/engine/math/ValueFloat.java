@@ -38,10 +38,10 @@ public interface ValueFloat
     }
     default ValueFloat sin()
     {
-        return a -> this.accept(v -> a.call((float)Math.sin(v)));
+        return new ValueFloatSin(this);
     }
     default ValueFloat cos()
     {
-        return a -> this.accept(v -> a.call((float)Math.cos(v)));
+        return new ValueFloatCos(this);
     }
 }

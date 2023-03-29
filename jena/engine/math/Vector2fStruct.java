@@ -16,11 +16,13 @@ public final class Vector2fStruct implements Vector2f
 
     public Vector2fStruct(Vector2f source)
     {
-        source.accept((x, y) ->
-        {
-            this.x = x;
-            this.y = y;
-        });
+        source.accept(this::apply);
+    }
+
+    public void apply(float x, float y)
+    {
+        this.x = x;
+        this.y = y;
     }
 
     @Override

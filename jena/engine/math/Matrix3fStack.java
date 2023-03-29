@@ -21,10 +21,15 @@ public class Matrix3fStack implements Matrix3fPipeline
         stack.peek().accept(acceptor);
     }
 
+    public Matrix3f peek()
+    {
+        return stack.peek();
+    }
+
     @Override
     public void matrixScope(Transformation transformation, Action action)
     {
-        Matrix3f m = new Matrix3fStruct(transformation.transform(stack.peek()));
+        Matrix3f m = transformation.transform(stack.peek());
         stack.push(m);
         action.call();
         stack.pop();
