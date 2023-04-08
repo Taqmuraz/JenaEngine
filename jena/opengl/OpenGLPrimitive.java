@@ -12,9 +12,9 @@ public interface OpenGLPrimitive
 {
     void draw();
 
-    default OpenGLPrimitive textured(OpenGLTexture texture, OpenGLTextureFunctions gl)
+    default OpenGLPrimitive textured(OpenGLTexture texture)
     {
-        return new OpenGLTexturedPrimitive(this, texture, gl);
+        return new OpenGLTexturedPrimitive(this, texture);
     }
     default OpenGLPrimitive transformed(Matrix3f matrix, OpenGLUniforms uniforms)
     {

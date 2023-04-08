@@ -7,16 +7,18 @@ import jena.opengl.OpenGLTextureFunctions;
 public class OpenGLPointFilterTexture implements OpenGLTexture
 {
     OpenGLTexture texture;
+    OpenGLTextureFunctions gl;
 
-    public OpenGLPointFilterTexture(OpenGLTexture texture)
+    public OpenGLPointFilterTexture(OpenGLTextureFunctions gl, OpenGLTexture texture)
     {
+        this.gl = gl;
         this.texture = texture;
     }
 
     @Override
-    public void bind(OpenGLTextureFunctions gl, Action action)
+    public void bind(Action action)
     {
-        texture.bind(gl, () ->
+        texture.bind(() ->
         {
             gl.disableFilter();
             action.call();

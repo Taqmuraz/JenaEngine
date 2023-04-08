@@ -1,6 +1,5 @@
 package jena.opengl;
 
-import jena.engine.common.Action;
 import jena.engine.graphics.TextureHandle;
 import jena.opengl.texture.OpenGLClampedTexture;
 import jena.opengl.texture.OpenGLOpaqueTexture;
@@ -10,26 +9,24 @@ import jena.opengl.texture.OpenGLTransparentTexture;
 
 public interface OpenGLTexture extends TextureHandle
 {
-    void bind(OpenGLTextureFunctions gl, Action action);
-
-    default OpenGLTexture clamp()
+    default OpenGLTexture clamp(OpenGLTextureFunctions gl)
     {
-        return new OpenGLClampedTexture(this);
+        return new OpenGLClampedTexture(gl, this);
     }
-    default OpenGLTexture repeat()
+    default OpenGLTexture repeat(OpenGLTextureFunctions gl)
     {
-        return new OpenGLRepeatedTexture(this);
+        return new OpenGLRepeatedTexture(gl, this);
     }
-    default OpenGLTexture transparent()
+    default OpenGLTexture transparent(OpenGLTextureFunctions gl)
     {
-        return new OpenGLTransparentTexture(this);
+        return new OpenGLTransparentTexture(gl, this);
     }
-    default OpenGLTexture opaque()
+    default OpenGLTexture opaque(OpenGLTextureFunctions gl)
     {
-        return new OpenGLOpaqueTexture(this);
+        return new OpenGLOpaqueTexture(gl, this);
     }
-    default OpenGLTexture point()
+    default OpenGLTexture point(OpenGLTextureFunctions gl)
     {
-        return new OpenGLPointFilterTexture(this);
+        return new OpenGLPointFilterTexture(gl, this);
     }
 }

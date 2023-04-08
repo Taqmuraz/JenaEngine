@@ -10,10 +10,12 @@ import jena.engine.math.Rectf;
 public class SwingGraphicsDevice implements GraphicsDevice
 {
     Graphics2D graphics;
+    SwingTextureResource textureResource;
 
-    public SwingGraphicsDevice(Graphics2D graphics)
+    public SwingGraphicsDevice(Graphics2D graphics, SwingTextureResource textureResource)
     {
         this.graphics = graphics;
+        this.textureResource = textureResource;
     }
 
     @Override
@@ -21,7 +23,7 @@ public class SwingGraphicsDevice implements GraphicsDevice
     {
         rect.accept((x, y, w, h) ->
         {
-            SwingGraphicsClip clip = new SwingGraphicsClip(graphics, new Rectangle.Float(x, y, w, h));
+            SwingGraphicsClip clip = new SwingGraphicsClip(graphics, new Rectangle.Float(x, y, w, h), textureResource);
             paint.paint(clip);
         });
     }

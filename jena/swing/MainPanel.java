@@ -48,7 +48,8 @@ public class MainPanel extends JPanel implements GraphicsResource
     private FrameEndListener frameEndHandler;
     private BufferedImage screenBuffer;
     private Rectf graphicsRect;
-    private Vector2f canvasSize;
+    private Vector2f canvasSize; 
+    private ImageDescriptor textureDescriptor;
     
     public MainPanel(int canvasWidth, int canvasHeight, SwingKeyboard keyboard, SwingMouse mouse, ErrorHandler errorHandler)
     {
@@ -129,7 +130,7 @@ public class MainPanel extends JPanel implements GraphicsResource
     {
         frameStartHandler.onStartFrame();
         Graphics2D screen = screenBuffer.createGraphics();
-        GraphicsDevice device = new SwingGraphicsDevice(screen);
+        GraphicsDevice device = new SwingGraphicsDevice(screen, a -> a.call(textureDescriptor));
         rootPainter.paint(device);
 
         int w = getWidth();
@@ -163,6 +164,6 @@ public class MainPanel extends JPanel implements GraphicsResource
     @Override
     public TextureHandle loadTexture(StorageResource file) 
     {
-        return new FileImageResource(file, errorHandler);
+        return new FileImageResource(file, image -> textureDescriptor = image, errorHandler);
     }
 }

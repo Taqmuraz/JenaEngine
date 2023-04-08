@@ -197,6 +197,6 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
     @Override
     public GraphicsClipPainter inspect(GraphicsInspector inspector)
     {
-        return root.inspect(inspector);
+        return clip -> {};// root.inspect(inspector);
     }
 }

@@ -16,24 +16,21 @@ import jena.opengl.OpenGLTextureFunctions;
 
 public class JOGLTextureFunctions implements OpenGLTextureFunctions
 {
-    static class JOGLTexture implements OpenGLTexture
+    class JOGLTexture implements OpenGLTexture
     {
         OpenGLTexture binder;
 
         JOGLTexture(GLProfile profile, StorageResource file, ErrorHandler errorHandler)
         {
-            binder = (gl, action) -> {};
+            binder = action -> action.call();
             file.read(stream ->
             {
                 try
                 {
                     Texture texture = AWTTextureIO.newTexture(profile, ImageIO.read(new InputStreamFromFlow(stream)), false);
-                    binder = (gl, action) ->
+                    binder = action ->
                     {
-                        if (gl instanceof JOGLTextureFunctions)
-                        {
-                            ((JOGLTextureFunctions)gl).bind(texture, action);
-                        }
+                        JOGLTextureFunctions.this.bind(texture, action);
                     };
                 } catch (Throwable error) 
                 {
@@ -43,9 +40,9 @@ public class JOGLTextureFunctions implements OpenGLTextureFunctions
         }
 
         @Override
-        public void bind(OpenGLTextureFunctions gl, Action action)
+        public void bind(Action action)
         {
-            binder.bind(gl, action);
+            binder.bind(action);
         }
     }
 

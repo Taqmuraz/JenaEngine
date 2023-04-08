@@ -52,6 +52,7 @@ public class JOGLWindowListener implements GLEventListener
 
         public OpenGLGraphicsResource(GL gl, GLProfile profile, ErrorHandler errorHandler)
         {
+            this.gl = gl;
             this.profile = profile;
             this.errorHandler = errorHandler;
         }
@@ -59,7 +60,7 @@ public class JOGLWindowListener implements GLEventListener
         @Override
         public TextureHandle loadTexture(StorageResource file)
         {
-            return new JOGLTextureFunctions.JOGLTexture(profile, file, System.out::println);
+            return new JOGLTextureFunctions(gl).new JOGLTexture(profile, file, System.out::println);
         }
     }
 

@@ -30,15 +30,13 @@ public class SwingGraphicsClip implements GraphicsClip
     private AffineTransform buffer;
     private Shape clip;
     private Matrix3fPipeline matrixStack;
+    private SwingTextureResource textureResource;
 
-    public SwingGraphicsClip(Graphics2D graphics)
-    {
-        this(graphics, graphics.getClip());
-    }
-    public SwingGraphicsClip(Graphics2D graphics, Shape clip)
+    public SwingGraphicsClip(Graphics2D graphics, Shape clip, SwingTextureResource textureResource)
     {
         this.graphics = graphics;
         this.clip = clip;
+        this.textureResource = textureResource;
         line = new AffineTransform();
         buffer = new AffineTransform();
         identity = new AffineTransform();
@@ -50,10 +48,9 @@ public class SwingGraphicsClip implements GraphicsClip
     @Override
     public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
     {
-        if (texture instanceof SwingTextureResource)
+        texture.bind(() ->
         {
-            SwingTextureResource swingTexture = (SwingTextureResource)texture;
-            swingTexture.accept(descriptor -> descriptor.acceptImage(image ->
+            textureResource.accept(descriptor -> descriptor.acceptImage(image ->
             {
                 destination.accept((dx, dy, dw, dh) ->
                     descriptor.acceptSize((iw, ih) ->
@@ -76,7 +73,7 @@ public class SwingGraphicsClip implements GraphicsClip
                         });
                     }));
             }));
-        }
+        });
     }
 
     @Override

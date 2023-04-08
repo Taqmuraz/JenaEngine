@@ -7,16 +7,18 @@ import jena.opengl.OpenGLTextureFunctions;
 public class OpenGLClampedTexture implements OpenGLTexture
 {
     OpenGLTexture texture;
+    OpenGLTextureFunctions gl;
 
-    public OpenGLClampedTexture(OpenGLTexture texture)
+    public OpenGLClampedTexture(OpenGLTextureFunctions gl, OpenGLTexture texture)
     {
+        this.gl = gl;
         this.texture = texture;
     }
 
     @Override
-    public void bind(OpenGLTextureFunctions gl, Action action)
+    public void bind(Action action)
     {
-        texture.bind(gl, () ->
+        texture.bind(() ->
         {
             gl.clamp();
             action.call();

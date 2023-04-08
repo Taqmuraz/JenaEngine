@@ -7,16 +7,18 @@ import jena.opengl.OpenGLTextureFunctions;
 public class OpenGLRepeatedTexture implements OpenGLTexture
 {
     OpenGLTexture texture;
+    OpenGLTextureFunctions gl;
 
-    public OpenGLRepeatedTexture(OpenGLTexture texture)
+    public OpenGLRepeatedTexture(OpenGLTextureFunctions gl, OpenGLTexture texture)
     {
+        this.gl = gl;
         this.texture = texture;
     }
 
     @Override
-    public void bind(OpenGLTextureFunctions gl, Action action)
+    public void bind(Action action)
     {
-        texture.bind(gl, () ->
+        texture.bind(() ->
         {
             gl.repeat();
             action.call();
