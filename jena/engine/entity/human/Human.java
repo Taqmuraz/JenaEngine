@@ -2,22 +2,17 @@ package jena.engine.entity.human;
 
 import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
-import jena.engine.entity.FrameStartListener;
 
 import java.util.Arrays;
 
 import jena.editor.GraphicsInspectable;
 import jena.editor.GraphicsInspector;
-import jena.engine.entity.Controller;
-import jena.engine.entity.DeltaTime;
-import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.Time;
 import jena.engine.graphics.ColorFloatStruct;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
 import jena.engine.io.Storage;
-import jena.engine.math.FieldVector2f;
 import jena.engine.math.IntAcceptor;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fTransform;
@@ -31,7 +26,7 @@ import jena.engine.math.Vector2fLength;
 import jena.engine.math.Vector2fStruct;
 import jena.engine.graphics.MultiplicationTransformation;
 
-public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndListener, GraphicsInspectable
+public class Human implements GraphicsClipPainter, GraphicsInspectable
 {
     private interface BodyPart extends GraphicsClipPainter, GraphicsInspectable
     {
@@ -82,20 +77,12 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
 
     private TextureHandle texture;
     private BodyPart root;
-    private Vector2fStruct position;
-    private Vector2f movement;
-    private ValueFloat deltaTime;
-    private Vector2f walkFieldPoint;
 
-    public Human(GraphicsResource graphicsResource, Storage storage, Controller controller, FieldVector2f walkField)
+    public Human(GraphicsResource graphicsResource, Storage storage, Vector2f position, Vector2f movement)
     {
         texture = graphicsResource.loadTexture(storage.open("HumanMap.png"));
-        position = new Vector2fStruct();
-        movement = controller.movement();
-        walkFieldPoint = walkField.project(position);
 
         ValueFloat time = new Time();
-        deltaTime = new DeltaTime(time);
 
         ValueFloat movementLength = new Vector2fLength(movement);
         ValueFloat sin = time.mul(6f).sin().mul(0.5f).mul(movementLength);
@@ -166,32 +153,6 @@ public class Human implements GraphicsClipPainter, FrameStartListener, FrameEndL
     public void paint(GraphicsClip clip)
     {
         root.paint(clip);
-    }
-
-    @Override
-    public void onEndFrame()
-    {
-
-    }
-
-    @Override
-    public void onStartFrame()
-    {
-        movement.accept((x, y) -> deltaTime.accept(dt ->
-        {
-            position.x += x * dt * 3f;
-            position.y += y * dt * 3f;
-        }));
-        walkFieldPoint.accept((x, y) ->
-        {
-            position.x = x;
-            position.y = y;
-        });
-    }
-
-    public Vector2f position()
-    {
-        return position;
     }
 
     @Override

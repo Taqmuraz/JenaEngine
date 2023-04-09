@@ -7,6 +7,7 @@ import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.Time;
 import jena.engine.entity.human.Human;
+import jena.engine.entity.human.InputPosition;
 import jena.engine.graphics.GraphicsClip;
 import jena.engine.graphics.GraphicsClipPainter;
 import jena.engine.graphics.GraphicsResource;
@@ -21,10 +22,12 @@ import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAdd;
+import jena.engine.math.Vector2fZero;
 
 public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndListener, GraphicsInspectable
 {
     Human human;
+    InputPosition position;
     TextureHandle groundTexture;
     TextureHandle skyTexture;
     Rectf skyRect;
@@ -48,21 +51,24 @@ public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndLi
             new RectClampFieldVector2f(groundRect));
         FieldVector2f punctureField = new RectPunctureFieldVector2f(obstacleRect);
 
-        human = new Human(graphicsResource, storage, controller, source ->
+
+        Vector2f movement = controller.movement();
+        position = new InputPosition(movement, new Vector2fZero(), source ->
         {
             return punctureField.project(clampField.project(source));
         });
+
+        human = new Human(graphicsResource, storage, position, movement);
     }
 
     @Override
     public void onStartFrame()
     {
-        human.onStartFrame();
+        position.onStartFrame();
     }
     @Override
     public void onEndFrame()
     {
-        human.onEndFrame();
     }
 
     class BackgroundOffset implements ValueFloat
@@ -102,7 +108,7 @@ public class Game implements GraphicsClipPainter, FrameStartListener, FrameEndLi
 
     public Vector2f position()
     {
-        return new Vector2fAdd(human.position(), a -> a.call(0f, 2f));
+        return new Vector2fAdd(position, a -> a.call(0f, 2f));
     }
 
     @Override
