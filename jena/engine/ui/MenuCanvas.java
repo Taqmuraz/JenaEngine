@@ -2,6 +2,8 @@ package jena.engine.ui;
 
 import jena.engine.common.Action;
 import jena.engine.graphics.Color;
+import jena.engine.graphics.CompositeGraphicsDrawing;
+import jena.engine.graphics.GraphicsDrawing;
 import jena.engine.graphics.Text;
 import jena.engine.input.Key;
 import jena.engine.input.Mouse;
@@ -21,7 +23,7 @@ public class MenuCanvas implements UserCanvas
     }
 
     @Override
-    public void drawButton(Text text, Rectf rect, Color textColor, Color buttonColor, Action click)
+    public GraphicsDrawing drawButton(Text text, Rectf rect, Color textColor, Color buttonColor, Action click)
     {
         Key button = mouse.button(0);
         Vector2f mousePosition = mouse.position();
@@ -36,7 +38,8 @@ public class MenuCanvas implements UserCanvas
             }
             else buttonColor.accept(c);
         };
-        canvas.fillRect(rect, color);
-        canvas.drawText(text, rect, textColor);
+        return new CompositeGraphicsDrawing(
+            canvas.fillRect(rect, color),
+            canvas.drawText(text, rect, textColor));
     }
 }

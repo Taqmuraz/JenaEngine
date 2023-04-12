@@ -68,7 +68,7 @@ public class RootCanvas implements GraphicsDevicePainter
     public GraphicsDrawing paint(GraphicsDevice device)
     {
         Matrix3f matrix = a -> rect.accept((x, y, z, w) ->
-            new Matrix3fTranslation(new Vector2fStruct(x, y)));
+            new Matrix3fTranslation(new Vector2fStruct(x, y)).accept(a));
         return device.paintRect(rect, clip ->
             new MatrixScopeGraphicsPainter(
                 new MultiplicationTransformation(matrix),

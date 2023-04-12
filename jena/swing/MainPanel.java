@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import jena.engine.common.CachedIterable;
 import jena.engine.common.ErrorHandler;
 import jena.engine.common.MapIterable;
+import jena.engine.common.RangeIterable;
 import jena.engine.entity.Camera;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
@@ -24,13 +25,24 @@ import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.GraphicsDrawing;
 import jena.engine.graphics.TextureHandle;
+import jena.engine.input.Mouse;
+import jena.engine.input.WindowToGraphicsMouse;
 import jena.engine.io.FileStorage;
 import jena.engine.io.Storage;
 import jena.engine.io.StorageResource;
 import jena.engine.math.Rectf;
+import jena.engine.math.RectfStruct;
+import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
+import jena.engine.ui.MenuCanvas;
+import jena.engine.ui.RootCanvas;
+import jena.engine.ui.UserCanvas;
 import jena.engine.graphics.GraphicsRectf;
+import jena.engine.graphics.CachedText;
+import jena.engine.graphics.ColorStruct;
 import jena.engine.graphics.CompositeGraphicsDrawing;
+import jena.engine.entity.DeltaTime;
+import jena.engine.entity.Time;
 
 public class MainPanel extends JPanel implements GraphicsResource
 {
@@ -52,7 +64,7 @@ public class MainPanel extends JPanel implements GraphicsResource
         this.canvasSize = a -> a.call(canvasWidth, canvasHeight);
         Vector2f panelSize = a -> a.call(getWidth(), getHeight());
         this.graphicsRect = new GraphicsRectf(panelSize, a -> a.call(canvasWidth, canvasHeight));
-        //Mouse windowMouse = new WindowToGraphicsMouse(mouse, canvasSize, graphicsRect);
+        Mouse windowMouse = new WindowToGraphicsMouse(mouse, canvasSize, graphicsRect);
         Storage storage = new FileStorage();
 
         Game game = new Game(this, storage, new KeyboardController(keyboard));
@@ -79,18 +91,24 @@ public class MainPanel extends JPanel implements GraphicsResource
         })
         .collect(Collectors.toList());
 
-        //String[] buttons = new String[] { "Играться", "Загрузиться", "Выбираться", "Уходить" };
+        String[] buttons = new String[] { "Играться", "Загрузиться", "Выбираться", "Уходить" };
 
-        /*painters.add(new RootCanvas(a -> a.call(450f, 550f, 300f, 55f * buttons.length + 1), windowMouse, canvas ->
+        painters.add(new RootCanvas(a -> a.call(450f, 550f, 300f, 55f * (buttons.length + 1)), windowMouse, canvas ->
         {
             UserCanvas userCanvas = new MenuCanvas(canvas);
             ValueFloat deltaTime = new DeltaTime(new Time());
-            canvas.drawText(a -> deltaTime.accept(time ->  a.call(String.format("fps = %s", String.valueOf((int)(1f / time))))), a -> a.call(0f, 0f, 300f, 50f), a -> a.call(255, 255, 255, 255));
-            IntStream.range(0, buttons.length).boxed().forEach(b -> 
-            {
-                userCanvas.drawButton(a -> a.call(buttons[b]), a -> a.call(0f, (b + 1) * 55f, 300f, 50f), c -> c.call(255, 150, 50, 255), c -> c.call(100, 100, 100, 255), () -> System.out.println(b));
-            });
-        }));*/
+            return new CompositeGraphicsDrawing(
+            canvas.drawText(a -> deltaTime.accept(time ->  a.call(String.format("fps = %s", String.valueOf((int)(1f / time))))), a -> a.call(0f, 0f, 300f, 50f), a -> a.call(255, 255, 255, 255)),
+            new CompositeGraphicsDrawing(
+                new MapIterable<Integer, GraphicsDrawing>(
+                    new RangeIterable(0, buttons.length),
+                    b -> userCanvas.drawButton(
+                        new CachedText(buttons[b]),
+                        new RectfStruct(0f, (b + 1) * 55f, 300f, 50f),
+                        new ColorStruct(255, 150, 50, 255),
+                        new ColorStruct(100, 100, 100, 255),
+                        () -> System.out.println(b)))));
+        }));
 
         frameStartHandler = game;
         frameEndHandler = () ->
