@@ -21,7 +21,6 @@ import jena.engine.graphics.TextureHandle;
 import jena.engine.io.Storage;
 import jena.engine.math.FieldVector2f;
 import jena.engine.math.FloatAcceptor;
-import jena.engine.math.Matrix3fScale;
 import jena.engine.math.Matrix3fTranslation;
 import jena.engine.math.MultipleClampFieldVector2f;
 import jena.engine.math.RectClampFieldVector2f;
