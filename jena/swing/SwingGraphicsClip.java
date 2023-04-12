@@ -20,30 +20,26 @@ import jena.engine.math.Vector2fNormalized;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.stream.IntStream;
-import java.awt.Shape;
 
 public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
 {
-    private Graphics2D graphics;
+    private SwingGraphics graphics;
     private AffineTransform transform;
     private AffineTransform identity;
     private AffineTransform line;
     private AffineTransform buffer;
-    private Shape clip;
     private Matrix3fPipeline matrixStack;
     private SwingTextureResource textureResource;
 
-    public SwingGraphicsClip(Graphics2D graphics, Shape clip, SwingTextureResource textureResource)
+    public SwingGraphicsClip(SwingGraphics graphics, SwingTextureResource textureResource)
     {
         this.graphics = graphics;
-        this.clip = clip;
         this.textureResource = textureResource;
         line = new AffineTransform();
         buffer = new AffineTransform();
         identity = new AffineTransform();
         transform = new AffineTransform();
         matrixStack = new Matrix3fStack();
-        reset();
     }
 
     @Override
@@ -51,6 +47,7 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
     {
         return () -> texture.bind(() ->
         {
+            Graphics2D graphics = this.graphics.graphics();
             textureResource.accept(descriptor -> descriptor.acceptImage(image ->
             {
                 destination.accept((dx, dy, dw, dh) ->
@@ -86,7 +83,7 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
             int iy = (int)y;
             float tw = dw / ix;
             float th = dh / iy;
-            IntStream.range(0, ix * iy).forEach(i -> drawSprite(texture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(dx + (i % ix) * tw, dy + (i / ix) * th, tw, th)));
+            IntStream.range(0, ix * iy).forEach(i -> drawSprite(texture, a -> a.call(0f, 0f, 1f, 1f), a -> a.call(dx + (i % ix) * tw, dy + (i / ix) * th, tw, th)).draw());
         }));
     }
 
@@ -102,6 +99,7 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
         return () -> rect.accept((x, y, w, h) ->
             color.accept((cr, cg, cb, ca) ->
             {
+                Graphics2D graphics = this.graphics.graphics();
                 graphics.setTransform(identity);
         
                 srcA.setLocation(x, y);
@@ -124,9 +122,10 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
     @Override
     public GraphicsDrawing drawText(Text text, Rectf rect, Color color)
     {
-        java.awt.FontMetrics metrics = graphics.getFontMetrics(graphics.getFont());
         return () -> rect.accept((x, y, w, h) -> text.accept(content ->
         {
+            Graphics2D graphics = this.graphics.graphics();
+            java.awt.FontMetrics metrics = graphics.getFontMetrics(graphics.getFont());
             float bw = metrics.stringWidth(content);
             float bh = metrics.getLineMetrics(content, graphics).getHeight();
 
@@ -162,13 +161,13 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
     {
         matrixStack.matrixScope(transformation, () ->
         {
-            updateTransform();
+            updateTransform(graphics.graphics());
             painter.paint(this);
         });
-        updateTransform();
+        updateTransform(graphics.graphics());
     }
 
-    private void updateTransform()
+    private void updateTransform(Graphics2D graphics)
     {
         matrixStack.accept(e ->
         {
@@ -177,18 +176,12 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
         });
     }
 
-    private void reset()
-    {
-        graphics.setClip(clip);
-        transform.setToIdentity();
-        graphics.setTransform(transform);
-    }
-
     @Override
     public GraphicsDrawing drawLine(Vector2f a, Vector2f b, Color color, ValueFloat width)
     {
         return () -> a.accept((ax, ay) -> b.accept((bx, by) -> width.accept(w ->
         {
+            Graphics2D graphics = this.graphics.graphics();
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.setStroke(new java.awt.BasicStroke(w));
             line.setTransform(transform);
@@ -205,6 +198,7 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
     {
         return () -> rect.accept((x, y, w, h) -> width.accept(strokeWidth ->
         {
+            Graphics2D graphics = this.graphics.graphics();
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.translate(x, y);
             graphics.scale(w, h);
@@ -218,6 +212,7 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
     {
         return () -> rect.accept((x, y, w, h) -> width.accept(strokeWidth ->
         {
+            Graphics2D graphics = this.graphics.graphics();
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.setStroke(new java.awt.BasicStroke(strokeWidth / ((w + h) * 0.5f)));
             graphics.translate(x, y);
@@ -231,6 +226,7 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
     {
         return () -> rect.accept((x, y, w, h) ->
         {
+            Graphics2D graphics = this.graphics.graphics();
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.translate(x, y);
             graphics.scale(w, h);

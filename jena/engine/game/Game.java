@@ -15,10 +15,14 @@ import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDrawingPainter;
 import jena.engine.graphics.GraphicsPainter;
 import jena.engine.graphics.GraphicsResource;
+import jena.engine.graphics.MatrixScopeGraphicsPainter;
+import jena.engine.graphics.MultiplicationTransformation;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.Storage;
 import jena.engine.math.FieldVector2f;
 import jena.engine.math.FloatAcceptor;
+import jena.engine.math.Matrix3fScale;
+import jena.engine.math.Matrix3fTranslation;
 import jena.engine.math.MultipleClampFieldVector2f;
 import jena.engine.math.RectClampFieldVector2f;
 import jena.engine.math.RectPunctureFieldVector2f;
@@ -26,6 +30,7 @@ import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAdd;
+import jena.engine.math.Vector2fStruct;
 import jena.engine.math.Vector2fZero;
 
 public class Game implements GraphicsBrushPainter, FrameStartListener, FrameEndListener, GraphicsInspectable
@@ -110,7 +115,11 @@ public class Game implements GraphicsBrushPainter, FrameStartListener, FrameEndL
                     clip.drawTile(skyTexture, a -> a.call(2f, 1f), skyRect),
                     clip.drawTile(groundTexture, a -> a.call(3f, 1f), groundRect),
                     clip.fillRect(obstacleRect, a -> a.call(255, 0, 0, 255)))),
-            human.paint(clip));
+            human.paint(clip),
+            new MatrixScopeGraphicsPainter(
+                new MultiplicationTransformation(
+                    new Matrix3fTranslation(position.add(new Vector2fStruct(0f, 4f))).scale(new Vector2fStruct(2f, -2f))),
+                    new FPSBrushPainter().paint(clip)));
     }
 
     public Vector2f position()

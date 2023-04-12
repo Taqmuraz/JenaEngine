@@ -16,10 +16,10 @@ import jena.engine.math.Rectf;
 
 public class SwingGraphicsDevice implements GraphicsDevice
 {
-    Graphics2D graphics;
+    SwingGraphics graphics;
     SwingTextureResource textureResource;
 
-    public SwingGraphicsDevice(Graphics2D graphics, SwingTextureResource textureResource)
+    public SwingGraphicsDevice(SwingGraphics graphics, SwingTextureResource textureResource)
     {
         this.graphics = graphics;
         this.textureResource = textureResource;
@@ -87,8 +87,14 @@ public class SwingGraphicsDevice implements GraphicsDevice
     @Override
     public GraphicsDrawing paintRect(Rectf rect, GraphicsBrushPainter paint)
     {
-        SwingGraphicsClip clip = new SwingGraphicsClip(graphics, new RectShape(rect), textureResource);
+        SwingGraphicsClip clip = new SwingGraphicsClip(graphics, textureResource);
         GraphicsPainter result = paint.paint(clip);
-        return () -> result.paint(clip);
+        return () ->
+        {
+            Graphics2D graphics = this.graphics.graphics();
+            graphics.setClip(new RectShape(rect));
+            graphics.setTransform(new AffineTransform());
+            result.paint(clip);
+        };
     }
 }

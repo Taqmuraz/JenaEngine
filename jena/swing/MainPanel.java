@@ -22,6 +22,7 @@ import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
+import jena.engine.graphics.GraphicsDrawing;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileStorage;
 import jena.engine.io.Storage;
@@ -34,13 +35,14 @@ import jena.engine.graphics.CompositeGraphicsDrawing;
 public class MainPanel extends JPanel implements GraphicsResource
 {
     private ErrorHandler errorHandler;
-    private GraphicsDevicePainter rootPainter;
+    private GraphicsDrawing rootDrawing;
     private FrameStartListener frameStartHandler;
     private FrameEndListener frameEndHandler;
     private BufferedImage screenBuffer;
     private Rectf graphicsRect;
     private Vector2f canvasSize; 
     private ThreadLocal<ImageDescriptor> textureDescriptor = new ThreadLocal<>();
+    private Graphics2D screen;
     
     public MainPanel(int canvasWidth, int canvasHeight, SwingKeyboard keyboard, SwingMouse mouse, ErrorHandler errorHandler)
     {
@@ -96,15 +98,15 @@ public class MainPanel extends JPanel implements GraphicsResource
             keyboard.onEndFrame();
             mouse.onEndFrame();
         };
+
+        GraphicsDevice device = new SwingGraphicsDevice(() -> screen, a -> a.call(textureDescriptor.get()));
         
-        rootPainter = device ->
-        {
-            return new CompositeGraphicsDrawing(
+        rootDrawing =
+            new CompositeGraphicsDrawing(
                 new CachedIterable<>(
                     new MapIterable<>(
                         painters,
                         p -> p.paint(device))));
-        };
 
         screenBuffer = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
     }
@@ -118,9 +120,8 @@ public class MainPanel extends JPanel implements GraphicsResource
     public void paint(Graphics g)
     {
         frameStartHandler.onStartFrame();
-        Graphics2D screen = screenBuffer.createGraphics();
-        GraphicsDevice device = new SwingGraphicsDevice(screen, a -> a.call(textureDescriptor.get()));
-        rootPainter.paint(device);
+        screen = screenBuffer.createGraphics();
+        rootDrawing.draw();
 
         int w = getWidth();
         int h = getHeight();
