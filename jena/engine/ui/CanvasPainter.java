@@ -1,6 +1,8 @@
 package jena.engine.ui;
 
+import jena.engine.graphics.GraphicsDrawing;
+
 public interface CanvasPainter
 {
-    void paint(Canvas canvas);
+    GraphicsDrawing paint(Canvas canvas);
 }

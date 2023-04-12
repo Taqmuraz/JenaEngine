@@ -1,8 +1,8 @@
 package jena.editor;
 
-import jena.engine.graphics.GraphicsClipPainter;
+import jena.engine.graphics.GraphicsPainter;
 
 public interface GraphicsInspectable
 {
-    GraphicsClipPainter inspect(GraphicsInspector inspector);
+    GraphicsPainter inspect(GraphicsInspector inspector);
 }

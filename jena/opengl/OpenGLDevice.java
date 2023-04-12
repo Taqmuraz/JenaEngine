@@ -2,8 +2,10 @@ package jena.opengl;
 
 import jena.engine.common.ErrorHandler;
 import jena.engine.common.Function;
-import jena.engine.graphics.GraphicsClipPainter;
+import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDevice;
+import jena.engine.graphics.GraphicsDrawing;
+import jena.engine.graphics.GraphicsPainter;
 import jena.engine.math.Rectf;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
@@ -23,15 +25,15 @@ public class OpenGLDevice implements GraphicsDevice
     }
 
     @Override
-    public void paintRect(Rectf rect, GraphicsClipPainter painter)
+    public GraphicsDrawing paintRect(Rectf rect, GraphicsBrushPainter painter)
     {
-        paintArea.accept((px, py, pw, ph) -> rect.accept((x, y, w, h) ->
+        Rectf area = a -> paintArea.accept((px, py, pw, ph) -> rect.accept((x, y, w, h) -> a.call(x + px, y + py, w, h)));
+        OpenGLMatrixPipeline pipeline = pipelineConstructor.call();
+        OpenGLClip clip = new OpenGLClip(gl, primitives, pipeline);
+        GraphicsPainter result = painter.paint(clip);
+        return () -> pipeline.rectScope(area, () ->
         {
-            OpenGLMatrixPipeline pipeline = pipelineConstructor.call();
-            pipeline.rectScope(a -> a.call(x + px, y + py, w, h), () ->
-            {
-                painter.paint(new OpenGLClip(gl, primitives, pipeline));
-            });
-        }));
+            result.paint(clip);
+        });
     }
 }

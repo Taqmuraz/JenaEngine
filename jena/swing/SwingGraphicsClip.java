@@ -2,9 +2,11 @@ package jena.swing;
 
 import java.awt.Graphics2D;
 
-import jena.engine.common.Action;
 import jena.engine.graphics.Color;
-import jena.engine.graphics.GraphicsClip;
+import jena.engine.graphics.GraphicsBrush;
+import jena.engine.graphics.GraphicsDrawing;
+import jena.engine.graphics.GraphicsPainter;
+import jena.engine.graphics.GraphicsState;
 import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
@@ -14,14 +16,13 @@ import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fNormalized;
-import jena.engine.math.Vector2fStruct;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.stream.IntStream;
 import java.awt.Shape;
 
-public class SwingGraphicsClip implements GraphicsClip
+public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
 {
     private Graphics2D graphics;
     private AffineTransform transform;
@@ -46,9 +47,9 @@ public class SwingGraphicsClip implements GraphicsClip
     }
 
     @Override
-    public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
+    public GraphicsDrawing drawSprite(TextureHandle texture, Rectf source, Rectf destination)
     {
-        texture.bind(() ->
+        return () -> texture.bind(() ->
         {
             textureResource.accept(descriptor -> descriptor.acceptImage(image ->
             {
@@ -77,9 +78,9 @@ public class SwingGraphicsClip implements GraphicsClip
     }
 
     @Override
-    public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
+    public GraphicsDrawing drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
     {
-        tiles.accept((x, y) -> destination.accept((dx, dy, dw, dh) ->
+        return () -> tiles.accept((x, y) -> destination.accept((dx, dy, dw, dh) ->
         {
             int ix = (int)x;
             int iy = (int)y;
@@ -90,17 +91,21 @@ public class SwingGraphicsClip implements GraphicsClip
     }
 
     @Override
-    public void fillRect(Rectf rect, jena.engine.graphics.Color color)
+    public GraphicsDrawing fillRect(Rectf rect, jena.engine.graphics.Color color)
     {
-        rect.accept((x, y, w, h) ->
+        Point2D.Float
+            srcA = new Point2D.Float(),
+            srcB = new Point2D.Float(),
+            dstA = new Point2D.Float(),
+            dstB = new Point2D.Float();
+        
+        return () -> rect.accept((x, y, w, h) ->
             color.accept((cr, cg, cb, ca) ->
             {
                 graphics.setTransform(identity);
         
-                Point2D.Float srcA = new Point2D.Float(x, y);
-                Point2D.Float srcB = new Point2D.Float(x + w, y + h);
-                Point2D.Float dstA = new Point2D.Float();
-                Point2D.Float dstB = new Point2D.Float();
+                srcA.setLocation(x, y);
+                srcB.setLocation(x + w, y + h);
 
                 transform.transform(srcA, dstA);
                 transform.transform(srcB, dstB);
@@ -117,11 +122,11 @@ public class SwingGraphicsClip implements GraphicsClip
     }
 
     @Override
-    public void drawText(Text text, Rectf rect, Color color)
+    public GraphicsDrawing drawText(Text text, Rectf rect, Color color)
     {
-        rect.accept((x, y, w, h) -> text.accept(content ->
+        java.awt.FontMetrics metrics = graphics.getFontMetrics(graphics.getFont());
+        return () -> rect.accept((x, y, w, h) -> text.accept(content ->
         {
-            java.awt.FontMetrics metrics = graphics.getFontMetrics(graphics.getFont());
             float bw = metrics.stringWidth(content);
             float bh = metrics.getLineMetrics(content, graphics).getHeight();
 
@@ -153,12 +158,12 @@ public class SwingGraphicsClip implements GraphicsClip
     }
 
     @Override
-    public void matrixScope(Transformation transformation, Action action)
+    public void matrixScope(Transformation transformation, GraphicsPainter painter)
     {
         matrixStack.matrixScope(transformation, () ->
         {
             updateTransform();
-            action.call();
+            painter.paint(this);
         });
         updateTransform();
     }
@@ -180,15 +185,15 @@ public class SwingGraphicsClip implements GraphicsClip
     }
 
     @Override
-    public void drawLine(Vector2f a, Vector2f b, Color color, ValueFloat width)
+    public GraphicsDrawing drawLine(Vector2f a, Vector2f b, Color color, ValueFloat width)
     {
-        a.accept((ax, ay) -> b.accept((bx, by) -> width.accept(w ->
+        return () -> a.accept((ax, ay) -> b.accept((bx, by) -> width.accept(w ->
         {
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.setStroke(new java.awt.BasicStroke(w));
-            Vector2fStruct d = new Vector2fStruct(new Vector2fNormalized(v -> v.call(bx - ax, by - ay)));
             line.setTransform(transform);
-            buffer.setTransform(bx - ax, by - ay, -d.y, d.x, ax, ay);
+            new Vector2fNormalized(v -> v.call(bx - ax, by - ay)).accept((dx, dy) ->
+                buffer.setTransform(bx - ax, by - ay, -dy, dx, ax, ay));
             line.concatenate(buffer);
             graphics.setTransform(line);
             graphics.drawLine(0, 0, 1, 0);
@@ -196,9 +201,9 @@ public class SwingGraphicsClip implements GraphicsClip
         })));
     }
     @Override
-    public void drawEllipse(Rectf rect, Color color, ValueFloat width)
+    public GraphicsDrawing drawEllipse(Rectf rect, Color color, ValueFloat width)
     {
-        rect.accept((x, y, w, h) -> width.accept(strokeWidth ->
+        return () -> rect.accept((x, y, w, h) -> width.accept(strokeWidth ->
         {
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.translate(x, y);
@@ -209,9 +214,9 @@ public class SwingGraphicsClip implements GraphicsClip
         }));
     }
     @Override
-    public void drawRect(Rectf rect, Color color, ValueFloat width)
+    public GraphicsDrawing drawRect(Rectf rect, Color color, ValueFloat width)
     {
-        rect.accept((x, y, w, h) -> width.accept(strokeWidth ->
+        return () -> rect.accept((x, y, w, h) -> width.accept(strokeWidth ->
         {
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.setStroke(new java.awt.BasicStroke(strokeWidth / ((w + h) * 0.5f)));
@@ -222,9 +227,9 @@ public class SwingGraphicsClip implements GraphicsClip
         }));
     }
     @Override
-    public void fillEllipse(Rectf rect, Color color)
+    public GraphicsDrawing fillEllipse(Rectf rect, Color color)
     {
-        rect.accept((x, y, w, h) ->
+        return () -> rect.accept((x, y, w, h) ->
         {
             color.accept((cr, cg, cb, ca) -> graphics.setColor(new java.awt.Color(cr, cg, cb, ca)));
             graphics.translate(x, y);

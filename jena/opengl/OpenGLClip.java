@@ -1,8 +1,11 @@
 package jena.opengl;
 
-import jena.engine.common.Action;
 import jena.engine.graphics.Color;
-import jena.engine.graphics.GraphicsClip;
+import jena.engine.graphics.GraphicsBrush;
+import jena.engine.graphics.GraphicsDrawing;
+import jena.engine.graphics.GraphicsPainter;
+import jena.engine.graphics.GraphicsState;
+import jena.engine.graphics.NoneGraphicsDrawing;
 import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
@@ -18,7 +21,7 @@ import jena.opengl.texture.OpenGLDefaultTexture;
 import jena.opengl.texture.OpenGLTransparentTexture;
 import jena.opengl.texture.OpenGLWrapTexture;
 
-public class OpenGLClip implements GraphicsClip
+public class OpenGLClip implements GraphicsBrush, GraphicsState
 {
     OpenGLTextureFunctions gl;
     OpenGLPrimitiveBuilder primitives;
@@ -32,77 +35,80 @@ public class OpenGLClip implements GraphicsClip
     }
 
     @Override
-    public void drawSprite(TextureHandle texture, Rectf source, Rectf destination)
+    public GraphicsDrawing drawSprite(TextureHandle texture, Rectf source, Rectf destination)
     {
-        primitives.quad((quad, uniforms) ->
+        return primitives.quad((quad, uniforms) ->
         {
             return quad.rect(source, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
         })
-        .textured(new OpenGLWrapTexture(texture).point(gl).clamp(gl).transparent(gl)).draw();
+        .textured(new OpenGLWrapTexture(texture).point(gl).clamp(gl).transparent(gl));
     }
 
     @Override
-    public void drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
+    public GraphicsDrawing drawTile(TextureHandle texture, Vector2f tiles, Rectf destination)
     {
-        primitives.quad((quad, uniforms) ->
+        return primitives.quad((quad, uniforms) ->
         {
             Vector2fStruct t = new Vector2fStruct(tiles);
             return quad.rect(a -> a.call(0f, 0f, t.x, t.y), uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
         })
-        .textured(new OpenGLWrapTexture(texture).point(gl).repeat(gl).opaque(gl)).draw();
+        .textured(new OpenGLWrapTexture(texture).point(gl).repeat(gl).opaque(gl));
     }
 
     @Override
-    public void drawLine(Vector2f a, Vector2f b, Color color, ValueFloat width)
+    public GraphicsDrawing drawLine(Vector2f a, Vector2f b, Color color, ValueFloat width)
     {
-        
+        return new NoneGraphicsDrawing();
     }
 
     @Override
-    public void drawEllipse(Rectf rect, Color color, ValueFloat width) 
+    public GraphicsDrawing drawEllipse(Rectf rect, Color color, ValueFloat width) 
     {
-        primitives.ellipseContour((ellipse, uniforms) ->
+        return primitives.ellipseContour((ellipse, uniforms) ->
         {
             return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
-        }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture())).draw();
+        }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
     @Override
-    public void drawRect(Rectf rect, Color color, ValueFloat width)
+    public GraphicsDrawing drawRect(Rectf rect, Color color, ValueFloat width)
     {
-        primitives.rectContour((contour, uniforms) ->
+        return primitives.rectContour((contour, uniforms) ->
         {
             return contour.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
-        }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture())).draw();
+        }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
     @Override
-    public void drawText(Text text, Rectf rect, Color color)
+    public GraphicsDrawing drawText(Text text, Rectf rect, Color color)
     {
-
+        return new NoneGraphicsDrawing();
     }
 
     @Override
-    public void fillEllipse(Rectf rect, Color color)
+    public GraphicsDrawing fillEllipse(Rectf rect, Color color)
     {
-        primitives.ellipse((ellipse, uniforms) ->
+        return primitives.ellipse((ellipse, uniforms) ->
         {
             return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
-        }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture())).draw();
+        }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
     @Override
-    public void fillRect(Rectf rect, Color color)
+    public GraphicsDrawing fillRect(Rectf rect, Color color)
     {
-        primitives.rect((shape, uniforms) ->
+        return primitives.rect((shape, uniforms) ->
         {
             return shape.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
-        }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture())).draw();
+        }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
     @Override
-    public void matrixScope(Transformation transformation, Action action)
+    public void matrixScope(Transformation transformation, GraphicsPainter painter)
     {
-        pipeline.matrixScope(transformation, action);
+        pipeline.matrixScope(transformation, () ->
+        {
+            painter.paint(this);
+        });
     }
 }

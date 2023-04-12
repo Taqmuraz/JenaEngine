@@ -5,40 +5,31 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.swing.JPanel;
 
-import jena.editor.ClipGraphicsInspector;
+import jena.engine.common.CachedIterable;
 import jena.engine.common.ErrorHandler;
+import jena.engine.common.MapIterable;
 import jena.engine.entity.Camera;
-import jena.engine.entity.DeltaTime;
 import jena.engine.entity.FrameEndListener;
 import jena.engine.entity.FrameStartListener;
 import jena.engine.entity.KeyboardController;
-import jena.engine.entity.Time;
 import jena.engine.game.Game;
 import jena.engine.graphics.GraphicsResource;
-import jena.engine.graphics.PostponedGraphicsDevice;
-import jena.engine.graphics.GraphicsClipPainter;
+import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.TextureHandle;
-import jena.engine.input.Mouse;
-import jena.engine.input.WindowToGraphicsMouse;
 import jena.engine.io.FileStorage;
 import jena.engine.io.Storage;
 import jena.engine.io.StorageResource;
 import jena.engine.math.Rectf;
-import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
-import jena.engine.ui.MenuCanvas;
-import jena.engine.ui.RootCanvas;
-import jena.engine.ui.UserCanvas;
 import jena.engine.graphics.GraphicsRectf;
+import jena.engine.graphics.CompositeGraphicsDrawing;
 
 public class MainPanel extends JPanel implements GraphicsResource
 {
@@ -59,16 +50,13 @@ public class MainPanel extends JPanel implements GraphicsResource
         this.canvasSize = a -> a.call(canvasWidth, canvasHeight);
         Vector2f panelSize = a -> a.call(getWidth(), getHeight());
         this.graphicsRect = new GraphicsRectf(panelSize, a -> a.call(canvasWidth, canvasHeight));
-        Mouse windowMouse = new WindowToGraphicsMouse(mouse, canvasSize, graphicsRect);
+        //Mouse windowMouse = new WindowToGraphicsMouse(mouse, canvasSize, graphicsRect);
         Storage storage = new FileStorage();
 
         Game game = new Game(this, storage, new KeyboardController(keyboard));
-        ArrayList<ClipGraphicsInspector> inspectors = new ArrayList<ClipGraphicsInspector>();
-        GraphicsClipPainter scene = clip ->
-        {
-            game.paint(clip);
-            for(ClipGraphicsInspector inspector : inspectors) inspector.paint(clip);
-        };
+        //ArrayList<ClipGraphicsInspector> inspectors = new ArrayList<ClipGraphicsInspector>();
+        GraphicsBrushPainter scene = clip -> game.paint(clip);
+            //for(ClipGraphicsInspector inspector : inspectors) inspector.paint(clip);
 
         int num = 1;
         float dnum = 1f / num;
@@ -83,15 +71,15 @@ public class MainPanel extends JPanel implements GraphicsResource
                 game.position(),
                 scene
             );
-            ClipGraphicsInspector inspector = new ClipGraphicsInspector(game, windowMouse, camera.screenToWorld());
-            inspectors.add(inspector);
+            //ClipGraphicsInspector inspector = new ClipGraphicsInspector(game, windowMouse, camera.screenToWorld());
+            //inspectors.add(inspector);
             return camera;
         })
         .collect(Collectors.toList());
 
-        String[] buttons = new String[] { "Играться", "Загрузиться", "Выбираться", "Уходить" };
+        //String[] buttons = new String[] { "Играться", "Загрузиться", "Выбираться", "Уходить" };
 
-        painters.add(new RootCanvas(a -> a.call(450f, 550f, 300f, 55f * buttons.length + 1), windowMouse, canvas ->
+        /*painters.add(new RootCanvas(a -> a.call(450f, 550f, 300f, 55f * buttons.length + 1), windowMouse, canvas ->
         {
             UserCanvas userCanvas = new MenuCanvas(canvas);
             ValueFloat deltaTime = new DeltaTime(new Time());
@@ -100,7 +88,7 @@ public class MainPanel extends JPanel implements GraphicsResource
             {
                 userCanvas.drawButton(a -> a.call(buttons[b]), a -> a.call(0f, (b + 1) * 55f, 300f, 50f), c -> c.call(255, 150, 50, 255), c -> c.call(100, 100, 100, 255), () -> System.out.println(b));
             });
-        }));
+        }));*/
 
         frameStartHandler = game;
         frameEndHandler = () ->
@@ -109,13 +97,14 @@ public class MainPanel extends JPanel implements GraphicsResource
             mouse.onEndFrame();
         };
         
-        rootPainter = new PostponedGraphicsDevice(device ->
+        rootPainter = device ->
         {
-            for(GraphicsDevicePainter p : painters)
-            {
-                p.paint(device);
-            }
-        });
+            return new CompositeGraphicsDrawing(
+                new CachedIterable<>(
+                    new MapIterable<>(
+                        painters,
+                        p -> p.paint(device))));
+        };
 
         screenBuffer = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
     }

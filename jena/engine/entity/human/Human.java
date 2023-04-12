@@ -1,15 +1,20 @@
 package jena.engine.entity.human;
 
-import jena.engine.graphics.GraphicsClipPainter;
+import jena.engine.graphics.GraphicsBrushPainter;
+import jena.engine.graphics.GraphicsDrawingPainter;
+import jena.engine.graphics.GraphicsPainter;
 import jena.engine.graphics.GraphicsResource;
-
-import java.util.Arrays;
-
+import jena.engine.graphics.MatrixScopeGraphicsPainter;
 import jena.editor.GraphicsInspectable;
 import jena.editor.GraphicsInspector;
+import jena.engine.common.ArrayIterable;
+import jena.engine.common.CachedIterable;
+import jena.engine.common.MapIterable;
 import jena.engine.entity.Time;
 import jena.engine.graphics.ColorFloatStruct;
-import jena.engine.graphics.GraphicsClip;
+import jena.engine.graphics.CompositeGraphicsBrushPainter;
+import jena.engine.graphics.CompositeGraphicsPainter;
+import jena.engine.graphics.GraphicsBrush;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
 import jena.engine.io.Storage;
@@ -25,10 +30,11 @@ import jena.engine.math.Vector2fAdd;
 import jena.engine.math.Vector2fLength;
 import jena.engine.math.Vector2fStruct;
 import jena.engine.graphics.MultiplicationTransformation;
+import jena.engine.graphics.NoneGraphicsPainter;
 
-public class Human implements GraphicsClipPainter, GraphicsInspectable
+public class Human implements GraphicsBrushPainter, GraphicsInspectable
 {
-    private interface BodyPart extends GraphicsClipPainter, GraphicsInspectable
+    private interface BodyPart extends GraphicsBrushPainter, GraphicsInspectable
     {
     }
     private class DefaultBodyPart implements BodyPart
@@ -47,31 +53,26 @@ public class Human implements GraphicsClipPainter, GraphicsInspectable
         }
 
         @Override
-        public void paint(GraphicsClip clip)
+        public GraphicsPainter paint(GraphicsBrush clip)
         {
-            clip.matrixScope(transformation, () ->
-            {
-                clip.drawSprite(texture, source, destination);
-                for(GraphicsClipPainter child : children)
-                {
-                    child.paint(clip);
-                }
-            });
+            return new MatrixScopeGraphicsPainter(transformation,
+                new CompositeGraphicsPainter(
+                    new GraphicsDrawingPainter(clip.drawSprite(texture, source, destination)),
+                    new CompositeGraphicsBrushPainter(children).paint(clip)));
         }
 
         @Override
-        public GraphicsClipPainter inspect(GraphicsInspector inspector)
+        public GraphicsPainter inspect(GraphicsInspector inspector)
         {
-            return inspector.matrixScope(transformation, () ->
-            {
-                GraphicsClipPainter point = inspector.pointHandle(new Vector2fStruct(), new ColorFloatStruct(1f, 1f, 0f, 1f), a -> a.call(0.1f));
-                GraphicsClipPainter[] nested = Arrays.stream(children).map(c -> c.inspect(inspector)).toArray(GraphicsClipPainter[]::new);
-                return clip ->
-                {
-                    point.paint(clip);
-                    for(GraphicsClipPainter n : nested) n.paint(clip);
-                };
-            });
+            return new MatrixScopeGraphicsPainter(transformation,
+                new CompositeGraphicsPainter(
+                    inspector.pointHandle(new Vector2fStruct(), new ColorFloatStruct(1f, 1f, 0f, 1f), a -> a.call(0.1f)),
+                    new CompositeGraphicsPainter(
+                        new CachedIterable<>(
+                            new MapIterable<>(
+                                new ArrayIterable<>(children),
+                                c -> c.inspect(inspector)))))
+            );
         }
     }
 
@@ -113,51 +114,42 @@ public class Human implements GraphicsClipPainter, GraphicsInspectable
         root = new BodyPart()
         {
             @Override
-            public void paint(GraphicsClip clip)
+            public GraphicsPainter paint(GraphicsBrush clip)
             {
                 //clip.fillEllipse(a -> a.call(position.x - 0.25f, position.y - 0.25f, 0.5f, 0.5f), a -> a.call(50, 150, 50, 255));
                 //clip.drawEllipse(a -> a.call(position.x - 0.5f, position.y - 0.5f, 1f, 1f), a -> a.call(150, 0, 150, 255), a -> a.call(0.02f));
                 //clip.drawLine(position, a -> a.call(0f, 0f), a -> a.call(150, 150, 0, 255), a -> a.call(0.01f));
-                clip.matrixScope(transformation, () ->
-                {
-                    armR.paint(clip);
-                    legR.paint(clip);
-                    body.paint(clip);
-                    legL.paint(clip);
-                    armL.paint(clip);
-                });    
+                return new MatrixScopeGraphicsPainter(transformation,
+                    new CompositeGraphicsBrushPainter(
+                        armR,
+                        legR,
+                        body,
+                        legL,
+                        armL
+                    ).paint(clip));
             }
 
             @Override
-            public GraphicsClipPainter inspect(GraphicsInspector inspector)
+            public GraphicsPainter inspect(GraphicsInspector inspector)
             {
-                return inspector.matrixScope(transformation, () ->
-                {
-                    GraphicsInspectable[] inspectables = {armR, legR, body, legL, armL};
-                    GraphicsClipPainter[] painters = Arrays.stream(inspectables)
-                        .map(i -> i.inspect(inspector))
-                        .toArray(GraphicsClipPainter[]::new);
-                    return clip ->
-                    {
-                        for(GraphicsClipPainter painter : painters)
-                        {
-                            painter.paint(clip);
-                        }
-                    };
-                });
+                return new MatrixScopeGraphicsPainter(transformation, new CompositeGraphicsPainter(
+                    new CachedIterable<>(
+                        new MapIterable<>(
+                            new ArrayIterable<>(armR, legR, body, legL, armL),
+                            i -> i.inspect(inspector)))));
             }
         };
     }
 
     @Override
-    public void paint(GraphicsClip clip)
+    public GraphicsPainter paint(GraphicsBrush clip)
     {
-        root.paint(clip);
+        return root.paint(clip);
     }
 
     @Override
-    public GraphicsClipPainter inspect(GraphicsInspector inspector)
+    public GraphicsPainter inspect(GraphicsInspector inspector)
     {
-        return clip -> {};// root.inspect(inspector);
+        return new NoneGraphicsPainter();// root.inspect(inspector);
     }
 }

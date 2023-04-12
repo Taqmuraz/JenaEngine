@@ -4,5 +4,5 @@ import jena.engine.math.Rectf;
 
 public interface GraphicsDevice
 {
-    void paintRect(Rectf rect, GraphicsClipPainter painter);
+    GraphicsDrawing paintRect(Rectf rect, GraphicsBrushPainter painter);
 }

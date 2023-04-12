@@ -1,9 +1,12 @@
 package jena.engine.entity;
 
 import jena.engine.graphics.Color;
-import jena.engine.graphics.GraphicsClipPainter;
+import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
+import jena.engine.graphics.GraphicsDrawing;
+import jena.engine.graphics.GraphicsDrawingPainter;
+import jena.engine.graphics.MatrixScopeGraphicsPainter;
 import jena.engine.graphics.MultiplicationTransformation;
 import jena.engine.math.Matrix3fOrtho;
 import jena.engine.math.Matrix3fTranslation;
@@ -15,16 +18,17 @@ import jena.engine.math.Vector2fNegative;
 import jena.engine.math.Vector2fTransformPoint;
 import jena.engine.math.FieldVector2f;
 import jena.engine.math.Matrix3f;
+import jena.engine.graphics.CompositeGraphicsPainter;
 
 public class Camera implements GraphicsDevicePainter
 {
-    private GraphicsClipPainter scene;
+    private GraphicsBrushPainter scene;
     private Color clearColor;
     private Rectf clip;
     private Matrix3f w2s;
     private Matrix3f s2w;
 
-    public Camera(Rectf clip, Color clearColor, Vector2f position, GraphicsClipPainter scene)
+    public Camera(Rectf clip, Color clearColor, Vector2f position, GraphicsBrushPainter scene)
     {
         this.clearColor = clearColor;
         this.scene = scene;
@@ -42,19 +46,19 @@ public class Camera implements GraphicsDevicePainter
         s2w = w2s.inverse();
     }
 
-    public Camera(Rectf clip, Color clearColor, GraphicsClipPainter scene)
+    public Camera(Rectf clip, Color clearColor, GraphicsBrushPainter scene)
     {
         this(clip, clearColor, a -> a.call(0f, 0f), scene);
     }
 
     @Override
-    public void paint(GraphicsDevice graphicsDevice)
+    public GraphicsDrawing paint(GraphicsDevice graphicsDevice)
     {
-        graphicsDevice.paintRect(clip, graphicsClip ->
-        {
-            graphicsClip.fillRect(clip, clearColor);
-            graphicsClip.matrixScope(new MultiplicationTransformation(w2s), () -> scene.paint(graphicsClip));
-        });
+        return graphicsDevice.paintRect(clip, graphicsClip ->
+        new CompositeGraphicsPainter(
+            new GraphicsDrawingPainter(graphicsClip.fillRect(clip, clearColor)),
+            new MatrixScopeGraphicsPainter(new MultiplicationTransformation(w2s), scene.paint(graphicsClip))
+        ));
     }
 
     public FieldVector2f worldToScreen()

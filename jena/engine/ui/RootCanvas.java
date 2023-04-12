@@ -1,43 +1,50 @@
 package jena.engine.ui;
 
 import jena.engine.graphics.Color;
-import jena.engine.graphics.GraphicsClip;
+import jena.engine.graphics.ColorStruct;
+import jena.engine.graphics.CompositeGraphicsDrawing;
+import jena.engine.graphics.GraphicsBrush;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDevicePainter;
+import jena.engine.graphics.GraphicsDrawing;
+import jena.engine.graphics.GraphicsDrawingPainter;
+import jena.engine.graphics.MatrixScopeGraphicsPainter;
+import jena.engine.graphics.MultiplicationTransformation;
 import jena.engine.graphics.Text;
 import jena.engine.input.ClipMouse;
 import jena.engine.input.Mouse;
 import jena.engine.math.Rectf;
-import jena.engine.math.RectfStruct;
-import jena.engine.math.Matrix3fMul;
+import jena.engine.math.ValueFloatStruct;
+import jena.engine.math.Vector2fStruct;
+import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fTranslation;
 
 public class RootCanvas implements GraphicsDevicePainter
 {
     private class Wrapper implements Canvas
     {
-        GraphicsClip clip;
+        GraphicsBrush clip;
 
-        public Wrapper(GraphicsClip clip)
+        public Wrapper(GraphicsBrush clip)
         {
             this.clip = clip;
         }
         @Override
-        public void drawText(Text text, Rectf rect, Color color)
+        public GraphicsDrawing drawText(Text text, Rectf rect, Color color)
         {
-            clip.drawText(text, rect, color);
+            return clip.drawText(text, rect, color);
         }
         @Override
-        public void fillRect(Rectf rect, Color color)
+        public GraphicsDrawing fillRect(Rectf rect, Color color)
         {
-            clip.fillRect(rect, color);
             float outline = 1f;
-            clip.drawRect(a ->
-            {
-                RectfStruct r = new RectfStruct(rect);
-                a.call(r.x - outline, r.y - outline, r.width + outline * 2f, r.height + outline * 2f);
-            },
-            a -> a.call(0, 0, 0, 255), a -> a.call(outline * 2f));
+            return new CompositeGraphicsDrawing(
+                clip.fillRect(rect, color),
+                clip.drawRect(a -> rect.accept((rx, ry, rw, rh) ->
+                {
+                    a.call(rx - outline, ry - outline, rw + outline * 2f, rh + outline * 2f);
+                }),
+                new ColorStruct(0, 0, 0, 255), new ValueFloatStruct(outline * 2f)));
         }
         @Override
         public Mouse mouse()
@@ -58,11 +65,14 @@ public class RootCanvas implements GraphicsDevicePainter
     }
 
     @Override
-    public void paint(GraphicsDevice device)
+    public GraphicsDrawing paint(GraphicsDevice device)
     {
-        device.paintRect(rect, clip ->
-            rect.accept((x, y, z, w) -> clip.matrixScope(s ->
-                new Matrix3fMul(s, new Matrix3fTranslation(a -> a.call(x, y))), () ->
+        Matrix3f matrix = a -> rect.accept((x, y, z, w) ->
+            new Matrix3fTranslation(new Vector2fStruct(x, y)));
+        return device.paintRect(rect, clip ->
+            new MatrixScopeGraphicsPainter(
+                new MultiplicationTransformation(matrix),
+                new GraphicsDrawingPainter(
                     painter.paint(new Wrapper(clip)))));
     }
 }
