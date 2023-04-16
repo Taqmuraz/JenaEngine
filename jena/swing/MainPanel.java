@@ -14,11 +14,6 @@ import jena.engine.common.CachedIterable;
 import jena.engine.common.ErrorHandler;
 import jena.engine.common.MapIterable;
 import jena.engine.common.RangeIterable;
-import jena.engine.entity.Camera;
-import jena.engine.entity.FrameEndListener;
-import jena.engine.entity.FrameStartListener;
-import jena.engine.entity.KeyboardController;
-import jena.engine.game.Game;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDevice;
@@ -37,12 +32,17 @@ import jena.engine.math.Vector2f;
 import jena.engine.ui.MenuCanvas;
 import jena.engine.ui.RootCanvas;
 import jena.engine.ui.UserCanvas;
+import jena.game.Camera;
+import jena.game.DeltaTime;
+import jena.game.FrameEndListener;
+import jena.game.FrameStartListener;
+import jena.game.Game;
+import jena.game.KeyboardController;
+import jena.game.Time;
 import jena.engine.graphics.GraphicsRectf;
 import jena.engine.graphics.CachedText;
 import jena.engine.graphics.ColorStruct;
 import jena.engine.graphics.CompositeGraphicsDrawing;
-import jena.engine.entity.DeltaTime;
-import jena.engine.entity.Time;
 
 public class MainPanel extends JPanel implements GraphicsResource
 {

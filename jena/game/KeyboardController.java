@@ -1,4 +1,4 @@
-package jena.engine.entity;
+package jena.game;
 
 import jena.engine.input.Key;
 import jena.engine.input.Keyboard;

@@ -1,4 +1,4 @@
-package jena.engine.entity.human;
+package jena.game.human;
 
 import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDrawingPainter;
@@ -10,7 +10,6 @@ import jena.editor.GraphicsInspector;
 import jena.engine.common.ArrayIterable;
 import jena.engine.common.CachedIterable;
 import jena.engine.common.MapIterable;
-import jena.engine.entity.Time;
 import jena.engine.graphics.ColorFloatStruct;
 import jena.engine.graphics.CompositeGraphicsBrushPainter;
 import jena.engine.graphics.CompositeGraphicsPainter;
@@ -18,17 +17,27 @@ import jena.engine.graphics.GraphicsBrush;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.graphics.Transformation;
 import jena.engine.io.Storage;
-import jena.engine.math.IntAcceptor;
+import jena.engine.math.FloatAcceptor;
 import jena.engine.math.Matrix3f;
+import jena.engine.math.Matrix3fIdentity;
+import jena.engine.math.Matrix3fMul;
+import jena.engine.math.Matrix3fScale;
 import jena.engine.math.Matrix3fTransform;
 import jena.engine.math.Matrix3fTranslation;
 import jena.engine.math.Rectf;
+import jena.engine.math.RectfStruct;
 import jena.engine.math.ValueFloat;
-import jena.engine.math.ValueInt;
+import jena.engine.math.ValueFloatMul;
+import jena.engine.math.ValueFloatNegative;
+import jena.engine.math.ValueFloatSin;
+import jena.engine.math.ValueFloatStruct;
+import jena.engine.math.ValueFloatVector2fY;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAdd;
 import jena.engine.math.Vector2fLength;
 import jena.engine.math.Vector2fStruct;
+import jena.engine.math.Vector2fValueFloat;
+import jena.game.Time;
 import jena.engine.graphics.MultiplicationTransformation;
 import jena.engine.graphics.NoneGraphicsPainter;
 
@@ -86,39 +95,108 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
         ValueFloat time = new Time();
 
         ValueFloat movementLength = new Vector2fLength(movement);
-        ValueFloat sin = time.mul(6f).sin().mul(0.5f).mul(movementLength);
-        ValueInt dir = new ValueInt()
+        ValueFloat sin = new ValueFloatMul(
+            new ValueFloatSin(
+                new ValueFloatMul(
+                    time,
+                    new ValueFloatStruct(6f))),
+            new ValueFloatMul(
+                movementLength,
+                new ValueFloatStruct(0.5f)));
+
+        ValueFloat dir = new ValueFloat()
         {
-            int dir = 1;
-            public void accept(IntAcceptor acceptor)
+            float dir = 1f;
+            public void accept(FloatAcceptor acceptor)
             {
                 movement.accept((x, y) -> dir = x == 0 ? dir : (x < 0 ? -1 : 1));
                 acceptor.call(dir);
             }
         };
 
-        BodyPart head = new DefaultBodyPart(a -> a.call(0.8f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.2f, 1f, 1f), new Matrix3fTransform(a -> a.call(-0.05f, 0.35f), a -> a.call(0.5f, 0.75f), a -> movement.accept((x, y) -> a.call(y * 0.5f))));
+        BodyPart head = new DefaultBodyPart(
+            new RectfStruct(0.8f, 0f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -0.2f, 1f, 1f),
+            new Matrix3fTransform(
+                new Vector2fStruct(-0.05f, 0.35f),
+                new Vector2fStruct(0.5f, 0.75f),
+                new ValueFloatMul(
+                    new ValueFloatVector2fY(movement),
+                    new ValueFloatStruct(0.5f))));
 
-        BodyPart forearm = new DefaultBodyPart(a -> a.call(0.6f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(a -> a.call(0f, -1f), a -> a.call(0f)));
-        BodyPart armL = new DefaultBodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), new Matrix3fTransform(a -> a.call(-0.3f, 0.5f), a -> a.call(0.5f, 0.5f), sin), forearm);
-        BodyPart armR = new DefaultBodyPart(a -> a.call(0.6f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -1f, 1f, 1f), new Matrix3fTransform(a -> a.call(0.1f, 0.5f), a -> a.call(0.5f, 0.5f), a -> sin.accept(s -> a.call(-s))), forearm);
+        BodyPart forearm = new DefaultBodyPart(
+            new RectfStruct(0.6f, 0.5f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -0.8f, 1f, 1f),
+            new Matrix3fTranslation(new Vector2fStruct(0f, -1f)));
 
-        BodyPart shoe = new DefaultBodyPart(a -> a.call(0.8f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(a -> a.call(0f, -0.5f), a -> a.call(0f)));
-        BodyPart knee = new DefaultBodyPart(a -> a.call(0.4f, 0.5f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1f), new Matrix3fTransform(a -> a.call(0f, -0.8f), a -> a.call(0f)), shoe);
-        BodyPart legL = new DefaultBodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), new Matrix3fTransform(a -> a.call(-0.15f, -0.45f), a -> a.call(0.5f, 0.5f), a -> sin.accept(s -> a.call(-s))), knee);
-        BodyPart legR = new DefaultBodyPart(a -> a.call(0.4f, 0f, 0.2f, 0.5f), a -> a.call(-0.5f, -0.8f, 1f, 1.3f), new Matrix3fTransform(a -> a.call(0.1f, -0.45f), a -> a.call(0.5f, 0.5f), sin), knee);
-        BodyPart body = new DefaultBodyPart(a -> a.call(0f, 0f, 0.4f, 1f), a -> a.call(-0.5f, -0.5f, 0.8f, 1.2f), new Matrix3fTransform(a -> a.call(0f, 0f), a -> a.call(1f, 1f), a -> a.call(0f)), head);
+        BodyPart armL = new DefaultBodyPart(
+            new RectfStruct(0.6f, 0f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -1f, 1f, 1f),
+            new Matrix3fTransform(
+                new Vector2fStruct(-0.3f, 0.5f),
+                new Vector2fStruct(0.5f, 0.5f),
+                sin),
+            forearm);
+
+        BodyPart armR = new DefaultBodyPart(
+            new RectfStruct(0.6f, 0f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -1f, 1f, 1f),
+            new Matrix3fTransform(
+                new Vector2fStruct(0.1f, 0.5f),
+                new Vector2fStruct(0.5f, 0.5f),
+                new ValueFloatNegative(sin)),
+            forearm);
+
+        BodyPart shoe = new DefaultBodyPart(
+            new RectfStruct(0.8f, 0.5f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -0.8f, 1f, 1f),
+            new Matrix3fTranslation(new Vector2fStruct(0f, -0.5f)));
+        BodyPart knee = new DefaultBodyPart(
+            new RectfStruct(0.4f, 0.5f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -0.8f, 1f, 1f),
+            new Matrix3fTranslation(new Vector2fStruct(0f, -0.8f)),
+            shoe);
+
+        BodyPart legL = new DefaultBodyPart(
+            new RectfStruct(0.4f, 0f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -0.8f, 1f, 1.3f),
+            new Matrix3fTransform(
+                new Vector2fStruct(-0.15f, -0.45f),
+                new Vector2fStruct(0.5f, 0.5f),
+                new ValueFloatNegative(sin)),
+            knee);
+
+        BodyPart legR = new DefaultBodyPart(
+            new RectfStruct(0.4f, 0f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -0.8f, 1f, 1.3f),
+            new Matrix3fTransform(
+                new Vector2fStruct(0.1f, -0.45f),
+                new Vector2fStruct(0.5f, 0.5f),
+                sin),
+            knee);
+
+        BodyPart body = new DefaultBodyPart(
+            new RectfStruct(0f, 0f, 0.4f, 1f),
+            new RectfStruct(-0.5f, -0.5f, 0.8f, 1.2f),
+            Matrix3fIdentity.identity,
+            head);
         
-        Transformation transformation = new MultiplicationTransformation(new Matrix3fTranslation(new Vector2fAdd(position, a -> a.call(0f, 1.25f))).scale(a -> dir.accept(d -> a.call(d, 1f))));
+        Transformation transformation = new MultiplicationTransformation(
+            new Matrix3fMul(
+                new Matrix3fTranslation(
+                    new Vector2fAdd(
+                        position,
+                        new Vector2fStruct(0f, 1.25f))),
+                new Matrix3fScale(
+                    new Vector2fValueFloat(
+                        dir,
+                        new ValueFloatStruct(1f)))));
 
         root = new BodyPart()
         {
             @Override
             public GraphicsPainter paint(GraphicsBrush clip)
             {
-                //clip.fillEllipse(a -> a.call(position.x - 0.25f, position.y - 0.25f, 0.5f, 0.5f), a -> a.call(50, 150, 50, 255));
-                //clip.drawEllipse(a -> a.call(position.x - 0.5f, position.y - 0.5f, 1f, 1f), a -> a.call(150, 0, 150, 255), a -> a.call(0.02f));
-                //clip.drawLine(position, a -> a.call(0f, 0f), a -> a.call(150, 150, 0, 255), a -> a.call(0.01f));
                 return new MatrixScopeGraphicsPainter(transformation,
                     new CompositeGraphicsBrushPainter(
                         armR,

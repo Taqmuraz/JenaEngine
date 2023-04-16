@@ -1,13 +1,7 @@
-package jena.engine.game;
+package jena.game;
 
 import jena.editor.GraphicsInspectable;
 import jena.editor.GraphicsInspector;
-import jena.engine.entity.Controller;
-import jena.engine.entity.FrameEndListener;
-import jena.engine.entity.FrameStartListener;
-import jena.engine.entity.Time;
-import jena.engine.entity.human.Human;
-import jena.engine.entity.human.InputPosition;
 import jena.engine.graphics.CompositeGraphicsDrawing;
 import jena.engine.graphics.CompositeGraphicsPainter;
 import jena.engine.graphics.GraphicsBrush;
@@ -31,6 +25,8 @@ import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAdd;
 import jena.engine.math.Vector2fStruct;
 import jena.engine.math.Vector2fZero;
+import jena.game.human.Human;
+import jena.game.human.InputPosition;
 
 public class Game implements GraphicsBrushPainter, FrameStartListener, FrameEndListener, GraphicsInspectable
 {

@@ -1,4 +1,4 @@
-package jena.engine.entity;
+package jena.game;
 
 import jena.engine.math.Vector2f;
 

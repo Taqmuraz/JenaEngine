@@ -1,6 +1,6 @@
 package jena.engine.input;
 
-import jena.engine.entity.FrameEndListener;
+import jena.game.FrameEndListener;
 
 public abstract class KeySystem implements FrameEndListener
 {

@@ -1,8 +1,5 @@
-package jena.engine.entity.human;
+package jena.game.human;
 
-import jena.engine.entity.DeltaTime;
-import jena.engine.entity.FrameStartListener;
-import jena.engine.entity.Time;
 import jena.engine.math.FieldVector2f;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.ValueFloatStruct;
@@ -11,6 +8,9 @@ import jena.engine.math.Vector2fAcceptor;
 import jena.engine.math.Vector2fAdd;
 import jena.engine.math.Vector2fMul;
 import jena.engine.math.Vector2fStruct;
+import jena.game.DeltaTime;
+import jena.game.FrameStartListener;
+import jena.game.Time;
 
 public class InputPosition implements Vector2f, FrameStartListener
 {

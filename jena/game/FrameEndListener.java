@@ -1,4 +1,4 @@
-package jena.engine.entity;
+package jena.game;
 
 public interface FrameEndListener
 {

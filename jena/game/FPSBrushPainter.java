@@ -1,7 +1,5 @@
-package jena.engine.game;
+package jena.game;
 
-import jena.engine.entity.DeltaTime;
-import jena.engine.entity.Time;
 import jena.engine.graphics.GraphicsBrush;
 import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDrawingPainter;

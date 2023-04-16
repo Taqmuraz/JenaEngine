@@ -1,4 +1,4 @@
-package jena.engine.entity;
+package jena.game;
 
 import java.time.Duration;
 import java.time.LocalTime;

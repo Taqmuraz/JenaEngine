@@ -1,4 +1,4 @@
-package jena.engine.entity;
+package jena.game;
 
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsBrushPainter;
