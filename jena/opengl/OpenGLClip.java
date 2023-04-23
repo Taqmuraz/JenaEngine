@@ -3,12 +3,12 @@ package jena.opengl;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsBrush;
 import jena.engine.graphics.GraphicsDrawing;
-import jena.engine.graphics.GraphicsPainter;
 import jena.engine.graphics.GraphicsState;
+import jena.engine.graphics.Matrix3fPipelineGraphicsState;
 import jena.engine.graphics.NoneGraphicsDrawing;
 import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
-import jena.engine.graphics.Transformation;
+import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fMul;
 import jena.engine.math.Matrix3fPipeline;
 import jena.engine.math.Matrix3fRect;
@@ -39,7 +39,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.quad((quad, uniforms) ->
         {
-            return quad.rect(source, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
+            return quad.rect(source, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(destination)), uniforms);
         })
         .textured(new OpenGLWrapTexture(texture).point(gl).clamp(gl).transparent(gl));
     }
@@ -50,7 +50,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
         return primitives.quad((quad, uniforms) ->
         {
             Vector2fStruct t = new Vector2fStruct(tiles);
-            return quad.rect(a -> a.call(0f, 0f, t.x, t.y), uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(destination)), uniforms);
+            return quad.rect(a -> a.call(0f, 0f, t.x, t.y), uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(destination)), uniforms);
         })
         .textured(new OpenGLWrapTexture(texture).point(gl).repeat(gl).opaque(gl));
     }
@@ -66,7 +66,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.ellipseContour((ellipse, uniforms) ->
         {
-            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
+            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(rect)), uniforms);
         }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
@@ -75,7 +75,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.rectContour((contour, uniforms) ->
         {
-            return contour.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
+            return contour.color(color, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(rect)), uniforms);
         }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
@@ -90,7 +90,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.ellipse((ellipse, uniforms) ->
         {
-            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
+            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(rect)), uniforms);
         }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
@@ -99,16 +99,19 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.rect((shape, uniforms) ->
         {
-            return shape.color(color, uniforms).transformed(new Matrix3fMul(pipeline, new Matrix3fRect(rect)), uniforms);
+            return shape.color(color, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(rect)), uniforms);
         }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
     @Override
-    public void matrixScope(Transformation transformation, GraphicsPainter painter)
+    public GraphicsState transform(Matrix3f matrix)
     {
-        pipeline.matrixScope(transformation, () ->
-        {
-            painter.paint(this);
-        });
+        return new Matrix3fPipelineGraphicsState(pipeline, matrix);
+    }
+
+    @Override
+    public void draw(GraphicsDrawing drawing)
+    {
+        drawing.draw();
     }
 }

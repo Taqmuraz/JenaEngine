@@ -2,14 +2,15 @@ package jena.swing;
 
 import java.awt.Graphics2D;
 
+import jena.engine.common.Action;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsBrush;
 import jena.engine.graphics.GraphicsDrawing;
-import jena.engine.graphics.GraphicsPainter;
 import jena.engine.graphics.GraphicsState;
+import jena.engine.graphics.Matrix3fPipelineGraphicsState;
 import jena.engine.graphics.Text;
 import jena.engine.graphics.TextureHandle;
-import jena.engine.graphics.Transformation;
+import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fPipeline;
 import jena.engine.math.Matrix3fStack;
 import jena.engine.math.Rectf;
@@ -28,8 +29,30 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
     private AffineTransform identity;
     private AffineTransform line;
     private AffineTransform buffer;
-    private Matrix3fPipeline matrixStack;
     private SwingTextureResource textureResource;
+    private Matrix3fPipeline pipeline;
+
+    class SwingPipeline implements Matrix3fPipeline
+    {
+        Matrix3fPipeline matrixStack = new Matrix3fStack();
+
+        @Override
+        public void matrixScope(Matrix3f matrix, Action action)
+        {
+            matrixStack.matrixScope(matrix, () ->
+            {
+                updateTransform(graphics.graphics());
+                action.call();
+            });
+            updateTransform(graphics.graphics());
+        }
+
+        @Override
+        public Matrix3f peek()
+        {
+            return matrixStack.peek();
+        }
+    }
 
     public SwingGraphicsClip(SwingGraphics graphics, SwingTextureResource textureResource)
     {
@@ -39,7 +62,7 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
         buffer = new AffineTransform();
         identity = new AffineTransform();
         transform = new AffineTransform();
-        matrixStack = new Matrix3fStack();
+        pipeline = new SwingPipeline();
     }
 
     @Override
@@ -157,19 +180,14 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
     }
 
     @Override
-    public void matrixScope(Transformation transformation, GraphicsPainter painter)
+    public GraphicsState transform(Matrix3f matrix)
     {
-        matrixStack.matrixScope(transformation, () ->
-        {
-            updateTransform(graphics.graphics());
-            painter.paint(this);
-        });
-        updateTransform(graphics.graphics());
+        return new Matrix3fPipelineGraphicsState(pipeline, matrix);
     }
 
     private void updateTransform(Graphics2D graphics)
     {
-        matrixStack.accept(e ->
+        pipeline.peek().accept(e ->
         {
             transform.setTransform(e.at(0), e.at(1), e.at(3), e.at(4), e.at(6), e.at(7));
             graphics.setTransform(transform);
@@ -233,5 +251,11 @@ public class SwingGraphicsClip implements GraphicsBrush, GraphicsState
             graphics.fillArc(0, 0, 1, 1, 0, 360);
             graphics.setTransform(transform);
         });
+    }
+
+    @Override
+    public void draw(GraphicsDrawing drawing)
+    {
+        drawing.draw();
     }
 }

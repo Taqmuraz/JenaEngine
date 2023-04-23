@@ -88,7 +88,8 @@ public class OpenGLESBufferPrimitiveBuilder implements OpenGLPrimitiveBuilder
 
     private OpenGLPrimitive create(OpenGLUniformsPrimitive acceptor, OpenGLPrimitive primitive, OpenGLShader shader)
     {
-        return () -> shader.play(acceptor.create(primitive, shader)::draw);
+        OpenGLPrimitive base = acceptor.create(primitive, shader);
+        return () -> shader.play(base::draw);
     }
 
     @Override

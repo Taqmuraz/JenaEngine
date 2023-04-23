@@ -5,7 +5,6 @@ import jena.engine.common.Function;
 import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDrawing;
-import jena.engine.graphics.GraphicsPainter;
 import jena.engine.math.Rectf;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
@@ -30,10 +29,8 @@ public class OpenGLDevice implements GraphicsDevice
         Rectf area = a -> paintArea.accept((px, py, pw, ph) -> rect.accept((x, y, w, h) -> a.call(x + px, y + py, w, h)));
         OpenGLMatrixPipeline pipeline = pipelineConstructor.call();
         OpenGLClip clip = new OpenGLClip(gl, primitives, pipeline);
-        GraphicsPainter result = painter.paint(clip);
-        return () -> pipeline.rectScope(area, () ->
-        {
-            result.paint(clip);
-        });
+        GraphicsDrawing drawing = painter.paint(clip).paint(clip);
+        OpenGLRectScope scope = pipeline.rectScope(area);
+        return () -> scope.draw(drawing);
     }
 }

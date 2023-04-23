@@ -3,16 +3,17 @@ package jena.editor;
 import jena.engine.graphics.Color;
 import jena.engine.graphics.GraphicsBrush;
 import jena.engine.graphics.GraphicsBrushPainter;
+import jena.engine.graphics.GraphicsDrawing;
 import jena.engine.graphics.GraphicsDrawingPainter;
 import jena.engine.graphics.GraphicsPainter;
 import jena.engine.graphics.GraphicsState;
-import jena.engine.graphics.MultiplicationTransformation;
-import jena.engine.graphics.Transformation;
+import jena.engine.graphics.Matrix3fPipelineGraphicsState;
 import jena.engine.input.Key;
 import jena.engine.input.Mouse;
 import jena.engine.math.CircleContainsPoint;
 import jena.engine.math.FieldVector2f;
 import jena.engine.math.Matrix3f;
+import jena.engine.math.Matrix3fPipeline;
 import jena.engine.math.Matrix3fStack;
 import jena.engine.math.Rectf;
 import jena.engine.math.RectfLocationSize;
@@ -26,26 +27,23 @@ import jena.engine.graphics.MatrixScopeGraphicsPainter;
 public class ClipGraphicsInspector implements GraphicsInspector, GraphicsBrushPainter, GraphicsState
 {
     private GraphicsInspectable root;
-    private Matrix3fStack matrixStack;
+    private Matrix3fPipeline pipeline;
     private Mouse mouse;
     private FieldVector2f mouseToScene;
     private GraphicsBrush brush;
 
     public ClipGraphicsInspector(GraphicsBrush brush, GraphicsInspectable root, Mouse mouse, FieldVector2f mouseToScene)
     {
-        matrixStack = new Matrix3fStack();
+        this.pipeline = new Matrix3fStack();
         this.mouse = mouse;
         this.mouseToScene = mouseToScene;
         this.brush = brush;
     }
 
     @Override
-    public void matrixScope(Transformation transformation, GraphicsPainter painter)
+    public GraphicsState transform(Matrix3f matrix)
     {
-        matrixStack.matrixScope(transformation, () ->
-        {
-            painter.paint(this);
-        });
+        return new Matrix3fPipelineGraphicsState(pipeline, matrix);
     }
 
     @Override
@@ -65,10 +63,9 @@ public class ClipGraphicsInspector implements GraphicsInspector, GraphicsBrushPa
         Vector2f graphicsRectLocation = initial.sub(radiusBox);
         Vector2f graphicsRectSize = radiusBox.mul(a -> a.call(2f));
         Rectf graphicsRect = new RectfLocationSize(graphicsRectLocation, graphicsRectSize);
-        Matrix3f transform = matrixStack.peek();
-        Transformation transformation = new MultiplicationTransformation(transform);
+        Matrix3f transform = pipeline.peek();
         GraphicsPainter painter = new MatrixScopeGraphicsPainter(
-            transformation,
+            transform,
             new GraphicsDrawingPainter(
                 brush.drawEllipse(graphicsRect, color, a -> a.call(0.1f))));
 
@@ -88,10 +85,16 @@ public class ClipGraphicsInspector implements GraphicsInspector, GraphicsBrushPa
                     a.call(initial.x, initial.y);
                 };
             }
-            public void paint(GraphicsState state)
+            public GraphicsDrawing paint(GraphicsState state)
             {
-                painter.paint(state);
+                return painter.paint(state);
             }
         };
+    }
+
+    @Override
+    public void draw(GraphicsDrawing drawing)
+    {
+        drawing.draw();
     }
 }

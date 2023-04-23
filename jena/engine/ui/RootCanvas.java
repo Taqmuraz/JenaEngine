@@ -9,7 +9,6 @@ import jena.engine.graphics.GraphicsDevicePainter;
 import jena.engine.graphics.GraphicsDrawing;
 import jena.engine.graphics.GraphicsDrawingPainter;
 import jena.engine.graphics.MatrixScopeGraphicsPainter;
-import jena.engine.graphics.MultiplicationTransformation;
 import jena.engine.graphics.Text;
 import jena.engine.input.ClipMouse;
 import jena.engine.input.Mouse;
@@ -71,7 +70,7 @@ public class RootCanvas implements GraphicsDevicePainter
             new Matrix3fTranslation(new Vector2fStruct(x, y)).accept(a));
         return device.paintRect(rect, clip ->
             new MatrixScopeGraphicsPainter(
-                new MultiplicationTransformation(matrix),
+                matrix,
                 new GraphicsDrawingPainter(
                     painter.paint(new Wrapper(clip)))));
     }

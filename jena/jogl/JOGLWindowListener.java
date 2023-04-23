@@ -1,9 +1,9 @@
 package jena.jogl;
 
 import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
@@ -12,6 +12,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 import jena.engine.common.Acceptable;
 import jena.engine.common.ErrorHandler;
 import jena.engine.graphics.GraphicsDevicePainter;
+import jena.engine.graphics.GraphicsDrawing;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.FileStorageResource;
@@ -37,21 +38,21 @@ public class JOGLWindowListener implements GLEventListener
     FPSAnimator animator;
     GLWindow window;
     Rectf paintArea;
-    GraphicsDevicePainter root;
+    GraphicsDrawing root;
     FrameStartListener frameStart;
     FrameEndListener frameEnd;
     OpenGLPrimitiveBuilder primitives;
     EnvironmentVariables variables;
+    GL2ES3 activeGl_ES3;
+    GL2ES1 activeGl_ES1;
 
     class OpenGLGraphicsResource implements GraphicsResource
     {
-        GL gl;
         GLProfile profile;
         ErrorHandler errorHandler;
 
-        public OpenGLGraphicsResource(GL gl, GLProfile profile, ErrorHandler errorHandler)
+        public OpenGLGraphicsResource(GLProfile profile, ErrorHandler errorHandler)
         {
-            this.gl = gl;
             this.profile = profile;
             this.errorHandler = errorHandler;
         }
@@ -59,7 +60,7 @@ public class JOGLWindowListener implements GLEventListener
         @Override
         public TextureHandle loadTexture(StorageResource file)
         {
-            return new JOGLTextureFunctions(gl).new JOGLTexture(profile, file, System.out::println);
+            return new JOGLTextureFunctions(() -> activeGl_ES3).new JOGLTexture(profile, file, System.out::println);
         }
     }
 
@@ -75,15 +76,14 @@ public class JOGLWindowListener implements GLEventListener
     {
         frameStart.onStartFrame();
 
-        GL2ES1 gl = drawable.getGL().getGL2ES1();
-        gl.glDisable(GL2.GL_DEPTH_TEST);
-        gl.glClearColor(0f, 0f, 0f, 1f);
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+        activeGl_ES3 = drawable.getGL().getGL2ES3();
+        activeGl_ES1 = drawable.getGL().getGL2ES1();
 
-        root.paint(
-            new OpenGLDevice((new JOGLTextureFunctions(drawable.getGL())),
-            () -> new OpenGLESMatrixPipeline(new JOGLMatrixFunctions(gl)),
-            primitives, paintArea, System.out::println));
+        activeGl_ES3.glDisable(GL2.GL_DEPTH_TEST);
+        activeGl_ES3.glClearColor(0f, 0f, 0f, 1f);
+        activeGl_ES3.glClear(GL2.GL_COLOR_BUFFER_BIT);
+
+        root.draw();
 
         frameEnd.onEndFrame();
     }
@@ -100,16 +100,19 @@ public class JOGLWindowListener implements GLEventListener
     {
         System.out.println("initialized");
 
+        activeGl_ES3 = drawable.getGL().getGL2ES3();
+        activeGl_ES1 = drawable.getGL().getGL2ES1();
+
         ResourcesDecoder decoder = new ResourcesDecoder();
         new FileDecoder(new FileStorageResource("../resources.resource")).decode(decoder, System.out::println);
         
         Storage storage = decoder.storage();
         JOGLKeyboard keyboard = new JOGLKeyboard();
-        Game player = new Game(new OpenGLGraphicsResource(drawable.getGL(), drawable.getGLProfile(), System.out::println), storage, new KeyboardController(keyboard));
+        Game player = new Game(new OpenGLGraphicsResource(drawable.getGLProfile(), System.out::println), storage, new KeyboardController(keyboard));
 
         primitives = new OpenGLESBufferPrimitiveBuilder(
-            new JOGLBufferFunctions(drawable.getGL().getGL2ES3()),
-            new JOGLShaderEnvironment(drawable.getGL().getGL2ES3(), System.out::println), storage, System.out::println);
+            new JOGLBufferFunctions(activeGl_ES3),
+            new JOGLShaderEnvironment(activeGl_ES3, System.out::println), storage, System.out::println);
 
         frameStart = player;
         frameEnd = () ->
@@ -120,9 +123,14 @@ public class JOGLWindowListener implements GLEventListener
 
         window.addKeyListener(keyboard);
 
-        root = new Camera(
+        GraphicsDevicePainter rootPainter = new Camera(
             a -> paintArea.accept((x, y, w, h) -> a.call(0f, 0f, w, h)),
             a -> a.call(200, 100, 100, 255), player.position(), player);
+
+        root = rootPainter.paint(
+            new OpenGLDevice((new JOGLTextureFunctions(() -> activeGl_ES3)),
+            () -> new OpenGLESMatrixPipeline(new JOGLMatrixFunctions(() -> activeGl_ES1)),
+            primitives, paintArea, System.out::println));
 
         Acceptable<Integer> fps = a -> variables.<IntegerVariable>findVariable("fps", v -> a.call(v.value()), () -> a.call(60));
         fps.accept(f -> animator = new FPSAnimator(window, f));

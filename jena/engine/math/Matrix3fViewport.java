@@ -1,14 +1,31 @@
 package jena.engine.math;
 
-public class Matrix3fViewport extends Matrix3fStruct
+public class Matrix3fViewport implements Matrix3f
 {
-    public Matrix3fViewport(float width, float height)
+    float halfWidth;
+    float halfHeight;
+    public Matrix3fViewport(Vector2f size)
     {
-        width *= 0.5f;
-        height *= 0.5f;
-        elements[0] = width;
-        elements[4] = -height;
-        elements[6] = width;
-        elements[7] = height;
+        size.accept((width, height) ->
+        {
+            this.halfWidth = width * 0.5f;
+            this.halfHeight = height * 0.5f;
+        });
+    }
+    @Override
+    public void accept(Matrix3fAcceptor acceptor)
+    {
+        acceptor.call(index ->
+        {
+            switch(index)
+            {
+                case 0: return halfWidth;
+                case 4: return -halfHeight;
+                case 6: return halfWidth;
+                case 7: return halfHeight;
+                case 8: return 1f;
+                default: return 0f;
+            }
+        });
     }
 }

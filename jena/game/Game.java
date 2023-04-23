@@ -10,7 +10,6 @@ import jena.engine.graphics.GraphicsDrawingPainter;
 import jena.engine.graphics.GraphicsPainter;
 import jena.engine.graphics.GraphicsResource;
 import jena.engine.graphics.MatrixScopeGraphicsPainter;
-import jena.engine.graphics.MultiplicationTransformation;
 import jena.engine.graphics.TextureHandle;
 import jena.engine.io.Storage;
 import jena.engine.math.FieldVector2f;
@@ -112,9 +111,8 @@ public class Game implements GraphicsBrushPainter, FrameStartListener, FrameEndL
                     clip.fillRect(obstacleRect, a -> a.call(255, 0, 0, 255)))),
             human.paint(clip),
             new MatrixScopeGraphicsPainter(
-                new MultiplicationTransformation(
-                    new Matrix3fTranslation(position.add(new Vector2fStruct(0f, 4f))).scale(new Vector2fStruct(2f, -2f))),
-                    new FPSBrushPainter().paint(clip)));
+                new Matrix3fTranslation(position.add(new Vector2fStruct(0f, 4f))).scale(new Vector2fStruct(2f, -2f)),
+                new FPSBrushPainter().paint(clip)));
     }
 
     public Vector2f position()

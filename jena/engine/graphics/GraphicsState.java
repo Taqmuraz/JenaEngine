@@ -1,6 +1,9 @@
 package jena.engine.graphics;
 
+import jena.engine.math.Matrix3f;
+
 public interface GraphicsState
 {
-    void matrixScope(Transformation transformation, GraphicsPainter painter);
+    GraphicsState transform(Matrix3f matrix);
+    void draw(GraphicsDrawing drawing);
 }

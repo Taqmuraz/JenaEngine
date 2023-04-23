@@ -7,7 +7,6 @@ import java.awt.geom.AffineTransform;
 import jena.engine.graphics.GraphicsBrushPainter;
 import jena.engine.graphics.GraphicsDevice;
 import jena.engine.graphics.GraphicsDrawing;
-import jena.engine.graphics.GraphicsPainter;
 import jena.engine.math.Rectf;
 
 public class SwingGraphicsDevice implements GraphicsDevice
@@ -25,13 +24,13 @@ public class SwingGraphicsDevice implements GraphicsDevice
     public GraphicsDrawing paintRect(Rectf rect, GraphicsBrushPainter paint)
     {
         SwingGraphicsClip clip = new SwingGraphicsClip(graphics, textureResource);
-        GraphicsPainter result = paint.paint(clip);
+        GraphicsDrawing drawing = paint.paint(clip).paint(clip);
         return () ->
         {
             Graphics2D graphics = this.graphics.graphics();
             rect.accept((x, y, w, h) -> graphics.setClip(new Rectangle.Float(x, y, w, h)));
             graphics.setTransform(new AffineTransform());
-            result.paint(clip);
+            drawing.draw();
         };
     }
 }

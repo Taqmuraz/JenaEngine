@@ -15,7 +15,6 @@ import jena.engine.graphics.CompositeGraphicsBrushPainter;
 import jena.engine.graphics.CompositeGraphicsPainter;
 import jena.engine.graphics.GraphicsBrush;
 import jena.engine.graphics.TextureHandle;
-import jena.engine.graphics.Transformation;
 import jena.engine.io.Storage;
 import jena.engine.math.FloatAcceptor;
 import jena.engine.math.Matrix3f;
@@ -38,7 +37,6 @@ import jena.engine.math.Vector2fLength;
 import jena.engine.math.Vector2fStruct;
 import jena.engine.math.Vector2fValueFloat;
 import jena.game.Time;
-import jena.engine.graphics.MultiplicationTransformation;
 import jena.engine.graphics.NoneGraphicsPainter;
 
 public class Human implements GraphicsBrushPainter, GraphicsInspectable
@@ -50,21 +48,21 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
     {
         Rectf source;
         Rectf destination;
-        Transformation transformation;
+        Matrix3f transform;
         BodyPart[] children;
 
         public DefaultBodyPart(Rectf source, Rectf destination, Matrix3f transform, BodyPart...children)
         {
             this.source = source;
             this.destination = destination;
-            this.transformation = new MultiplicationTransformation(transform);
+            this.transform = transform;
             this.children = children;
         }
 
         @Override
         public GraphicsPainter paint(GraphicsBrush clip)
         {
-            return new MatrixScopeGraphicsPainter(transformation,
+            return new MatrixScopeGraphicsPainter(transform,
                 new CompositeGraphicsPainter(
                     new GraphicsDrawingPainter(clip.drawSprite(texture, source, destination)),
                     new CompositeGraphicsBrushPainter(children).paint(clip)));
@@ -73,7 +71,7 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
         @Override
         public GraphicsPainter inspect(GraphicsInspector inspector)
         {
-            return new MatrixScopeGraphicsPainter(transformation,
+            return new MatrixScopeGraphicsPainter(transform,
                 new CompositeGraphicsPainter(
                     inspector.pointHandle(new Vector2fStruct(), new ColorFloatStruct(1f, 1f, 0f, 1f), a -> a.call(0.1f)),
                     new CompositeGraphicsPainter(
@@ -181,23 +179,22 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
             Matrix3fIdentity.identity,
             head);
         
-        Transformation transformation = new MultiplicationTransformation(
-            new Matrix3fMul(
-                new Matrix3fTranslation(
-                    new Vector2fAdd(
-                        position,
-                        new Vector2fStruct(0f, 1.25f))),
-                new Matrix3fScale(
-                    new Vector2fValueFloat(
-                        dir,
-                        new ValueFloatStruct(1f)))));
+        Matrix3f transform = new Matrix3fMul(
+            new Matrix3fTranslation(
+                new Vector2fAdd(
+                    position,
+                    new Vector2fStruct(0f, 1.25f))),
+            new Matrix3fScale(
+                new Vector2fValueFloat(
+                    dir,
+                    new ValueFloatStruct(1f))));
 
         root = new BodyPart()
         {
             @Override
             public GraphicsPainter paint(GraphicsBrush clip)
             {
-                return new MatrixScopeGraphicsPainter(transformation,
+                return new MatrixScopeGraphicsPainter(transform,
                     new CompositeGraphicsBrushPainter(
                         armR,
                         legR,
@@ -210,7 +207,7 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
             @Override
             public GraphicsPainter inspect(GraphicsInspector inspector)
             {
-                return new MatrixScopeGraphicsPainter(transformation, new CompositeGraphicsPainter(
+                return new MatrixScopeGraphicsPainter(transform, new CompositeGraphicsPainter(
                     new CachedIterable<>(
                         new MapIterable<>(
                             new ArrayIterable<>(armR, legR, body, legL, armL),

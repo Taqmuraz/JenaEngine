@@ -46,60 +46,60 @@ public class JOGLTextureFunctions implements OpenGLTextureFunctions
         }
     }
 
-    GL gl;
+    JOGL_ES3_Provider gl;
 
-    public JOGLTextureFunctions(GL gl)
+    public JOGLTextureFunctions(JOGL_ES3_Provider gl)
     {
         this.gl = gl;
     }
 
     private void bind(Texture texture, Action action)
     {
-        gl.glEnable(GL.GL_TEXTURE_2D);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, texture.getTextureObject());
+        gl.gl().glEnable(GL.GL_TEXTURE_2D);
+        gl.gl().glBindTexture(GL.GL_TEXTURE_2D, texture.getTextureObject());
         action.call();
-        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        gl.gl().glBindTexture(GL.GL_TEXTURE_2D, 0);
+        gl.gl().glDisable(GL.GL_TEXTURE_2D);
     }
 
     @Override
     public void repeat()
     {
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+        gl.gl().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+        gl.gl().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
     }
 
     @Override
     public void clamp()
     {
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+        gl.gl().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+        gl.gl().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
     }
 
     @Override
     public void enableBlend()
     {
-        gl.glEnable(GL.GL_BLEND);
-        gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+        gl.gl().glEnable(GL.GL_BLEND);
+        gl.gl().glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     @Override
     public void disableBlend()
     {
-        gl.glDisable(GL.GL_BLEND);
+        gl.gl().glDisable(GL.GL_BLEND);
     }
 
     @Override
     public void enableFilter()
     {
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+        gl.gl().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+        gl.gl().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
     }
 
     @Override
     public void disableFilter()
     {
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        gl.gl().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+        gl.gl().glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
     }
 }

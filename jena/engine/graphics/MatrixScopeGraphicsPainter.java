@@ -1,19 +1,21 @@
 package jena.engine.graphics;
 
+import jena.engine.math.Matrix3f;
+
 public final class MatrixScopeGraphicsPainter implements GraphicsPainter
 {
-    Transformation transformation;
+    Matrix3f matrix;
     GraphicsPainter painter;
 
-    public MatrixScopeGraphicsPainter(Transformation transformation, GraphicsPainter painter)
+    public MatrixScopeGraphicsPainter(Matrix3f matrix, GraphicsPainter painter)
     {
-        this.transformation = transformation;
+        this.matrix = matrix;
         this.painter = painter;
     }
 
     @Override
-    public void paint(GraphicsState graphics)
+    public GraphicsDrawing paint(GraphicsState state)
     {
-        graphics.matrixScope(transformation, painter);
+        return painter.paint(state.transform(matrix));
     }
 }

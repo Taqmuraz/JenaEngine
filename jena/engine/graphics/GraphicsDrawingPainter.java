@@ -10,8 +10,8 @@ public final class GraphicsDrawingPainter implements GraphicsPainter
     }
 
     @Override
-    public void paint(GraphicsState graphics)
+    public GraphicsDrawing paint(GraphicsState state)
     {
-        drawing.draw();
+        return () -> state.draw(drawing);
     }
 }

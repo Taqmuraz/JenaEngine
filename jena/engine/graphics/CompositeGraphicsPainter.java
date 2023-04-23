@@ -1,6 +1,8 @@
 package jena.engine.graphics;
 
 import jena.engine.common.ArrayIterable;
+import jena.engine.common.CachedIterable;
+import jena.engine.common.MapIterable;
 
 public final class CompositeGraphicsPainter implements GraphicsPainter
 {
@@ -15,8 +17,12 @@ public final class CompositeGraphicsPainter implements GraphicsPainter
         this.painters = new ArrayIterable<>(painters);
     }
     @Override
-    public void paint(GraphicsState state)
+    public GraphicsDrawing paint(GraphicsState state)
     {
-        for(GraphicsPainter painter : painters) painter.paint(state);
+        return new CompositeGraphicsDrawing(
+            new CachedIterable<>(
+                new MapIterable<>(
+                    painters,
+                    painter -> painter.paint(state))));
     }
 }
