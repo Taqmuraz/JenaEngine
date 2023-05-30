@@ -22,10 +22,10 @@ import jena.opengl.OpenGLShaderSource;
 
 public class JOGLShaderEnvironment implements OpenGLShaderEnvironment
 {
-    GL2ES3 gl;
+    JOGL_ES3_Provider gl;
     ErrorHandler errorHandler;
 
-    public JOGLShaderEnvironment(GL2ES3 gl, ErrorHandler errorHandler)
+    public JOGLShaderEnvironment(JOGL_ES3_Provider gl, ErrorHandler errorHandler)
     {
         this.gl = gl;
         this.errorHandler = errorHandler;
@@ -33,6 +33,8 @@ public class JOGLShaderEnvironment implements OpenGLShaderEnvironment
 
     private int loadShaderSubprogram(String source, int type, ErrorHandler errorHandler)
     {
+        GL2ES3 gl = this.gl.gl();
+
         int shaderID = gl.glCreateShader(type);
         gl.glShaderSource(shaderID, 1, new String[] { source }, IntBuffer.allocate(1));
         gl.glCompileShader(shaderID);
@@ -56,19 +58,19 @@ public class JOGLShaderEnvironment implements OpenGLShaderEnvironment
     @Override
     public OpenGLShaderProgram createProgram(OpenGLShaderSource vertex, OpenGLShaderSource fragment, OpenGLShaderAttributeCollection attributes)
     {
-        int program = gl.glCreateProgram();
+        int program = gl.gl().glCreateProgram();
         vertex.accept(vert -> fragment.accept(frag ->
         {
-            gl.glAttachShader(program, loadShaderSubprogram(vert, GL2ES3.GL_VERTEX_SHADER, errorHandler));
-            gl.glAttachShader(program, loadShaderSubprogram(frag, GL2ES3.GL_FRAGMENT_SHADER, errorHandler));
+            gl.gl().glAttachShader(program, loadShaderSubprogram(vert, GL2ES3.GL_VERTEX_SHADER, errorHandler));
+            gl.gl().glAttachShader(program, loadShaderSubprogram(frag, GL2ES3.GL_FRAGMENT_SHADER, errorHandler));
         }));
         attributes.acceptAll((index, name) ->
         {
-            gl.glBindAttribLocation(program, index, name);
+            gl.gl().glBindAttribLocation(program, index, name);
         });
 
-        gl.glLinkProgram(program);
-        gl.glValidateProgram(program);
+        gl.gl().glLinkProgram(program);
+        gl.gl().glValidateProgram(program);
 
         return new OpenGLShaderProgram()
         {
@@ -76,9 +78,9 @@ public class JOGLShaderEnvironment implements OpenGLShaderEnvironment
             @Override
             public void execute(Action action)
             {
-                gl.glUseProgram(program);
+                gl.gl().glUseProgram(program);
                 action.call();
-                gl.glUseProgram(0);
+                gl.gl().glUseProgram(0);
             }
 
             @Override
@@ -88,7 +90,7 @@ public class JOGLShaderEnvironment implements OpenGLShaderEnvironment
                 {
                     float[] buffer = new float[9];
                     for(int i = 0; i < 9; i++) buffer[i] = elements.at(i);
-                    gl.glUniformMatrix3fv(gl.glGetUniformLocation(program, name), 1, false, buffer, 0);
+                    gl.gl().glUniformMatrix3fv(gl.gl().glGetUniformLocation(program, name), 1, false, buffer, 0);
                 });
             }
 
@@ -97,7 +99,7 @@ public class JOGLShaderEnvironment implements OpenGLShaderEnvironment
             {
                 rect.accept((x, y, w, h) ->
                 {
-                    gl.glUniform4f(gl.glGetUniformLocation(program, name), x, y, w, h);
+                    gl.gl().glUniform4f(gl.gl().glGetUniformLocation(program, name), x, y, w, h);
                 });
             }
 
@@ -106,7 +108,7 @@ public class JOGLShaderEnvironment implements OpenGLShaderEnvironment
             {
                 new ColorFloatStruct(color).acceptFloats((r, g, b, a) ->
                 {
-                    gl.glUniform4f(gl.glGetUniformLocation(program, name), r, g, b, a);
+                    gl.gl().glUniform4f(gl.gl().glGetUniformLocation(program, name), r, g, b, a);
                 });
             }
         };

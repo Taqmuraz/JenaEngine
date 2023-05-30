@@ -2,14 +2,11 @@ package jena.opengl.gles;
 
 import jena.engine.common.Action;
 import jena.engine.math.Matrix3f;
-import jena.engine.math.Matrix3fRect;
+import jena.engine.math.Matrix3fPipeline;
 import jena.engine.math.Matrix3fStack;
-import jena.engine.math.Rectf;
 import jena.opengl.OpenGLMatrixFunctions;
-import jena.opengl.OpenGLMatrixPipeline;
-import jena.opengl.OpenGLRectScope;
 
-public class OpenGLESMatrixPipeline implements OpenGLMatrixPipeline
+public class OpenGLESMatrixPipeline implements Matrix3fPipeline
 {
     OpenGLMatrixFunctions gl;
     Matrix3fStack stack;
@@ -37,19 +34,5 @@ public class OpenGLESMatrixPipeline implements OpenGLMatrixPipeline
             action.call();
             gl.pop();
         });
-    }
-
-    @Override
-    public OpenGLRectScope rectScope(Rectf rect)
-    {
-        Matrix3f matrix = new Matrix3fRect(a -> rect.accept((x, y, w, h) -> a.call(-1f, 1f, 2f / w, -2f / h)));
-        return drawing ->
-        {
-            gl.push();
-            gl.identity();
-            rect.accept((x, y, w, h) -> gl.viewport((int)x, (int)y, (int)w, (int)h));
-            matrixScope(matrix, drawing::draw);
-            gl.pop();
-        };
     }
 }

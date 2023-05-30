@@ -16,9 +16,9 @@ import jena.opengl.OpenGLVertexBufferContext;
 
 public class JOGLBufferFunctions implements OpenGLBufferFunctions
 {
-    GL2ES3 gl;
+    JOGL_ES3_Provider gl;
 
-    public JOGLBufferFunctions(GL2ES3 gl)
+    public JOGLBufferFunctions(JOGL_ES3_Provider gl)
     {
         this.gl = gl;
     }
@@ -27,7 +27,7 @@ public class JOGLBufferFunctions implements OpenGLBufferFunctions
     public OpenGLVertexArray genVertexArray(int attributesCount, int[] elements)
     {
         IntBuffer vaoBuffer = IntBuffer.allocate(1);
-        gl.glGenVertexArrays(1, vaoBuffer);
+        gl.gl().glGenVertexArrays(1, vaoBuffer);
         int vaoID = vaoBuffer.get(0);
 
         return new OpenGLVertexArray()
@@ -35,6 +35,8 @@ public class JOGLBufferFunctions implements OpenGLBufferFunctions
             @Override
             public void drawTriangles()
             {
+                GL2ES3 gl = JOGLBufferFunctions.this.gl.gl();
+                
                 gl.glDisable(GL.GL_CULL_FACE);
                 gl.glBindVertexArray(vaoID);
                 for(int i = 0; i < attributesCount; i++) gl.glEnableVertexAttribArray(i);
@@ -45,6 +47,8 @@ public class JOGLBufferFunctions implements OpenGLBufferFunctions
             @Override
             public void bind(ActionSingle<OpenGLVertexArrayContext> action)
             {
+                GL2ES3 gl = JOGLBufferFunctions.this.gl.gl();
+
                 gl.glBindVertexArray(vaoID);
 
                 action.call(new OpenGLVertexArrayContext()

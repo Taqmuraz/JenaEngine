@@ -26,12 +26,14 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     OpenGLTextureFunctions gl;
     OpenGLPrimitiveBuilder primitives;
     Matrix3fPipeline pipeline;
+    Matrix3f peek;
 
     public OpenGLClip(OpenGLTextureFunctions gl, OpenGLPrimitiveBuilder primitives, Matrix3fPipeline pipeline)
     {
         this.gl = gl;
         this.primitives = primitives;
         this.pipeline = pipeline;
+        peek = a -> pipeline.peek().accept(a);
     }
 
     @Override
@@ -39,7 +41,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.quad((quad, uniforms) ->
         {
-            return quad.rect(source, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(destination)), uniforms);
+            return quad.rect(source, uniforms).transformed(new Matrix3fMul(peek, new Matrix3fRect(destination)), uniforms);
         })
         .textured(new OpenGLWrapTexture(texture).point(gl).clamp(gl).transparent(gl));
     }
@@ -50,7 +52,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
         return primitives.quad((quad, uniforms) ->
         {
             Vector2fStruct t = new Vector2fStruct(tiles);
-            return quad.rect(a -> a.call(0f, 0f, t.x, t.y), uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(destination)), uniforms);
+            return quad.rect(a -> a.call(0f, 0f, t.x, t.y), uniforms).transformed(new Matrix3fMul(peek, new Matrix3fRect(destination)), uniforms);
         })
         .textured(new OpenGLWrapTexture(texture).point(gl).repeat(gl).opaque(gl));
     }
@@ -66,7 +68,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.ellipseContour((ellipse, uniforms) ->
         {
-            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(rect)), uniforms);
+            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(peek, new Matrix3fRect(rect)), uniforms);
         }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
@@ -75,7 +77,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.rectContour((contour, uniforms) ->
         {
-            return contour.color(color, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(rect)), uniforms);
+            return contour.color(color, uniforms).transformed(new Matrix3fMul(peek, new Matrix3fRect(rect)), uniforms);
         }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
@@ -90,7 +92,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.ellipse((ellipse, uniforms) ->
         {
-            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(rect)), uniforms);
+            return ellipse.color(color, uniforms).transformed(new Matrix3fMul(peek, new Matrix3fRect(rect)), uniforms);
         }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 
@@ -99,7 +101,7 @@ public class OpenGLClip implements GraphicsBrush, GraphicsState
     {
         return primitives.rect((shape, uniforms) ->
         {
-            return shape.color(color, uniforms).transformed(new Matrix3fMul(pipeline.peek(), new Matrix3fRect(rect)), uniforms);
+            return shape.color(color, uniforms).transformed(new Matrix3fMul(peek, new Matrix3fRect(rect)), uniforms);
         }).textured(new OpenGLTransparentTexture(gl, new OpenGLDefaultTexture()));
     }
 

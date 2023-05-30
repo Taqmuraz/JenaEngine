@@ -45,6 +45,8 @@ public class JOGLWindowListener implements GLEventListener
     EnvironmentVariables variables;
     GL2ES3 activeGl_ES3;
     GL2ES1 activeGl_ES1;
+    JOGL_ES3_Provider es3;
+    JOGL_ES1_Provider es1;
 
     class OpenGLGraphicsResource implements GraphicsResource
     {
@@ -60,7 +62,7 @@ public class JOGLWindowListener implements GLEventListener
         @Override
         public TextureHandle loadTexture(StorageResource file)
         {
-            return new JOGLTextureFunctions(() -> activeGl_ES3).new JOGLTexture(profile, file, System.out::println);
+            return new JOGLTextureFunctions(es3).new JOGLTexture(profile, file, System.out::println);
         }
     }
 
@@ -69,6 +71,9 @@ public class JOGLWindowListener implements GLEventListener
         this.paintArea = paintArea;
         this.window = window;
         this.variables = variables;
+
+        es3 = () -> activeGl_ES3;
+        es1 = () -> activeGl_ES1;
     }
 
     @Override
@@ -111,8 +116,8 @@ public class JOGLWindowListener implements GLEventListener
         Game player = new Game(new OpenGLGraphicsResource(drawable.getGLProfile(), System.out::println), storage, new KeyboardController(keyboard));
 
         primitives = new OpenGLESBufferPrimitiveBuilder(
-            new JOGLBufferFunctions(activeGl_ES3),
-            new JOGLShaderEnvironment(activeGl_ES3, System.out::println), storage, System.out::println);
+            new JOGLBufferFunctions(es3),
+            new JOGLShaderEnvironment(es3, System.out::println), storage, System.out::println);
 
         frameStart = player;
         frameEnd = () ->
@@ -128,8 +133,8 @@ public class JOGLWindowListener implements GLEventListener
             a -> a.call(200, 100, 100, 255), player.position(), player);
 
         root = rootPainter.paint(
-            new OpenGLDevice((new JOGLTextureFunctions(() -> activeGl_ES3)),
-            () -> new OpenGLESMatrixPipeline(new JOGLMatrixFunctions(() -> activeGl_ES1)),
+            new OpenGLDevice((new JOGLTextureFunctions(es3)),
+            () -> new OpenGLESMatrixPipeline(new JOGLMatrixFunctions(es1)),
             primitives, paintArea, System.out::println));
 
         Acceptable<Integer> fps = a -> variables.<IntegerVariable>findVariable("fps", v -> a.call(v.value()), () -> a.call(60));

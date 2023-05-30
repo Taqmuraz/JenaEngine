@@ -27,11 +27,11 @@ public class Program
                 {
                     switch(v.value())
                     {
-                        case "opengl": new JOGLWindow(variables); break;
-                        default: new MainWindow(variables);
+                        default: new JOGLWindow(variables); break;
+                        case "swing": new MainWindow(variables); break;
                     }
                 },
-                () -> new MainWindow(variables));
+                () -> new JOGLWindow(variables));
             }
             catch(Throwable error)
             {
