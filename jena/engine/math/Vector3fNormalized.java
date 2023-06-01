@@ -14,13 +14,12 @@ public final class Vector3fNormalized implements Vector3f
     @Override
     public void accept(Vector3fAcceptor acceptor)
     {
-        length.accept(len ->
+        length.accept(len -> source.accept((x, y, z) ->
         {
-            Vector3fStruct struct = new Vector3fStruct(source);
             if (len != 0)
-                acceptor.call(struct.x / len, struct.y / len, struct.z / len);
+                acceptor.call(x / len, y / len, z / len);
             else
                 acceptor.call(0f, 0f, 0f);
-        });
+        }));
     }
 }

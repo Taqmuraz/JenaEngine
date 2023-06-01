@@ -22,6 +22,7 @@ import jena.engine.math.Rectf;
 import jena.engine.math.ValueFloat;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAdd;
+import jena.engine.math.Vector2fNormalized;
 import jena.engine.math.Vector2fStruct;
 import jena.engine.math.Vector2fZero;
 import jena.game.human.Human;
@@ -55,7 +56,7 @@ public class Game implements GraphicsBrushPainter, FrameStartListener, FrameEndL
         FieldVector2f punctureField = new RectPunctureFieldVector2f(obstacleRect);
 
 
-        Vector2f movement = controller.movement();
+        Vector2f movement = new Vector2fNormalized(controller.movement());
         position = new InputPosition(movement, new Vector2fZero(), source ->
         {
             return punctureField.project(clampField.project(source));

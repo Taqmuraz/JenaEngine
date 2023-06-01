@@ -26,10 +26,12 @@ import jena.engine.math.Matrix3fTranslation;
 import jena.engine.math.Rectf;
 import jena.engine.math.RectfStruct;
 import jena.engine.math.ValueFloat;
+import jena.engine.math.ValueFloatAdd;
 import jena.engine.math.ValueFloatMul;
 import jena.engine.math.ValueFloatNegative;
 import jena.engine.math.ValueFloatSin;
 import jena.engine.math.ValueFloatStruct;
+import jena.engine.math.ValueFloatSub;
 import jena.engine.math.ValueFloatVector2fY;
 import jena.engine.math.Vector2f;
 import jena.engine.math.Vector2fAdd;
@@ -122,10 +124,25 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
                     new ValueFloatVector2fY(movement),
                     new ValueFloatStruct(0.5f))));
 
-        BodyPart forearm = new DefaultBodyPart(
+        BodyPart forearmL = new DefaultBodyPart(
             new RectfStruct(0.6f, 0.5f, 0.2f, 0.5f),
             new RectfStruct(-0.5f, -0.8f, 1f, 1f),
-            new Matrix3fTranslation(new Vector2fStruct(0f, -1f)));
+            new Matrix3fTransform(
+                new Vector2fStruct(0f, -1f),
+                new ValueFloatSub(
+                    sin,
+                    new ValueFloatMul(movementLength,
+                        new ValueFloatStruct(6f)))));
+
+        BodyPart forearmR = new DefaultBodyPart(
+            new RectfStruct(0.6f, 0.5f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -0.8f, 1f, 1f),
+            new Matrix3fTransform(
+                new Vector2fStruct(0f, -1f),
+                new ValueFloatSub(
+                    new ValueFloatNegative(sin),
+                    new ValueFloatMul(movementLength,
+                        new ValueFloatStruct(6f)))));
 
         BodyPart armL = new DefaultBodyPart(
             new RectfStruct(0.6f, 0f, 0.2f, 0.5f),
@@ -134,7 +151,7 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
                 new Vector2fStruct(-0.3f, 0.5f),
                 new Vector2fStruct(0.5f, 0.5f),
                 sin),
-            forearm);
+            forearmL);
 
         BodyPart armR = new DefaultBodyPart(
             new RectfStruct(0.6f, 0f, 0.2f, 0.5f),
@@ -143,16 +160,29 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
                 new Vector2fStruct(0.1f, 0.5f),
                 new Vector2fStruct(0.5f, 0.5f),
                 new ValueFloatNegative(sin)),
-            forearm);
+            forearmR);
 
         BodyPart shoe = new DefaultBodyPart(
             new RectfStruct(0.8f, 0.5f, 0.2f, 0.5f),
             new RectfStruct(-0.5f, -0.8f, 1f, 1f),
             new Matrix3fTranslation(new Vector2fStruct(0f, -0.5f)));
-        BodyPart knee = new DefaultBodyPart(
+        
+        BodyPart kneeL = new DefaultBodyPart(
             new RectfStruct(0.4f, 0.5f, 0.2f, 0.5f),
             new RectfStruct(-0.5f, -0.8f, 1f, 1f),
-            new Matrix3fTranslation(new Vector2fStruct(0f, -0.8f)),
+            new Matrix3fTransform(new Vector2fStruct(0f, -0.8f),
+                new ValueFloatAdd(new ValueFloatNegative(sin),
+                    new ValueFloatMul(movementLength,
+                        new ValueFloatStruct(6f)))),
+            shoe);
+
+        BodyPart kneeR = new DefaultBodyPart(
+            new RectfStruct(0.4f, 0.5f, 0.2f, 0.5f),
+            new RectfStruct(-0.5f, -0.8f, 1f, 1f),
+            new Matrix3fTransform(new Vector2fStruct(0f, -0.8f),
+                new ValueFloatAdd(sin,
+                    new ValueFloatMul(movementLength,
+                        new ValueFloatStruct(6f)))),
             shoe);
 
         BodyPart legL = new DefaultBodyPart(
@@ -162,7 +192,7 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
                 new Vector2fStruct(-0.15f, -0.45f),
                 new Vector2fStruct(0.5f, 0.5f),
                 new ValueFloatNegative(sin)),
-            knee);
+            kneeL);
 
         BodyPart legR = new DefaultBodyPart(
             new RectfStruct(0.4f, 0f, 0.2f, 0.5f),
@@ -171,7 +201,7 @@ public class Human implements GraphicsBrushPainter, GraphicsInspectable
                 new Vector2fStruct(0.1f, -0.45f),
                 new Vector2fStruct(0.5f, 0.5f),
                 sin),
-            knee);
+            kneeR);
 
         BodyPart body = new DefaultBodyPart(
             new RectfStruct(0f, 0f, 0.4f, 1f),

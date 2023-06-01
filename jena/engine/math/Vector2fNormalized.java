@@ -13,13 +13,12 @@ public final class Vector2fNormalized implements Vector2f
     @Override
     public void accept(Vector2fAcceptor acceptor)
     {
-        length.accept(len ->
+        length.accept(len -> source.accept((x, y) ->
         {
-            Vector2fStruct struct = new Vector2fStruct(source);
             if (len != 0)
-                acceptor.call(struct.x / len, struct.y / len);
+                acceptor.call(x / len, y / len);
             else
                 acceptor.call(0f, 0f);
-        });
+        }));
     }
 }
