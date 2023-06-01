@@ -9,8 +9,9 @@ import jena.engine.graphics.GraphicsPainter;
 import jena.engine.graphics.MatrixScopeGraphicsPainter;
 import jena.engine.math.Matrix3f;
 import jena.engine.math.Matrix3fPipeline;
-import jena.engine.math.Matrix3fRect;
+import jena.engine.math.Matrix3fViewport;
 import jena.engine.math.Rectf;
+import jena.engine.math.Vector2fRectSize;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
 public class OpenGLDevice implements GraphicsDevice
@@ -35,7 +36,7 @@ public class OpenGLDevice implements GraphicsDevice
         Matrix3fPipeline pipeline = pipelineConstructor.call();
         OpenGLClip clip = new OpenGLClip(gl, primitives, pipeline);
 
-        Matrix3f matrix = new Matrix3fRect(a -> area.accept((x, y, w, h) -> a.call(-1f, 1f, 2f / w, -2f / h)));
+        Matrix3f matrix = new Matrix3fViewport(new Vector2fRectSize(area)).inverse();
         GraphicsPainter gp = new MatrixScopeGraphicsPainter(matrix, painter.paint(clip));
         GraphicsDrawing drawing = gp.paint(clip);
         return drawing;

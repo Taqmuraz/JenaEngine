@@ -1,6 +1,6 @@
 package jena.engine.math;
 
-public class Matrix3fOrtho extends Matrix3fStruct
+public class Matrix3fOrtho implements Matrix3f
 {
     private Vector2f clipSize;
     private ValueFloat worldScale;
