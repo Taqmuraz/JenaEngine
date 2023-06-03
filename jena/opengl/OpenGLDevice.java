@@ -17,14 +17,16 @@ import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 public class OpenGLDevice implements GraphicsDevice
 {
     OpenGLTextureFunctions gl;
+    OpenGLMatrixFunctions matrixFunctions;
     Rectf paintArea;
     OpenGLPrimitiveBuilder primitives;
     Function<Matrix3fPipeline> pipelineConstructor;
 
-    public OpenGLDevice(OpenGLTextureFunctions gl, Function<Matrix3fPipeline> pipelineConstructor, OpenGLPrimitiveBuilder primitives, Rectf paintArea, ErrorHandler errorHandler)
+    public OpenGLDevice(OpenGLTextureFunctions gl, OpenGLMatrixFunctions matrixFunctions, Function<Matrix3fPipeline> pipelineConstructor, OpenGLPrimitiveBuilder primitives, Rectf paintArea, ErrorHandler errorHandler)
     {
         this.pipelineConstructor = pipelineConstructor;
         this.gl = gl;
+        this.matrixFunctions = matrixFunctions;
         this.paintArea = paintArea;
         this.primitives = primitives;
     }
@@ -39,6 +41,10 @@ public class OpenGLDevice implements GraphicsDevice
         Matrix3f matrix = new Matrix3fViewport(new Vector2fRectSize(area)).inverse();
         GraphicsPainter gp = new MatrixScopeGraphicsPainter(matrix, painter.paint(clip));
         GraphicsDrawing drawing = gp.paint(clip);
-        return drawing;
+        return () ->
+        {
+            //paintArea.accept((x, y, w, h) -> matrixFunctions.viewport((int)x, (int)y, (int)w, (int)h));
+            drawing.draw();
+        };
     }
 }

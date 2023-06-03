@@ -20,6 +20,7 @@ import jena.engine.io.Storage;
 import jena.engine.io.StorageResource;
 import jena.engine.io.encoding.ResourcesDecoder;
 import jena.engine.io.encoding.FileDecoder;
+import jena.engine.math.Matrix3fStack;
 import jena.engine.math.Rectf;
 import jena.environment.EnvironmentVariables;
 import jena.environment.variable.IntegerVariable;
@@ -30,7 +31,6 @@ import jena.game.Game;
 import jena.game.KeyboardController;
 import jena.opengl.OpenGLDevice;
 import jena.opengl.gles.OpenGLESBufferPrimitiveBuilder;
-import jena.opengl.gles.OpenGLESMatrixPipeline;
 import jena.opengl.primitive.OpenGLPrimitiveBuilder;
 
 public class JOGLWindowListener implements GLEventListener
@@ -133,8 +133,9 @@ public class JOGLWindowListener implements GLEventListener
             a -> a.call(200, 100, 100, 255), player.position(), player);
 
         root = rootPainter.paint(
-            new OpenGLDevice((new JOGLTextureFunctions(es3)),
-            () -> new OpenGLESMatrixPipeline(new JOGLMatrixFunctions(es1)),
+            new OpenGLDevice(new JOGLTextureFunctions(es3),
+            new JOGLMatrixFunctions(es1),
+            Matrix3fStack::new,
             primitives, paintArea, System.out::println));
 
         Acceptable<Integer> fps = a -> variables.<IntegerVariable>findVariable("fps", v -> a.call(v.value()), () -> a.call(60));
